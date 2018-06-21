@@ -111,7 +111,7 @@ $ php artisan es:init
 ## 扩展包使用情况
 
 | 扩展包 | 一句话描述 | 本项目应用场景 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- |
 | [dingo/api](https://github.com/dingo/api) | 处理api接口的开源插件 | 用于api接口 |
 | [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth) | 身份验证的软件包 | 用于api认证  |
 | [predis/predis](https://github.com/nrk/predis.git) | Redis 官方首推的 PHP 客户端开发包 | 缓存驱动 Redis 基础扩展包 |
