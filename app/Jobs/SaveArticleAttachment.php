@@ -21,9 +21,14 @@ class SaveArticleAttachment implements ShouldQueue
 
     protected $diskName;
 
-    public function __construct(Article $article, $diskName = 'public')
+    public function __construct(Article $article, $diskName = null)
     {
         $this->article = $article;
+
+        if (!$diskName) {
+            $diskName = config('app.attachment_disk', 'public');
+        }
+
         $this->diskName = $diskName;
     }
 

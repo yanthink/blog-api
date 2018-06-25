@@ -28,7 +28,6 @@ class TagController extends Controller
         Tag::insert(collect($tags)->map(function ($tag) {
             return [
                 'name' => $tag,
-                'article_num' => 0,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];

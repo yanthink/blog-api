@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\ArticleObserver;
 use Eloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
@@ -11,6 +12,11 @@ class Article extends Eloquent
     use SoftDeletes, Searchable, EsSearchable;
 
     protected $table = 'articles';
+
+    public static function boot()
+    {
+        self::observe(ArticleObserver::class);
+    }
 
     // 定义索引里面的type
     public function searchableAs()

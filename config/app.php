@@ -216,4 +216,6 @@ return [
 
     ],
 
+    'attachment_disk' => env('ATTACHMENT_DISK', 'public'), // 附件存储disk
+
 ];

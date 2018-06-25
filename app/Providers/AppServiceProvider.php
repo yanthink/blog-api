@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use App\Observers\UserObserver;
 use App\Serializers\DataSerializer;
 use Dingo\Api\Exception\Handler as DingoExceptionHandler;
 use Dingo\Api\Transformer\Factory as TransformerFactory;
@@ -22,9 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // 注册Model观察者
-        User::observe(UserObserver::class);
-
         $this->app->make(DingoExceptionHandler::class)
             ->register(function (ValidationException $exception) {
                 $errMsg = $exception->validator->getMessageBag()->first();

@@ -69,7 +69,7 @@ class ArticleController extends Controller
 
         $article->tags()->sync($request->input('tags'));
 
-        dispatch(new SaveArticleAttachment($article, 'public'));
+        dispatch(new SaveArticleAttachment($article));
 
         $data = ['status' => true];
         return $this->response->created('', compact('data'));
@@ -85,7 +85,7 @@ class ArticleController extends Controller
 
         $article->tags()->sync($request->input('tags'));
 
-        dispatch(new SaveArticleAttachment($article, 'public'));
+        dispatch(new SaveArticleAttachment($article));
 
         $data = ['status' => true];
         return compact('data');

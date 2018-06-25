@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\UserObserver;
 use Eloquent;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -50,6 +51,11 @@ class User extends Eloquent implements
     protected $fillable = ['name', 'email', 'password'];
 
     protected $hidden = ['password', 'remember_token'];
+
+    public static function boot()
+    {
+        self::observe(UserObserver::class);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
