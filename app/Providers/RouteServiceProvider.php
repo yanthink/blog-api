@@ -51,7 +51,7 @@ class RouteServiceProvider extends ServiceProvider
                                   }\n";
 
                     // sleep(1);
-                    echo "${jsRetryFn}\nretry(10, function() {\n${js}\nwindow.phpdebugbar = phpdebugbar\n}, 200);";
+                    echo "${jsRetryFn}\nretry(50, function() {\n${js}\nwindow.phpdebugbar = phpdebugbar\n}, 200);";
                     exit;
                 });
             });

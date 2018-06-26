@@ -15,6 +15,7 @@ class Article extends Eloquent
 
     public static function boot()
     {
+        parent::boot();
         self::observe(ArticleObserver::class);
     }
 

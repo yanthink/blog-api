@@ -54,6 +54,7 @@ class User extends Eloquent implements
 
     public static function boot()
     {
+        parent::boot();
         self::observe(UserObserver::class);
     }
 
