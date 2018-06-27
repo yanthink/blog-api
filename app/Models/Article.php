@@ -34,6 +34,11 @@ class Article extends Eloquent
         ];
     }
 
+    public function shouldBeSearchable()
+    {
+        return true;
+    }
+
     // -------------- relations ------------------
     public function author()
     {

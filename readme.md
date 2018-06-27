@@ -2,7 +2,7 @@
 
 * 产品名称：个人博客系统api接口
 * 项目代号：blog-api
-* 官方地址：http://www.einsition.com
+* 官方地址：https://www.einsition.com
 * 前端项目地址：https://github.com/yanthink/blog
 
 该系统使用 Laravel5.6 编写而成。
@@ -11,7 +11,7 @@
 ## 功能如下
 
 
-- 文章列表 -- elasticsearch搜索；
+- 文章列表 -- Elasticsearch搜索；
 - 文章详情；
 - 用户认证 -- 后台登录、退出；
 - 多角色权限管理；
@@ -19,14 +19,15 @@
 - 文章管理 -- 列表、详情、发布、修改、删除；
 - 用户管理 -- 列表、添加、修改、分配角色；
 - 定时清除无用的附件；
-- debugbar;
+- Debugbar;
 
 ## 运行环境要求
 
 - Nginx 1.8+
 - PHP 7.0+
-- Mysql 5.7+
+- MySQL 5.7+
 - Redis 3.0+
+- Elasticsearch 6.0+
 
 ## 开发环境部署/安装
 
@@ -74,8 +75,12 @@ $ php artisan key:generate
 $ php artisan jwt:secret
 ```
 
+#### 6. 创建软连接
+```shell
+$ php artisan storage:link
+```
 
-#### 6. 生成数据表及生成测试数据
+#### 7. 生成数据表及生成测试数据
 ```shell
 $ php artisan migrate --seed
 ```
@@ -89,18 +94,18 @@ username: admin
 password: 888888
 ```
 
-#### 7. 安装elasticsearch
+#### 8. 安装elasticsearch
 ```shell
 $ brew install elasticsearch
 ```
 
-#### 8. 安装elasticsearch-analysis-ik
+#### 9. 安装elasticsearch-analysis-ik
 ```shell
 $ cd $(brew --prefix elasticsearch)
 $ ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.4/elasticsearch-analysis-ik-6.2.4.zip
 ```
 
-#### 9. 初始化elasticsearch
+#### 10. 初始化Elasticsearch
 ```shell
 $ php artisan es:init
 ```
