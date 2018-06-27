@@ -45,7 +45,7 @@
 
 克隆 `blog-api` 源代码到本地：
 
-    > git clone git@github.com:yanthink/blog-api.git
+    > git clone https://github.com/yanthink/blog-api.git
 
 #### 2. 安装扩展包依赖
 ```shell
