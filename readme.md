@@ -21,6 +21,12 @@
 - 定时清除无用的附件；
 - Debugbar;
 
+## 后台截图
+![file](https://api.einsition.com/storage/screenshot/WX20180627-175615.png)
+![file](https://api.einsition.com/storage/screenshot/WX20180627-175640.png)
+![file](https://api.einsition.com/storage/screenshot/WX20180627-175811.png)
+![file](https://api.einsition.com/storage/screenshot/WX20180627-175828.png)
+
 ## 运行环境要求
 
 - Nginx 1.8+
