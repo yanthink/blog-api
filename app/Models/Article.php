@@ -7,6 +7,36 @@ use Eloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
+/**
+ * App\Models\Article
+ *
+ * @property int $id
+ * @property int $status
+ * @property string $title
+ * @property string $preview
+ * @property string $content
+ * @property int|null $author_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\Models\User|null $author
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Tag[] $tags
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Article onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article wherePreview($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Article extends Eloquent
 {
     use SoftDeletes, Searchable, EsSearchable;
