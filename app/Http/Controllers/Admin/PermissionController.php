@@ -35,7 +35,7 @@ class PermissionController extends Controller
 
         $data = ['status' => true];
 
-        return compact('data');
+        return $this->response->created('', compact('data'));
     }
 
     public function update(PermissionRequest $request, Permission $permission)

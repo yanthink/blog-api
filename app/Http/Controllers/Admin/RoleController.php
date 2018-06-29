@@ -37,7 +37,7 @@ class RoleController extends Controller
 
         $data = ['status' => true];
 
-        return compact('data');
+        return $this->response->created('', compact('data'));
     }
 
     public function update(RoleRequest $request, Role $role)

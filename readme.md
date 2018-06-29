@@ -2,7 +2,7 @@
 
 * 产品名称：个人博客系统api接口
 * 项目代号：blog-api
-* 官方地址：https://www.einsition.com
+* 演示地址：https://www.einsition.com
 * 前端项目地址：https://github.com/yanthink/blog
 
 该系统使用 Laravel5.6 编写而成。

@@ -37,7 +37,7 @@ class UserController extends Controller
         $user->save();
 
         $data = ['status' => true];
-        return compact('data');
+        return $this->response->created('', compact('data'));
     }
 
     public function update(UserRequest $request, User $user)
