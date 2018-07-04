@@ -58,6 +58,8 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
+        $article->readCountIncrement();
+
         return $this->response->item($article, new ArticleTransformer);
     }
 }

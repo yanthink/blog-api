@@ -19,6 +19,7 @@ class ArticleTransformer extends BaseTransformer
             ), 500);
         $data['highlight'] = $article->highlight;
         $data['url'] = url("article/$article->id");
+        $data['current_read_count'] = $article->getCurrentReadCount();
 
         return $data;
     }

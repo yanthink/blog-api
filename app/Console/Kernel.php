@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(Commands\RemoveTmpAttachment::class)->dailyAt('02:00');
+        $schedule->command(Commands\SyncArticleReadCount::class)->dailyAt('00:00');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ArticleReadCountHelper;
 use App\Observers\ArticleObserver;
 use Eloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,10 +37,12 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withoutTrashed()
  * @mixin \Eloquent
+ * @property int $read_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereReadCount($value)
  */
 class Article extends Eloquent
 {
-    use SoftDeletes, Searchable, EsSearchable;
+    use SoftDeletes, Searchable, EsSearchable, ArticleReadCountHelper;
 
     protected $table = 'articles';
 
