@@ -62,7 +62,7 @@ trait ArticleReadCountHelper
      */
     public function getHashFromDateString($date)
     {
-        return $this->hashPrefix . $date;
+        return Cache::getPrefix() . $this->hashPrefix . $date;
     }
 
     /**
@@ -74,9 +74,11 @@ trait ArticleReadCountHelper
         return $this->fieldPrefix . $this->id;
     }
 
+    /**
+     * @return \Illuminate\Redis\Connections\PredisConnection
+     */
     public function getRedis()
     {
-        return Cache::getRedis()->connection();
-
+        return Cache::store('redis')->getRedis()->connection();
     }
 }
