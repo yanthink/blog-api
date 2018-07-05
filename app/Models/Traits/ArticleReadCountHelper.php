@@ -37,7 +37,7 @@ trait ArticleReadCountHelper
 
     public function syncReadCount()
     {
-        $hash = $this->getHashFromDateString(Carbon::now()->toDateString());
+        $hash = $this->getHashFromDateString(Carbon::now()->subDay()->toDateString());
 
         $redis = $this->getRedis();
 
