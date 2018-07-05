@@ -35,9 +35,9 @@ trait ArticleReadCountHelper
         $redis->hset($hash, $field, ++$readCount);
     }
 
-    public function syncReadCount()
+    public function syncReadCount($date)
     {
-        $hash = $this->getHashFromDateString(Carbon::now()->subDay()->toDateString());
+        $hash = $this->getHashFromDateString($date);
 
         $redis = $this->getRedis();
 
