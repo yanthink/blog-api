@@ -15,8 +15,10 @@ class SyncArticleReadCount extends Command
     public function handle(Article $article)
     {
         $date = $this->argument('date') ?? Carbon::now()->subDay()->toDateString();
-        $article->syncReadCount($date);
-
-        $this->info('同步成功！');
+        if ($article->syncReadCount($date)) {
+            $this->info('同步成功！');
+        } else {
+            $this->error('同步失败！');
+        }
     }
 }

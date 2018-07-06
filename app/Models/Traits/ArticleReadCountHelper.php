@@ -4,6 +4,9 @@ namespace App\Models\Traits;
 
 use Cache;
 use Carbon\Carbon;
+use DB;
+use Exception;
+use Throwable;
 
 trait ArticleReadCountHelper
 {
@@ -43,16 +46,22 @@ trait ArticleReadCountHelper
 
         $result = $redis->hgetall($hash);
 
-        foreach ($result as $articleId => $readCount) {
-            $articleId = str_replace($this->fieldPrefix, '', $articleId);
+        try {
+            DB::transaction(function () use ($result) {
+                foreach ($result as $articleId => $readCount) {
+                    $articleId = str_replace($this->fieldPrefix, '', $articleId);
+                    DB::statement("update articles set read_count = read_count + $readCount where id = $articleId");
+                }
+            });
 
-            if ($article = $this->find($articleId)) {
-                $article->read_count += $readCount;
-                $article->save();
-            }
+            $redis->del([$hash]);
+            return true;
+        } catch (Exception $exception) {
+
+        } catch (Throwable $throwable) {
+
         }
-
-        $redis->del([$hash]);
+        return false;
     }
 
     /**
