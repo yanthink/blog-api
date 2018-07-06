@@ -8,7 +8,8 @@ use Illuminate\Console\Command;
 
 class SyncArticleReadCount extends Command
 {
-    protected $signature = 'sync-article-read-count {date?}';
+    protected $signature = 'sync-article-read-count
+                            {date? : 同步日期}';
     protected $description = '将Redis的文章阅读次数数据同步到数据库中';
 
     public function handle(Article $article)

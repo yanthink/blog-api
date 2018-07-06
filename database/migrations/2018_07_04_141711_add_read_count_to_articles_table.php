@@ -14,7 +14,7 @@ class AddReadCountToArticlesTable extends Migration
     public function up()
     {
         Schema::table('articles', function (Blueprint $table) {
-            $table->unsignedInteger('read_count');
+            $table->unsignedInteger('read_count')->after('author_id')->default(0);
         });
     }
 
