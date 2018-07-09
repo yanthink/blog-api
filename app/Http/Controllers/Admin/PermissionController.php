@@ -6,18 +6,16 @@ use App\Http\Requests\PermissionRequest;
 use App\Models\Permission;
 use App\Transformers\Admin\PermissionTransformer;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $pageSize = min($request->input('pageSize', 10), 20);
-        $permissions = Permission
-            ::where(function (Builder $builder) use ($request) {
-                if (null !== $name = $request->input('name')) {
-                    $builder->where('name', $name);
-                }
+        $pageSize = min(request('pageSize', 10), 20);
+
+        $permissions = Permission::query()
+            ->when(request('name'), function (Builder $builder, $name) {
+                $builder->where('name', $name);
             })
             ->paginate($pageSize);
 

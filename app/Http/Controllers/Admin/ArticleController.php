@@ -7,46 +7,39 @@ use App\Jobs\SaveArticleAttachment;
 use App\Models\Article;
 use App\Transformers\Admin\ArticleTransformer;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        if ($keyword = $request->input('keyword')) {
-            return $this->search($request);
+        if (request('keyword')) {
+            return $this->search();
         }
 
-        $pageSize = min($request->input('pageSize', 10), 20);
+        $pageSize = min(request('pageSize', 10), 20);
 
-        $users = Article
-            ::where(function (Builder $builder) use ($request) {
-                if ($status = $request->input('status')) {
-                    $builder->where('status', $status);
-                }
-
-                if ($keyword = $request->input('keyword')) {
-                    $builder->where('title', 'like', "%$keyword%");
-                }
-
-                if ($tags = $request->input('tags')) {
-                    $builder->whereHas('tags', function (Builder $builder) use ($tags) {
-                        $builder->whereIn('tags.id', $tags);
-                    });
-                }
+        $articles = Article::query()
+            ->when(request('author_id'), function (Builder $builder, $authorId) {
+                $builder->where('author_id', $authorId);
             })
+            ->when(request('tags'), function (Builder $builder, $tags) {
+                $builder->whereHas('tags', function (Builder $builder) use ($tags) {
+                    $builder->whereIn('tags.id', $tags);
+                });
+            })
+            ->where('status', 1)
             ->orderBy('id', 'desc')
             ->paginate($pageSize);
 
-        return $this->response->paginator($users, new ArticleTransformer);
+        return $this->response->paginator($articles, new ArticleTransformer);
     }
 
-    public function search(Request $request)
+    public function search()
     {
-        $pageSize = min($request->input('pageSize', 10), 20);
+        $pageSize = min(request('pageSize', 10), 20);
 
         $articles = Article
-            ::search($request->input('keyword'))
+            ::search(request('keyword'))
             ->paginate($pageSize);
 
         return $this->response->paginator($articles, new ArticleTransformer);

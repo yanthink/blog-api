@@ -8,20 +8,19 @@ use App\Models\User;
 use App\Transformers\Admin\RoleTransformer;
 use App\Transformers\Admin\UserTransformer;
 use Cache;
+use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $pageSize = min($request->input('pageSize', 10), 20);
+        $pageSize = min(request('pageSize', 10), 20);
 
-        $users = User
-            ::where(function (Builder $builder) use ($request) {
-                if ($name = $request->input('name')) {
-                    $builder->where('name', $name);
-                }
+        $users = User::query()
+            ->when(request('name'), function (Builder $builder, $name) {
+                $builder->where('name', $name);
             })
             ->paginate($pageSize);
 
@@ -75,7 +74,7 @@ class UserController extends Controller
         $roles = $request->input('roles');
 
         if (!$this->user->hasRole('Founder')) {
-            $roleId = Role::where('name', 'Founder')->value('id');
+            $roleId = Role::query()->where('name', 'Founder')->value('id');
             if (in_array($roleId, $roles)) {
                 abort(422, "您没有权限给 {$user->name} 用户分配 Founder 角色");
             }

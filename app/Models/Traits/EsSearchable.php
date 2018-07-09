@@ -6,7 +6,7 @@
  * Time: 下午4:47
  */
 
-namespace App\Models;
+namespace App\Models\Traits;
 
 trait EsSearchable
 {

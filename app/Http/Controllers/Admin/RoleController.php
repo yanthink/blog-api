@@ -13,14 +13,12 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $pageSize = min($request->input('pageSize', 10), 20);
-        $roles = Role
-            ::where(function (Builder $builder) use ($request) {
-                if (null !== $name = $request->input('name')) {
-                    $builder->where('name', $name);
-                }
+        $pageSize = min(request('pageSize', 10), 20);
+        $roles = Role::query()
+            ->when(request('name'), function (Builder $builder, $name) {
+                $builder->where('name', $name);
             })
             ->paginate($pageSize);
 

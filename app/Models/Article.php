@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\ArticleReadCountHelper;
+use App\Models\Traits\EsSearchable;
 use App\Observers\ArticleObserver;
 use Eloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
