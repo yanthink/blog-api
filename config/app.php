@@ -218,4 +218,6 @@ return [
 
     'attachment_disk' => env('ATTACHMENT_DISK', 'public'), // 附件存储disk
 
+    'spider_domain' => env('SPIDER_DOMAIN', 'api.blog.test'),
+
 ];
