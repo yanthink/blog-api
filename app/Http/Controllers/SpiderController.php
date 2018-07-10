@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Yanthink\Browser\Browser;
 use Yanthink\Browser\Simulation;
 
+Simulation::disableAutoStartChromeDriver();
+
 class SpiderController extends Controller
 {
     public function render(Request $request, Simulation $simulation)

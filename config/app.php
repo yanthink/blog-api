@@ -220,4 +220,6 @@ return [
 
     'spider_domain' => env('SPIDER_DOMAIN', 'api.blog.test'),
 
+    'baidu_urls_token' => env('BAIDU_URLS_TOKEN'),
+
 ];
