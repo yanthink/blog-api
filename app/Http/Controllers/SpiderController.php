@@ -9,6 +9,8 @@ use Yanthink\Selenium\Selenium;
 Selenium::useChromeDriver();
 Selenium::disableAutoStartChromeDriver();
 
+Simulation::disableAutoStartChromeDriver();
+
 class SpiderController extends Controller
 {
     public function render(Request $request, Selenium $selenium)

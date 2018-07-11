@@ -6,6 +6,7 @@ use App\Http\Requests\ArticleRequest;
 use App\Jobs\SaveArticleAttachment;
 use App\Models\Article;
 use App\Transformers\Admin\ArticleTransformer;
+use Artisan;
 use Illuminate\Database\Eloquent\Builder;
 
 class ArticleController extends Controller
@@ -64,6 +65,15 @@ class ArticleController extends Controller
 
         dispatch(new SaveArticleAttachment($article));
 
+        if (app()->environment('production')) {
+            Artisan::queue('baidu-link:submit', [
+                '--url' => [
+                    'https://www.einsition.com/article/list',
+                    "https://www.einsition.com/article/$article->id/details",
+                ],
+            ]);
+        }
+
         $data = ['status' => true];
         return $this->response->created('', compact('data'));
     }
@@ -79,6 +89,15 @@ class ArticleController extends Controller
         $article->tags()->sync($request->input('tags'));
 
         dispatch(new SaveArticleAttachment($article));
+
+        if (app()->environment('production')) {
+            Artisan::queue('baidu-link:submit', [
+                '--url' => [
+                    'https://www.einsition.com/article/list',
+                    "https://www.einsition.com/article/$article->id/details",
+                ],
+            ]);
+        }
 
         $data = ['status' => true];
         return compact('data');
