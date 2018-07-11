@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Yanthink\Browser\Browser;
-use Yanthink\Browser\Simulation;
+use Yanthink\Selenium\Browser;
+use Yanthink\Selenium\Selenium;
+
+Selenium::useChromeDriver();
+Selenium::disableAutoStartChromeDriver();
 
 class SpiderController extends Controller
 {
-    public function render(Request $request, Simulation $simulation)
+    public function render(Request $request, Selenium $selenium)
     {
-        $simulation->browse(function (Browser $browser) use ($request) {
+        $selenium->browse(function (Browser $browser) use ($request) {
             $url = 'https://www.einsition.com' . $request->getRequestUri();
             echo $browser->visit($url)->waitFor('#layout')->driver->getPageSource();
             exit;

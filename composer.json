@@ -15,7 +15,7 @@
         "predis/predis": "^1.1",
         "tamayo/laravel-scout-elastic": "@dev",
         "tymon/jwt-auth": "^1.0.0@dev",
-        "yanthink/browser": "@dev",
+        "yanthink/selenium": "@dev",
         "zgldh/qiniu-laravel-storage": "^0.9.2",
         "zizaco/entrust": "5.2.x-dev"
     },
@@ -72,6 +72,10 @@
         {
             "type": "path",
             "url": "packages/laravel-scout-elastic"
+        },
+        {
+            "type": "path",
+            "url": "packages/selenium"
         }
     ]
 }
