@@ -28,7 +28,6 @@ class ArticleController extends Controller
                     $builder->whereIn('tags.id', $tags);
                 });
             })
-            ->where('status', 1)
             ->orderBy('id', 'desc')
             ->paginate($pageSize);
 
