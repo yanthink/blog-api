@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Tag;
 use App\Transformers\Admin\TagTransformer;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TagController extends Controller
@@ -28,8 +27,8 @@ class TagController extends Controller
         Tag::insert(collect($tags)->map(function ($tag) {
             return [
                 'name' => $tag,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         })->all());
 

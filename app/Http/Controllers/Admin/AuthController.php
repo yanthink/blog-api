@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Role;
 use App\Models\User;
 use Auth;
-use Carbon\Carbon;
 use Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -59,7 +58,7 @@ class AuthController extends Controller
                 'permissions' => $permissions,
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'expires_in' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
+                'expires_in' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
             ];
             return compact('data');
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.6.26 on 2018-07-10 17:36:55.
+ * Generated for Laravel 5.6.27 on 2019-02-11 16:51:04.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1947,240 +1947,6 @@ namespace Illuminate\Support\Facades {
         public static function setUser($user)
         {
             return \Tymon\JWTAuth\JWTGuard::setUser($user);
-        }
-         
-    }
-
-    class Blade {
-        
-        /**
-         * Compile the view at the given path.
-         *
-         * @param string $path
-         * @return void 
-         * @static 
-         */ 
-        public static function compile($path = null)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::compile($path);
-        }
-        
-        /**
-         * Get the path currently being compiled.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getPath()
-        {
-            return \Illuminate\View\Compilers\BladeCompiler::getPath();
-        }
-        
-        /**
-         * Set the path currently being compiled.
-         *
-         * @param string $path
-         * @return void 
-         * @static 
-         */ 
-        public static function setPath($path)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::setPath($path);
-        }
-        
-        /**
-         * Compile the given Blade template contents.
-         *
-         * @param string $value
-         * @return string 
-         * @static 
-         */ 
-        public static function compileString($value)
-        {
-            return \Illuminate\View\Compilers\BladeCompiler::compileString($value);
-        }
-        
-        /**
-         * Strip the parentheses from the given expression.
-         *
-         * @param string $expression
-         * @return string 
-         * @static 
-         */ 
-        public static function stripParentheses($expression)
-        {
-            return \Illuminate\View\Compilers\BladeCompiler::stripParentheses($expression);
-        }
-        
-        /**
-         * Register a custom Blade compiler.
-         *
-         * @param callable $compiler
-         * @return void 
-         * @static 
-         */ 
-        public static function extend($compiler)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::extend($compiler);
-        }
-        
-        /**
-         * Get the extensions used by the compiler.
-         *
-         * @return array 
-         * @static 
-         */ 
-        public static function getExtensions()
-        {
-            return \Illuminate\View\Compilers\BladeCompiler::getExtensions();
-        }
-        
-        /**
-         * Register an "if" statement directive.
-         *
-         * @param string $name
-         * @param callable $callback
-         * @return void 
-         * @static 
-         */ 
-        public static function if($name, $callback)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::if($name, $callback);
-        }
-        
-        /**
-         * Check the result of a condition.
-         *
-         * @param string $name
-         * @param array $parameters
-         * @return bool 
-         * @static 
-         */ 
-        public static function check($name, $parameters = null)
-        {
-            return \Illuminate\View\Compilers\BladeCompiler::check($name, $parameters);
-        }
-        
-        /**
-         * Register a component alias directive.
-         *
-         * @param string $path
-         * @param string $alias
-         * @return void 
-         * @static 
-         */ 
-        public static function component($path, $alias = null)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::component($path, $alias);
-        }
-        
-        /**
-         * Register an include alias directive.
-         *
-         * @param string $path
-         * @param string $alias
-         * @return void 
-         * @static 
-         */ 
-        public static function include($path, $alias = null)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::include($path, $alias);
-        }
-        
-        /**
-         * Register a handler for custom directives.
-         *
-         * @param string $name
-         * @param callable $handler
-         * @return void 
-         * @static 
-         */ 
-        public static function directive($name, $handler)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::directive($name, $handler);
-        }
-        
-        /**
-         * Get the list of custom directives.
-         *
-         * @return array 
-         * @static 
-         */ 
-        public static function getCustomDirectives()
-        {
-            return \Illuminate\View\Compilers\BladeCompiler::getCustomDirectives();
-        }
-        
-        /**
-         * Set the echo format to be used by the compiler.
-         *
-         * @param string $format
-         * @return void 
-         * @static 
-         */ 
-        public static function setEchoFormat($format)
-        {
-            \Illuminate\View\Compilers\BladeCompiler::setEchoFormat($format);
-        }
-        
-        /**
-         * Set the "echo" format to double encode entities.
-         *
-         * @return void 
-         * @static 
-         */ 
-        public static function withDoubleEncoding()
-        {
-            \Illuminate\View\Compilers\BladeCompiler::withDoubleEncoding();
-        }
-        
-        /**
-         * Set the "echo" format to not double encode entities.
-         *
-         * @return void 
-         * @static 
-         */ 
-        public static function withoutDoubleEncoding()
-        {
-            \Illuminate\View\Compilers\BladeCompiler::withoutDoubleEncoding();
-        }
-        
-        /**
-         * Get the path to the compiled version of a view.
-         *
-         * @param string $path
-         * @return string 
-         * @static 
-         */ 
-        public static function getCompiledPath($path)
-        {
-            //Method inherited from \Illuminate\View\Compilers\Compiler            
-            return \Illuminate\View\Compilers\BladeCompiler::getCompiledPath($path);
-        }
-        
-        /**
-         * Determine if the view at the given path is expired.
-         *
-         * @param string $path
-         * @return bool 
-         * @static 
-         */ 
-        public static function isExpired($path)
-        {
-            //Method inherited from \Illuminate\View\Compilers\Compiler            
-            return \Illuminate\View\Compilers\BladeCompiler::isExpired($path);
-        }
-        
-        /**
-         * Compile the default values for the echo statement.
-         *
-         * @param string $value
-         * @return string 
-         * @static 
-         */ 
-        public static function compileEchoDefaults($value)
-        {
-            return \Illuminate\View\Compilers\BladeCompiler::compileEchoDefaults($value);
         }
          
     }
@@ -5224,6 +4990,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $driver
          * @return mixed 
+         * @throws \InvalidArgumentException
          * @static 
          */ 
         public static function driver($driver = null)
@@ -5591,7 +5358,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function debug($message, $context = array())
@@ -5604,7 +5371,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function info($message, $context = array())
@@ -5617,7 +5384,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function notice($message, $context = array())
@@ -5630,7 +5397,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function warning($message, $context = array())
@@ -5643,7 +5410,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function error($message, $context = array())
@@ -5656,7 +5423,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function critical($message, $context = array())
@@ -5669,7 +5436,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function alert($message, $context = array())
@@ -5682,7 +5449,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $message The log message
          * @param array $context The log context
-         * @return Boolean Whether the record has been processed
+         * @return bool Whether the record has been processed
          * @static 
          */ 
         public static function emergency($message, $context = array())
@@ -6157,6 +5924,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $driver
          * @return mixed 
+         * @throws \InvalidArgumentException
          * @static 
          */ 
         public static function driver($driver = null)
@@ -6687,7 +6455,7 @@ namespace Illuminate\Support\Facades {
          * Create a new redirect response to a named route.
          *
          * @param string $route
-         * @param array $parameters
+         * @param mixed $parameters
          * @param int $status
          * @param array $headers
          * @return \Illuminate\Http\RedirectResponse 
@@ -6702,7 +6470,7 @@ namespace Illuminate\Support\Facades {
          * Create a new redirect response to a controller action.
          *
          * @param string $action
-         * @param array $parameters
+         * @param mixed $parameters
          * @param int $status
          * @param array $headers
          * @return \Illuminate\Http\RedirectResponse 
@@ -7066,6 +6834,21 @@ namespace Illuminate\Support\Facades {
         public static function replace($input)
         {
             return \Illuminate\Http\Request::replace($input);
+        }
+        
+        /**
+         * This method belongs to Symfony HttpFoundation and is not usually needed when using Laravel.
+         * 
+         * Instead, you may use the "input" method.
+         *
+         * @param string $key
+         * @param mixed $default
+         * @return mixed 
+         * @static 
+         */ 
+        public static function get($key, $default = null)
+        {
+            return \Illuminate\Http\Request::get($key, $default);
         }
         
         /**
@@ -7507,26 +7290,6 @@ namespace Illuminate\Support\Facades {
         {
             //Method inherited from \Symfony\Component\HttpFoundation\Request            
             return \Illuminate\Http\Request::getHttpMethodParameterOverride();
-        }
-        
-        /**
-         * Gets a "parameter" value from any bag.
-         * 
-         * This method is mainly useful for libraries that want to provide some flexibility. If you don't need the
-         * flexibility in controllers, it is better to explicitly get request parameters from the appropriate
-         * public property instead (attributes, query, request).
-         * 
-         * Order of precedence: PATH (routing placeholders or custom attributes), GET, BODY
-         *
-         * @param string $key The key
-         * @param mixed $default The default value if the parameter key does not exist
-         * @return mixed 
-         * @static 
-         */ 
-        public static function get($key, $default = null)
-        {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request            
-            return \Illuminate\Http\Request::get($key, $default);
         }
         
         /**
@@ -8004,7 +7767,7 @@ namespace Illuminate\Support\Facades {
          *  * _format request attribute
          *  * $default
          *
-         * @param string $default The default format
+         * @param string|null $default The default format
          * @return string The request format
          * @static 
          */ 
@@ -8129,7 +7892,7 @@ namespace Illuminate\Support\Facades {
          * Checks whether the method is cacheable or not.
          *
          * @see https://tools.ietf.org/html/rfc7231#section-4.2.3
-         * @return bool 
+         * @return bool True for GET and HEAD, false otherwise
          * @static 
          */ 
         public static function isMethodCacheable()
@@ -10071,6 +9834,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $driver
          * @return mixed 
+         * @throws \InvalidArgumentException
          * @static 
          */ 
         public static function driver($driver = null)
@@ -11765,6 +11529,7 @@ namespace Illuminate\Support\Facades {
          * @param array $data
          * @param array $mergeData
          * @return \Illuminate\Contracts\View\View 
+         * @throws \InvalidArgumentException
          * @static 
          */ 
         public static function first($views, $data = array(), $mergeData = array())
@@ -13782,6 +13547,262 @@ namespace Barryvdh\Debugbar {
  
 }
 
+namespace Overtrue\LaravelWeChat { 
+
+    class Facade {
+        
+        /**
+         * 
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getId()
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::getId();
+        }
+        
+        /**
+         * 
+         *
+         * @return array 
+         * @static 
+         */ 
+        public static function getConfig()
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::getConfig();
+        }
+        
+        /**
+         * Return all providers.
+         *
+         * @return array 
+         * @static 
+         */ 
+        public static function getProviders()
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::getProviders();
+        }
+        
+        /**
+         * 
+         *
+         * @param string $id
+         * @param mixed $value
+         * @static 
+         */ 
+        public static function rebind($id, $value)
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::rebind($id, $value);
+        }
+        
+        /**
+         * 
+         *
+         * @param array $providers
+         * @static 
+         */ 
+        public static function registerProviders($providers)
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::registerProviders($providers);
+        }
+        
+        /**
+         * Sets a parameter or an object.
+         * 
+         * Objects must be defined as Closures.
+         * 
+         * Allowing any PHP callable leads to difficult to debug problems
+         * as function names (strings) are callable (creating a function with
+         * the same name as an existing parameter would break your container).
+         *
+         * @param string $id The unique identifier for the parameter or object
+         * @param mixed $value The value of the parameter or a closure to define an object
+         * @throws FrozenServiceException Prevent override of a frozen service
+         * @static 
+         */ 
+        public static function offsetSet($id, $value)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::offsetSet($id, $value);
+        }
+        
+        /**
+         * Gets a parameter or an object.
+         *
+         * @param string $id The unique identifier for the parameter or object
+         * @return mixed The value of the parameter or an object
+         * @throws UnknownIdentifierException If the identifier is not defined
+         * @static 
+         */ 
+        public static function offsetGet($id)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::offsetGet($id);
+        }
+        
+        /**
+         * Checks if a parameter or an object is set.
+         *
+         * @param string $id The unique identifier for the parameter or object
+         * @return bool 
+         * @static 
+         */ 
+        public static function offsetExists($id)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::offsetExists($id);
+        }
+        
+        /**
+         * Unsets a parameter or an object.
+         *
+         * @param string $id The unique identifier for the parameter or object
+         * @static 
+         */ 
+        public static function offsetUnset($id)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::offsetUnset($id);
+        }
+        
+        /**
+         * Marks a callable as being a factory service.
+         *
+         * @param callable $callable A service definition to be used as a factory
+         * @return callable The passed callable
+         * @throws ExpectedInvokableException Service definition has to be a closure or an invokable object
+         * @static 
+         */ 
+        public static function factory($callable)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::factory($callable);
+        }
+        
+        /**
+         * Protects a callable from being interpreted as a service.
+         * 
+         * This is useful when you want to store a callable as a parameter.
+         *
+         * @param callable $callable A callable to protect from being evaluated
+         * @return callable The passed callable
+         * @throws ExpectedInvokableException Service definition has to be a closure or an invokable object
+         * @static 
+         */ 
+        public static function protect($callable)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::protect($callable);
+        }
+        
+        /**
+         * Gets a parameter or the closure defining an object.
+         *
+         * @param string $id The unique identifier for the parameter or object
+         * @return mixed The value of the parameter or the closure defining an object
+         * @throws UnknownIdentifierException If the identifier is not defined
+         * @static 
+         */ 
+        public static function raw($id)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::raw($id);
+        }
+        
+        /**
+         * Extends an object definition.
+         * 
+         * Useful when you want to extend an existing object definition,
+         * without necessarily loading that object.
+         *
+         * @param string $id The unique identifier for the object
+         * @param callable $callable A service definition to extend the original
+         * @return callable The wrapped callable
+         * @throws UnknownIdentifierException        If the identifier is not defined
+         * @throws FrozenServiceException            If the service is frozen
+         * @throws InvalidServiceIdentifierException If the identifier belongs to a parameter
+         * @throws ExpectedInvokableException        If the extension callable is not a closure or an invokable object
+         * @static 
+         */ 
+        public static function extend($id, $callable)
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::extend($id, $callable);
+        }
+        
+        /**
+         * Returns all defined value names.
+         *
+         * @return array An array of value names
+         * @static 
+         */ 
+        public static function keys()
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::keys();
+        }
+        
+        /**
+         * Registers a service provider.
+         *
+         * @param \Pimple\ServiceProviderInterface $provider A ServiceProviderInterface instance
+         * @param array $values An array of values that customizes the provider
+         * @return static 
+         * @static 
+         */ 
+        public static function register($provider, $values = array())
+        {
+            //Method inherited from \Pimple\Container            
+            return \EasyWeChat\OfficialAccount\Application::register($provider, $values);
+        }
+        
+        /**
+         * 
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function shouldDelegate($id)
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::shouldDelegate($id);
+        }
+        
+        /**
+         * 
+         *
+         * @return $this 
+         * @static 
+         */ 
+        public static function shouldntDelegate()
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::shouldntDelegate();
+        }
+        
+        /**
+         * 
+         *
+         * @param string $id
+         * @return \EasyWeChatComposer\Delegation 
+         * @static 
+         */ 
+        public static function delegateTo($id)
+        {
+            //Method inherited from \EasyWeChat\Kernel\ServiceContainer            
+            return \EasyWeChat\OfficialAccount\Application::delegateTo($id);
+        }
+         
+    }
+ 
+}
+
 namespace Tymon\JWTAuth\Facades { 
 
     class JWTAuth {
@@ -14302,8 +14323,6 @@ namespace  {
     class Artisan extends \Illuminate\Support\Facades\Artisan {}
 
     class Auth extends \Illuminate\Support\Facades\Auth {}
-
-    class Blade extends \Illuminate\Support\Facades\Blade {}
 
     class Broadcast extends \Illuminate\Support\Facades\Broadcast {}
 
@@ -16645,6 +16664,8 @@ namespace  {
     class Debugbar extends \Barryvdh\Debugbar\Facade {}
 
     class API extends \Dingo\Api\Facade\API {}
+
+    class EasyWeChat extends \Overtrue\LaravelWeChat\Facade {}
 
     class JWTAuth extends \Tymon\JWTAuth\Facades\JWTAuth {}
 

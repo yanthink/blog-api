@@ -14,8 +14,8 @@ class RolesTableSeeder extends Seeder
         DB::table('roles')->insert([
             'name' => 'Founder',
             'display_name' => '创始人',
-            'created_at' => Carbon\Carbon::now(),
-            'updated_at' => Carbon\Carbon::now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }

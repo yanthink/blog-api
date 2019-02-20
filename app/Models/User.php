@@ -52,6 +52,16 @@ class User extends Eloquent implements
 
     protected $hidden = ['password', 'remember_token'];
 
+    /**
+     * 接收用户的频道广播通知.
+     *
+     * @return string
+     */
+    public function receivesBroadcastNotificationsOn()
+    {
+        return 'notification.'.$this->id;
+    }
+
     public static function boot()
     {
         parent::boot();
@@ -76,5 +86,15 @@ class User extends Eloquent implements
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function setUserInfoAttribute($userInfo)
+    {
+        $this->attributes['user_info'] = json_encode($userInfo);
+    }
+//
+    public function getUserInfoAttribute($value)
+    {
+        return json_decode($value);
     }
 }

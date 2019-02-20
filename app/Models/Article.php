@@ -83,4 +83,14 @@ class Article extends Eloquent
     {
         return $this->belongsToMany(Tag::class);
     }
+
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'target');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'target');
+    }
 }

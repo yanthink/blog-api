@@ -14,18 +14,18 @@ class TagsTableSeeder extends Seeder
         DB::table('tags')->insert([
             [
                 'name' => 'Laravel',
-                'created_at' => Carbon\Carbon::now(),
-                'updated_at' => Carbon\Carbon::now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'PHP',
-                'created_at' => Carbon\Carbon::now(),
-                'updated_at' => Carbon\Carbon::now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'React',
-                'created_at' => Carbon\Carbon::now(),
-                'updated_at' => Carbon\Carbon::now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
     }

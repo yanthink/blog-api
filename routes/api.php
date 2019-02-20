@@ -24,6 +24,58 @@ ApiRoute::version('v1', [
         ApiRoute::get('tags', 'TagController@allTags');
     });
 
+    // 小程序
+    ApiRoute::group(['prefix' => 'wechat', 'namespace' => 'Wechat'], function () {
+        ApiRoute::group(['prefix' => 'auth'], function () {
+            ApiRoute::post('login', [
+//                'middleware' => 'api.throttle',
+                'limit' => 5,
+                'expires' => 5,
+                'uses' => 'AuthController@login'
+            ]);
+            ApiRoute::get('logout', 'AuthController@logout');
+        });
+
+        ApiRoute::get('article/search', 'ArticleController@search');
+        ApiRoute::resource('article', 'ArticleController', [
+            'only' => ['index', 'show'],
+        ]);
+
+        // 文章点赞
+        ApiRoute::resource('article.like', 'ArticleLikeController', [
+            'only' => ['store'],
+        ]);
+
+        // 文章评论
+        ApiRoute::resource('article.comment', 'ArticleCommentController', [
+            'only' => ['index', 'store'],
+        ]);
+
+        // 评论点赞
+        ApiRoute::resource('comment.like', 'CommentLikeController', [
+            'only' => ['store', 'index'],
+        ]);
+
+        // 评论
+        ApiRoute::resource('comment', 'CommentController', [
+            'only' => ['show'],
+        ]);
+
+        // 评论回复
+        ApiRoute::resource('comment.reply', 'CommentReplyController', [
+            'only' => ['index', 'store'],
+        ]);
+
+        // 回复点赞
+        ApiRoute::resource('reply.like', 'ReplyLikeController', [
+            'only' => ['store'],
+        ]);
+
+        // 通知
+        ApiRoute::group(['prefix' => 'notification', 'middleware' => 'api.auth'], function () {
+        });
+    });
+
     // 后台
     ApiRoute::group(['prefix' => 'admin', 'namespace' => 'Admin'], function () {
         ApiRoute::group(['prefix' => 'auth'], function () {

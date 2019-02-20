@@ -15,8 +15,9 @@ class UsersTableSeeder extends Seeder
             'name' => 'admin',
             'email' => '987965424@qq.com',
             'password' => bcrypt('888888'),
-            'created_at' => Carbon\Carbon::now(),
-            'updated_at' => Carbon\Carbon::now(),
+            'user_info->is_admin' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }
