@@ -51,6 +51,11 @@ ApiRoute::version('v1', [
             'only' => ['index', 'store'],
         ]);
 
+        // 文章收藏
+        ApiRoute::resource('article.favorite', 'ArticleFavoriteController', [
+            'only' => ['store'],
+        ]);
+
         // 评论点赞
         ApiRoute::resource('comment.like', 'CommentLikeController', [
             'only' => ['store', 'index'],

@@ -35,14 +35,17 @@ class ReplyLikeController extends Controller
             $reply->likes()->save($like);
         }
 
+        $likeCount = $reply->like_count;
         if (!$reply->isDirty('like_count')) {
-            $reply->like_count = $liked ? $reply->like_count + 1 : $reply->like_count - 1;
+            $likeCount = $liked ? $likeCount + 1 : $likeCount - 1;
         }
 
-        $reply->load(['likes' => function (MorphMany $builder) {
-            $builder->where('user_id', user('id'));
-        }]);
+        $data = [
+            'id' => $reply->id,
+            'like_count' => $likeCount,
+            'likes' => $liked ? [$like] : null,
+        ];
 
-        return $this->response->item($reply, new ReplyTransformer);
+        return compact('data');
     }
 }

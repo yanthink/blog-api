@@ -35,13 +35,18 @@ class ArticleLikeController extends Controller
             $article->likes()->save($like);
         }
 
+        $likeCount = $article->like_count;
+
         if (!$article->isDirty('like_count')) {
-            $article->like_count = $liked ? $article->like_count + 1 : $article->like_count - 1;
+            $likeCount = $liked ? $likeCount + 1 : $likeCount - 1;
         }
 
-        $article->load(['likes' => function (MorphMany $builder) {
-            $builder->where('user_id', user('id'));
-        }]);
-        return $this->response->item($article, new ArticleTransformer);
+        $data = [
+            'id' => $article->id,
+            'like_count' => $likeCount,
+            'likes' => $liked ? [$like] : null,
+        ];
+
+        return compact('data');
     }
 }

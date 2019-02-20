@@ -39,11 +39,17 @@ class ArticleController extends Controller
         $article->readCountIncrement();
 
         if (user()) {
-            $article->load(['likes' => function (MorphMany $builder) {
-                $builder->where('user_id', user('id'));
-            }]);
+            $article->load([
+                'likes' => function (MorphMany $builder) {
+                    $builder->where('user_id', user('id'));
+                },
+                'favorites' => function (MorphMany $builder) {
+                    $builder->where('user_id', user('id'));
+                },
+            ]);
         }
 
+        // https://gitee.com/matols/html2wxml
         $article->htmltowxml_json = app(ToWXML::class)->towxml($article->content, [
             'type' => 'markdown',
             'highlight' => true,

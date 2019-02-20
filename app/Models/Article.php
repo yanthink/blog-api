@@ -89,6 +89,11 @@ class Article extends Eloquent
         return $this->morphMany(Like::class, 'target');
     }
 
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'target');
+    }
+
     public function comments()
     {
         return $this->morphMany(Comment::class, 'target');

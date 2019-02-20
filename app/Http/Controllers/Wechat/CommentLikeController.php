@@ -47,14 +47,18 @@ class CommentLikeController extends Controller
             $comment->likes()->save($like);
         }
 
+        $likeCount = $comment->like_count;
+
         if (!$comment->isDirty('like_count')) {
-            $comment->like_count = $liked ? $comment->like_count + 1 : $comment->like_count - 1;
+            $likeCount = $liked ? $likeCount + 1 : $likeCount - 1;
         }
 
-        $comment->load(['likes' => function (MorphMany $builder) {
-            $builder->where('user_id', user('id'));
-        }]);
+        $data = [
+            'id' => $comment->id,
+            'like_count' => $likeCount,
+            'likes' => $liked ? [$like] : null,
+        ];
 
-        return $this->response->item($comment, new CommentTransformer);
+        return compact('data');
     }
 }
