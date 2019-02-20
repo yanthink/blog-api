@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Wechat;
 
+use App\Html2wxml\ToWXML;
 use App\Models\Article;
 use App\Transformers\ArticleTransformer;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,10 +39,32 @@ class ArticleController extends Controller
         $article->readCountIncrement();
 
         if (user()) {
-            $article->load(['likes' => function(MorphMany $builder) {
+            $article->load(['likes' => function (MorphMany $builder) {
                 $builder->where('user_id', user('id'));
             }]);
         }
+
+        $article->htmltowxml_json = app(ToWXML::class)->towxml($article->content, [
+            'type' => 'markdown',
+            'highlight' => true,
+            'linenums' => true,
+            'imghost' => null,
+            'encode' => false,
+            'highlight_languages' => [
+                'bash',
+                'css',
+                'ini',
+                'java',
+                'json',
+                'less',
+                'scss',
+                'php',
+                'python',
+                'go',
+                'sql',
+                'swift',
+            ],
+        ]);
 
         return $this->response->item($article, new ArticleTransformer);
     }
