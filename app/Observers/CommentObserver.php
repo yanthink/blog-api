@@ -10,12 +10,14 @@ class CommentObserver
 {
     public function created(Comment $comment)
     {
-        if ($comment->target instanceof Article) {
+        if ($comment->target_type == Article::class) {
             $comment->target->comment_count++;
             $comment->target->save();
 
-            $comment->target->author->notify(new CommentArticle($comment)); // 评论文章通知
-            // todo 订阅收藏通知
+            if ($comment->target->author_id != $comment->user_id) {
+                $comment->target->author->notify(new CommentArticle($comment)); // 评论文章通知
+                // todo 订阅收藏通知
+            }
         }
     }
 }

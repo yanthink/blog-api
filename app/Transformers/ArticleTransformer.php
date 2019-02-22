@@ -7,7 +7,7 @@ use Parsedown;
 
 class ArticleTransformer extends BaseTransformer
 {
-    protected $availableIncludes = ['author', 'tags', 'likes'];
+    protected $availableIncludes = ['author', 'tags', 'likes', 'comments', 'favorites'];
 
     public function transform(Article $article)
     {
@@ -44,5 +44,15 @@ class ArticleTransformer extends BaseTransformer
     public function includeLikes(Article $article)
     {
         return $this->collectionAndEagerLoadRelations($article->likes, new LikeTransformer, 'likes');
+    }
+
+    public function includeComments(Article $article)
+    {
+        return $this->collectionAndEagerLoadRelations($article->comments, new CommentTransformer, 'comments');
+    }
+
+    public function includeFavorites(Article $article)
+    {
+        return $this->collectionAndEagerLoadRelations($article->favorites, new FavoriteTransformer, 'favorites');
     }
 }

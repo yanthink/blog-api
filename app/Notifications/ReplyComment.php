@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Comment;
 use App\Models\Reply;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -27,7 +28,7 @@ class ReplyComment extends Notification implements ShouldQueue
     {
         $target = $this->reply->parent ?? $this->reply->target;
 
-        return [
+        $data = [
             'form_id' => $this->reply->id, // 回复id
             'form_user_id' => $this->reply->user_id, // 回复用户id
             'form_user_name' => $this->reply->user->name, // 回复用户名
@@ -36,5 +37,11 @@ class ReplyComment extends Notification implements ShouldQueue
             'target_id' => $target->id, // parent_id 或 评论id
             'target_name' => $target->content, // parent 或 评论内容
         ];
+
+        if ($this->reply->target_type == Comment::class) {
+            $data['comment_id'] = $this->reply->target_id;
+        }
+
+        return $data;
     }
 }

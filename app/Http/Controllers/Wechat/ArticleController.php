@@ -47,6 +47,14 @@ class ArticleController extends Controller
                     $builder->where('user_id', user('id'));
                 },
             ]);
+
+            $commentId = request('comment_id');
+
+            if ($commentId > 0) {
+                $article->load(['comments' => function (MorphMany $builder) use ($commentId) {
+                    $builder->where('id', $commentId);
+                }, 'comments.user']);
+            }
         }
 
         // https://gitee.com/matols/html2wxml

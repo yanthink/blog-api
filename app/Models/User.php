@@ -59,7 +59,7 @@ class User extends Eloquent implements
      */
     public function receivesBroadcastNotificationsOn()
     {
-        return 'notification.'.$this->id;
+        return 'notification.' . $this->id;
     }
 
     public static function boot()
@@ -92,9 +92,30 @@ class User extends Eloquent implements
     {
         $this->attributes['user_info'] = json_encode($userInfo);
     }
+
 //
     public function getUserInfoAttribute($value)
     {
         return json_decode($value);
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function replys()
+    {
+        return $this->hasMany(Reply::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
     }
 }

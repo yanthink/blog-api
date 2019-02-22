@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Comment;
 use App\Models\Like;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -25,7 +26,7 @@ class LikeReply extends Notification implements ShouldQueue
 
     public function toArray()
     {
-        return [
+        $data = [
             'form_id' => $this->like->id, // 点赞id
             'form_user_id' => $this->like->user_id, // 点赞用户id
             'form_user_name' => $this->like->user->name, // 点赞用户名
@@ -34,5 +35,11 @@ class LikeReply extends Notification implements ShouldQueue
             'target_id' => $this->like->target_id, // 回复id
             'target_name' => $this->like->target->content, // 回复内容
         ];
+
+        if ($this->like->target->target_type == Comment::class) {
+            $data['comment_id'] = $this->like->target->target_id;
+        }
+
+        return $data;
     }
 }

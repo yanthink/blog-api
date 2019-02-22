@@ -63,8 +63,8 @@ wss.on('connection', (ws, req) => {
         ws.user_id = sub
         clients[sub] = ws
 
-        const date = new Date()
-        clientStatistics.clients[sub] = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+
+        clientStatistics.clients[sub] = getNowDateTimeString()
         clientStatistics.count ++
 
         // redis.set('socket_clients', JSON.stringify(redisStorage.clients)) // 订阅模式不能用
@@ -102,6 +102,8 @@ redis.psubscribe('*', function (err, count) {
 })
 
 redis.on('pmessage', (subscrbed, channel, message) => { // 接收 laravel 推送的消息
+    console.info('[%s] %s %s', getNowDateTimeString(), channel, message)
+
     const { event, data } = JSON.parse(message)
     switch (event) {
         case 'Illuminate\\Notifications\\Events\\BroadcastNotificationCreated':
@@ -115,4 +117,9 @@ redis.on('pmessage', (subscrbed, channel, message) => { // 接收 laravel 推送
 
 function env(key, def = '') {
     return config[key] || def
+}
+
+function getNowDateTimeString () {
+    const date = new Date()
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 }

@@ -66,6 +66,11 @@ ApiRoute::version('v1', [
             'only' => ['show'],
         ]);
 
+        // 回复
+        ApiRoute::resource('reply', 'ReplyController', [
+            'only' => ['show'],
+        ]);
+
         // 评论回复
         ApiRoute::resource('comment.reply', 'CommentReplyController', [
             'only' => ['index', 'store'],
@@ -76,8 +81,24 @@ ApiRoute::version('v1', [
             'only' => ['store'],
         ]);
 
-        // 通知
-        ApiRoute::group(['prefix' => 'notification', 'middleware' => 'api.auth'], function () {
+        // 我的
+        ApiRoute::group(['prefix' => 'user', 'middleware' => 'api.auth'], function () {
+            // 收藏
+            ApiRoute::get('favorite', 'UserController@favorite');
+
+            // 评论
+            ApiRoute::get('comment', 'UserController@comment');
+
+            // 回复
+            ApiRoute::get('reply', 'UserController@reply');
+
+            // 点赞
+            ApiRoute::get('like', 'UserController@like');
+
+            // 通知
+            ApiRoute::get('notification', 'UserController@notification');
+
+            ApiRoute::post('notification/{notification}/read', 'UserController@notificationRead');
         });
     });
 
