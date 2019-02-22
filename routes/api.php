@@ -98,6 +98,8 @@ ApiRoute::version('v1', [
             // 通知
             ApiRoute::get('notification', 'UserController@notification');
 
+            ApiRoute::get('notification/unread_count', 'UserController@notificationUnreadCount');
+
             ApiRoute::post('notification/{notification}/read', 'UserController@notificationRead');
         });
     });

@@ -71,6 +71,13 @@ class UserController extends Controller
         return $this->response->paginator($notifications, new NotificationTransformer);
     }
 
+    public function notificationUnreadCount()
+    {
+        $data = user()->unreadNotifications()->count();
+
+        return compact('data');
+    }
+
     public function notificationRead($id)
     {
         $data = user()->unreadNotifications()->where('id', $id)->update(['read_at' => now()]);
