@@ -31,15 +31,15 @@ class AuthController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
-        $user = User::where(function (Builder $builder) use ($account, $email) {
-            if ($account) {
+        $user = User::query()
+            ->where('is_admin', 1)
+            ->when($account, function (Builder $builder, $account) {
                 $builder->where('name', $account);
-            }
-
-            if ($email) {
+            })
+            ->when($email, function (Builder $builder, $email) {
                 $builder->where('email', $email);
-            }
-        })->first();
+            })
+            ->first();
 
         if ($user && Hash::check($password, $user->password)) {
             $token = Auth::login($user);

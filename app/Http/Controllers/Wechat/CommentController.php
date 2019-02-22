@@ -20,7 +20,7 @@ class CommentController extends Controller
             if ($replyId > 0) {
                 $comment->load(['replys' => function (MorphMany $builder) use ($replyId) {
                     $builder->where('id', $replyId);
-                }, 'replys.user']);
+                }, 'replys.user', 'replys.parent']);
             }
         }
 
