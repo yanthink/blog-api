@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Transformers\ArticleTransformer;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Parsedown;
 
 class ArticleController extends Controller
 {
@@ -59,9 +60,14 @@ class ArticleController extends Controller
             }
         }
 
+        $article->html_content = Parsedown::instance()
+            ->setMarkupEscaped(true)
+            ->setBreaksEnabled(true)
+            ->text($article->content);
+
         // https://gitee.com/matols/html2wxml
-        $article->htmltowxml_json = app(ToWXML::class)->towxml($article->content, [
-            'type' => 'markdown',
+        $article->htmltowxml_json = app(ToWXML::class)->towxml($article->html_content, [
+            'type' => 'html',
             'highlight' => true,
             'linenums' => true,
             'imghost' => null,

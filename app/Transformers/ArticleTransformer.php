@@ -12,7 +12,13 @@ class ArticleTransformer extends BaseTransformer
     public function transform(Article $article)
     {
         $data = $article->toArray();
-        $data['html_content'] = Parsedown::instance()->setMarkupEscaped(true)->text($article->content);
+
+        if (!isset($data['html_content'])) {
+            $data['html_content'] = Parsedown::instance()
+                ->setMarkupEscaped(true)
+                ->setBreaksEnabled(true)
+                ->text($article->content);
+        }
         $data['description'] = str_limit(
             htmlspecialchars_decode(
                 preg_replace('/<\/?.*?>/', '', $data['html_content'])
