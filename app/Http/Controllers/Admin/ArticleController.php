@@ -39,7 +39,7 @@ class ArticleController extends Controller
         $pageSize = min(request('pageSize', 10), 20);
 
         $articles = Article
-            ::search(request('keyword'))
+            ::search(strtolower(request('keyword')))
             ->paginate($pageSize);
 
         return $this->response->paginator($articles, new ArticleTransformer);

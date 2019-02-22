@@ -24,10 +24,13 @@
 - Debugbar;
 
 ## 后台截图
-![file](https://api.einsition.com/storage/screenshot/WX20180627-175615.png)
-![file](https://api.einsition.com/storage/screenshot/WX20180627-175640.png)
-![file](https://api.einsition.com/storage/screenshot/WX20180627-175811.png)
-![file](https://api.einsition.com/storage/screenshot/WX20180627-175828.png)
+![文章列表](http://qiniu.einsition.com/article/a27/32077943eb94be253f1ef4bfee6a1ad7.png)
+
+![文章详情](http://qiniu.einsition.com/article/a27/afb57458fedc4d53626c9b6e6f26136d.png)
+
+![文章发布](http://qiniu.einsition.com/article/a27/e800fb0dc80eb18d7d437ed61c283149.png)
+
+![文章预览](http://qiniu.einsition.com/article/a27/3ef3cf768ebdffcba8eb42bf94a22e7f.png)
 
 ## 运行环境要求
 
@@ -132,6 +135,7 @@ $ php artisan es:init
 | [zgldh/qiniu-laravel-storage](https://github.com/zgldh/qiniu-laravel-storage) | Qiniu 云储存 Laravel 5 Storage版 | 存储附件 |
 | [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) | 代码提示及补全工具 | 代码提示及补全 |
 | [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar) | 页面调试工具栏 (对 phpdebugbar 的封装) | 开发环境中的 DEBUG |
+| [overtrue/laravel-wechat](https://github.com/overtrue/laravel-wechat) | 微信 SDK for Laravel 5 / Lumen | 微信小程序登录 |
 
 ## 自定义 Artisan 命令
 
@@ -139,9 +143,15 @@ $ php artisan es:init
 | --- | --- | --- | --- |
 | `remove-tmp-attachment` | 删除临时附件 | 每天凌晨2点执行一次 | 无 |
 | `es:init` | 初始化elasticsearch | 无 | 无 |
+| `sync-article-read-count` | 将Redis的文章阅读次数数据同步到数据库中 |  每天凌晨0点执行一次 | 无 |
 
 ## 队列清单
 
 | 名称 | 说明 | 调用时机 |
 | --- | --- | --- |
 | SaveArticleAttachment.php | 保存临时附件 | 发布文章和更新文章 |
+
+
+## 小程序二维码
+
+![file](http://qiniu.einsition.com/article/a27/126393085b4a7553b146d7099fa543fe.jpeg)

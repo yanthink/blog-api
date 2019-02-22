@@ -39,7 +39,7 @@ class ArticleController extends Controller
         $pageSize = min(request('pageSize', 10), 20);
 
         $articles = Article
-            ::search(request('keyword'))
+            ::search(strtolower(request('keyword')))
             ->paginate($pageSize);
 
         return $this->response->paginator($articles, new ArticleTransformer);
@@ -47,6 +47,8 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
+        abort_if(!$article->status, 404, '没有找到文章！');
+
         $article->readCountIncrement();
 
         return $this->response->item($article, new ArticleTransformer);
