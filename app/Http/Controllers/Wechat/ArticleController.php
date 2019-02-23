@@ -28,7 +28,9 @@ class ArticleController extends Controller
                     $builder->whereIn('tags.id', $tags);
                 });
             })
-            ->where('status', 1)
+            ->when(user('id') != 1, function (Builder $builder) {
+                $builder->where('status', 1);
+            })
             ->orderBy('id', 'desc')
             ->paginate($pageSize);
 
@@ -37,7 +39,7 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
-        abort_if(!$article->status, 404, '没有找到文章！');
+        abort_if(!$article->status && user('id') != 1, 404, '没有找到文章！');
 
         $article->readCountIncrement();
 

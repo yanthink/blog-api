@@ -60,6 +60,16 @@ wss.on('connection', (ws, req) => {
         const algorithm = env('JWT_ALGO', 'HS256')
 
         const { sub } = jwt.verify(token, jwtSecret, {algorithm})
+
+        if (clients[sub] && clients[sub].readyState === 1) {
+            try {
+                clients[sub].close()
+                clientStatistics.count--
+            } catch (e) {
+                //
+            }
+        }
+
         ws.user_id = sub
         clients[sub] = ws
 
