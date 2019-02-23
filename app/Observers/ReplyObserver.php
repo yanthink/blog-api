@@ -11,8 +11,10 @@ class ReplyObserver
     public function created(Reply $reply)
     {
         if ($reply->target_type == Comment::class) {
+            DB::statement('update comments set reply_count = reply_count + 1 where id = '.$reply->target_id);
+
             $reply->target->reply_count ++;
-            $reply->target->save();
+            // $reply->target->save();
 
             if ($reply->parent) {
                 if ($reply->parent->user_id != $reply->user_id) {

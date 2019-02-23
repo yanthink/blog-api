@@ -9,20 +9,27 @@ use App\Models\Reply;
 use App\Notifications\LikeArticle;
 use App\Notifications\LikeComment;
 use App\Notifications\LikeReply;
+use DB;
 
 class LikeObserver
 {
     public function saved(Like $like)
     {
         if ($like->target_type === Article::class) {
+            DB::statement('update articles set like_count = like_count + 1 where id = '.$like->target_id);
+
             $like->target->like_count++;
-            $like->target->save();
+            // $like->target->save();
         } elseif ($like->target_type == Comment::class) {
+            DB::statement('update comments set like_count = like_count + 1 where id = '.$like->target_id);
+
             $like->target->like_count++;
-            $like->target->save();
+            // $like->target->save();
         } elseif ($like->target_type == Reply::class) {
+            DB::statement('update replys set like_count = like_count + 1 where id = '.$like->target_id);
+
             $like->target->like_count++;
-            $like->target->save();
+            // $like->target->save();
         }
     }
 
@@ -49,14 +56,20 @@ class LikeObserver
     public function deleted(Like $like)
     {
         if ($like->target_type == Article::class) {
+            DB::statement('update articles set like_count = like_count - 1 where id = '.$like->target_id);
+
             $like->target->like_count--;
-            $like->target->save();
+            // $like->target->save();
         } elseif ($like->target_type == Comment::class) {
+            DB::statement('update comments set like_count = like_count - 1 where id = '.$like->target_id);
+
             $like->target->like_count--;
-            $like->target->save();
+            // $like->target->save();
         } elseif ($like->target_type == Reply::class) {
+            DB::statement('update replys set like_count = like_count - 1 where id = '.$like->target_id);
+
             $like->target->like_count--;
-            $like->target->save();
+            // $like->target->save();
         }
     }
 }
