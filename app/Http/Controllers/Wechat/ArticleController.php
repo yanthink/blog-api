@@ -63,7 +63,7 @@ class ArticleController extends Controller
         }
 
         $article->html_content = Parsedown::instance()
-            ->setMarkupEscaped(true)
+            // ->setMarkupEscaped(true)
             ->setBreaksEnabled(true)
             ->text($article->content);
 
