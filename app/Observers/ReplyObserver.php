@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Comment;
 use App\Models\Reply;
 use App\Notifications\ReplyComment;
+use DB;
 
 class ReplyObserver
 {
