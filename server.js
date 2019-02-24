@@ -12,7 +12,7 @@ const redis = new Redis({
     host: env('REDIS_HOST', '127.0.0.1'),   // Redis host
     // family: 4,           // 4 (IPv4) or 6 (IPv6)
     password: env('REDIS_PASSWORD', null),
-    // db: 0
+    db: 0,
 })
 
 const wss = new WebSocket.Server({
@@ -36,11 +36,13 @@ const wss = new WebSocket.Server({
             // }
 
             if (!(sub > 0)) {
+                console.info('无法验证令牌签名.')
                 cb(false, 401, '无法验证令牌签名.')
             }
 
             cb(true)
         } catch (e) {
+            console.info(e)
             cb(false, 401, 'Token could not be parsed from the request.')
         }
 
@@ -70,6 +72,8 @@ wss.on('connection', (ws, req) => {
             }
         }
 
+        console.info('[%s] connection：%s', getNowDateTimeString(), sub)
+
         ws.user_id = sub
         clients[sub] = ws
 
@@ -84,13 +88,18 @@ wss.on('connection', (ws, req) => {
     }
 
     ws.on('message', message => { // 接收消息事件
-        if (ws.user_id && ws.user_id === 1 && message === 'get_client_statistics') {
-            ws.send(JSON.stringify(clientStatistics))
+        if (ws.user_id) {
+            console.info('[%s] message：%s %s', getNowDateTimeString(), ws.user_id, message)
+
+            if (ws.user_id === 1 && message === 'get_client_statistics') {
+                ws.send(JSON.stringify(clientStatistics))
+            }
         }
     }) // 当收到消息时，在控制台打印出来，并回复一条信息
 
     ws.on('close', () => { // 关闭链接事件
         if (ws.user_id) {
+            console.info('[%s] closed：%s', getNowDateTimeString(), ws.user_id)
             try {
                 delete clients[ws.user_id]
                 delete clientStatistics.clients[ws.user_id]
