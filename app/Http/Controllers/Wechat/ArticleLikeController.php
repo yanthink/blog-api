@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Wechat;
 use App\Models\Article;
 use App\Models\Like;
 use App\Transformers\ArticleTransformer;
+use Cache;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ArticleLikeController extends Controller
@@ -16,9 +17,14 @@ class ArticleLikeController extends Controller
 
     public function store(Article $article)
     {
-//        abort_if($article->author_id == user('id'),  422, '不能给自己的文章点赞！');
+        $userId = user('id');
+        $cacheKey = self::class."@store:$userId";
 
-        $like = $article->likes()->withTrashed()->where('user_id', user('id'))->first();
+        abort_if(!Cache::add($cacheKey, 1, 1), 422, '操作过于频繁，请稍后再试！');
+        // abort_if($article->author_id == $userId,  422, '不能给自己的文章点赞！');
+
+
+        $like = $article->likes()->withTrashed()->where('user_id', $userId)->first();
 
         $liked = true;
 
@@ -31,7 +37,7 @@ class ArticleLikeController extends Controller
             }
         } else {
             $like = new Like;
-            $like->user_id = user('id');
+            $like->user_id = $userId;
             $article->likes()->save($like);
         }
 
@@ -46,6 +52,8 @@ class ArticleLikeController extends Controller
             'like_count' => $likeCount,
             'likes' => $liked ? [$like] : null,
         ];
+
+        Cache::forget($cacheKey);
 
         return compact('data');
     }

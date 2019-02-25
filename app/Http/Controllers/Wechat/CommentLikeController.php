@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Like;
 use App\Transformers\CommentTransformer;
 use App\Transformers\LikeTransformer;
+use Cache;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class CommentLikeController extends Controller
@@ -28,9 +29,13 @@ class CommentLikeController extends Controller
 
     public function store(Comment $comment)
     {
-//        abort_if($comment->user_id == user('id'), 422, '不能给自己的评论点赞！');
+        $userId = user('id');
+        $cacheKey = self::class."@store:$userId";
 
-        $like = $comment->likes()->withTrashed()->where('user_id', user('id'))->first();
+        abort_if(!Cache::add($cacheKey, 1, 1), 422, '操作过于频繁，请稍后再试！');
+        // abort_if($comment->user_id == $userId, 422, '不能给自己的评论点赞！');
+
+        $like = $comment->likes()->withTrashed()->where('user_id', $userId)->first();
 
         $liked = true;
 
@@ -43,7 +48,7 @@ class CommentLikeController extends Controller
             }
         } else {
             $like = new Like;
-            $like->user_id = user('id');
+            $like->user_id = $userId;
             $comment->likes()->save($like);
         }
 
@@ -58,6 +63,8 @@ class CommentLikeController extends Controller
             'like_count' => $likeCount,
             'likes' => $liked ? [$like] : null,
         ];
+
+        Cache::forget($cacheKey);
 
         return compact('data');
     }

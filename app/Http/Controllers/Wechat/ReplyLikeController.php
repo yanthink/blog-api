@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Wechat;
 use App\Models\Like;
 use App\Models\Reply;
 use App\Transformers\ReplyTransformer;
+use Cache;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ReplyLikeController extends Controller
@@ -16,9 +17,13 @@ class ReplyLikeController extends Controller
 
     public function store(Reply $reply)
     {
-//        abort_if($reply->user_id == user('id'), 422, '不能给自己的回复点赞！');
+        $userId = user('id');
+        $cacheKey = self::class."@store:$userId";
 
-        $like = $reply->likes()->withTrashed()->where('user_id', user('id'))->first();
+        abort_if(!Cache::add($cacheKey, 1, 1), 422, '操作过于频繁，请稍后再试！');
+        // abort_if($reply->user_id == $userId, 422, '不能给自己的回复点赞！');
+
+        $like = $reply->likes()->withTrashed()->where('user_id', $userId)->first();
 
         $liked = true;
 
@@ -31,7 +36,7 @@ class ReplyLikeController extends Controller
             }
         } else {
             $like = new Like;
-            $like->user_id = user('id');
+            $like->user_id = $userId;
             $reply->likes()->save($like);
         }
 
@@ -45,6 +50,8 @@ class ReplyLikeController extends Controller
             'like_count' => $likeCount,
             'likes' => $liked ? [$like] : null,
         ];
+
+        Cache::forget($cacheKey);
 
         return compact('data');
     }

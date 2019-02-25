@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Favorite;
 use App\Models\Like;
 use App\Transformers\ArticleTransformer;
+use Cache;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ArticleFavoriteController extends Controller
@@ -17,9 +18,12 @@ class ArticleFavoriteController extends Controller
 
     public function store(Article $article)
     {
-//        abort_if($article->author_id == user('id'),  422, '不能给自己的文章点赞！');
+        $userId = user('id');
+        $cacheKey = self::class."@store:$userId";
 
-        $favorite = $article->favorites()->withTrashed()->where('user_id', user('id'))->first();
+        abort_if(!Cache::add($cacheKey, 1, 1), 422, '操作过于频繁，请稍后再试！');
+
+        $favorite = $article->favorites()->withTrashed()->where('user_id', $userId)->first();
 
         $isFavorite = true;
 
@@ -32,7 +36,7 @@ class ArticleFavoriteController extends Controller
             }
         } else {
             $favorite = new Favorite();
-            $favorite->user_id = user('id');
+            $favorite->user_id = $userId;
             $article->favorites()->save($favorite);
         }
 
@@ -40,6 +44,8 @@ class ArticleFavoriteController extends Controller
             'id' => $article->id,
             'favorites' => $isFavorite ? [$favorite] : null,
         ];
+
+        Cache::forget($cacheKey);
 
         return compact('data');
     }
