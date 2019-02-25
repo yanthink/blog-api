@@ -20,7 +20,7 @@ class CommentLikeController extends Controller
         $pageSize = min(request('pageSize', 10), 20);
 
         $likes = $comment->likes()
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
         return $this->response->paginator($likes, new LikeTransformer);

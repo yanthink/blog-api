@@ -12,7 +12,9 @@ class ArticleCommentController extends Controller
 {
     public function __construct()
     {
+        $this->rateLimit(1, .1); // 6秒钟1次
         $this->middleware('api.auth')->except('index');
+        $this->middleware('api.throttle')->only('store');
     }
 
     public function index(Article $article)
@@ -22,7 +24,7 @@ class ArticleCommentController extends Controller
         $comments = $article->comments()
             ->orderBy('like_count', 'desc')
             ->orderBy('reply_count', 'desc')
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
         if (user()) {

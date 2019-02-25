@@ -12,7 +12,10 @@ class CommentReplyController extends Controller
 {
     public function __construct()
     {
+        $this->rateLimit(1, .1); // 6秒钟1次
         $this->middleware('api.auth')->except('index');
+        $this->middleware('api.throttle')->only('store');
+
     }
 
     public function index(Comment $comment)
@@ -21,7 +24,7 @@ class CommentReplyController extends Controller
 
         $replys = $comment->replys()
             ->orderBy('like_count', 'desc')
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
         if (user()) {
