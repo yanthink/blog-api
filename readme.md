@@ -5,7 +5,7 @@
 * 演示地址：https://www.einsition.com
 * 前端项目地址：https://github.com/yanthink/blog
 
-该系统使用 Laravel5.6 编写而成。
+该系统使用 Laravel5.7 编写而成。
 
 
 ## 功能如下
@@ -42,7 +42,7 @@
 
 ## 开发环境部署/安装
 
-本项目代码使用 PHP 框架 [Laravel 5.6](https://d.laravel-china.org/docs/5.6/) 开发，本地开发环境使用 [Laravel Valet](https://laravel-china.org/docs/laravel/5.6/valet)。
+本项目代码使用 PHP 框架 [Laravel 5.7](https://d.laravel-china.org/docs/5.7/) 开发，本地开发环境使用 [Laravel Valet](https://laravel-china.org/docs/laravel/5.7/valet)。
 
 ### 基础安装
 
