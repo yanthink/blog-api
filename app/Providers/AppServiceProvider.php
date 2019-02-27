@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Serializers\DataSerializer;
+use DB;
 use Dingo\Api\Exception\Handler as DingoExceptionHandler;
 use Dingo\Api\Transformer\Factory as TransformerFactory;
 use Dingo\Api\Transformer\Adapter\Fractal;
@@ -37,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function (User $user, $ability) {
             return $user->hasRole('Founder') ? true : null;
         });
+
+        if ($this->app->environment('local')) {
+            DB::enableQueryLog();
+        }
     }
 
     /**
