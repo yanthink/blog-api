@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\RoleRequest;
-use App\Models\Role;
 use App\Transformers\Admin\PermissionTransformer;
 use App\Transformers\Admin\RoleTransformer;
-use Cache;
-use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -27,12 +25,7 @@ class RoleController extends Controller
 
     public function store(RoleRequest $request)
     {
-        $role = new Role;
-        $role->name = $request->input('name');
-        $role->display_name = $request->input('display_name');
-        $role->description = $request->input('description');
-        $role->save();
-
+        Role::create($request->only('name', 'display_name'));
         $data = ['status' => true];
 
         return $this->response->created('', compact('data'));
@@ -40,17 +33,8 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
-        if ($role->name == 'Founder' && !$this->user->hasRole('Founder')) {
-            abort(422, '您没有权限修改Founder角色');
-        }
-
-        $role->name = $request->input('name');
-        $role->display_name = $request->input('display_name');
-        $role->description = $request->input('description');
-        $role->save();
-
+        $role->update($request->only('name', 'display_name'));
         $data = ['status' => true];
-
         return compact('data');
     }
 
@@ -63,27 +47,15 @@ class RoleController extends Controller
 
     public function rolePermissions(Role $role)
     {
-        $permissions = $role->cachedPermissions();
-
-        return $this->response->collection($permissions, new PermissionTransformer);
+        return $this->response->collection($role->permissions, new PermissionTransformer);
     }
 
     public function assignPermissions(Request $request, Role $role)
     {
         $this->validate($request, ['permissions.*' => 'integer']);
-
-        if ($role->name == 'Founder' && !$this->user->hasRole('Founder')) {
-            abort(422, '您没有权限给 Founder 角色分配权限');
-        }
-
-        $role->perms()->sync($request->input('permissions'));
-
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(config('entrust.permission_role_table'))->flush();
-        }
+        $role->syncPermissions($request->input('permissions'));
 
         $data = ['status' => true];
-
         return compact('data');
     }
 }

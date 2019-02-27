@@ -16,11 +16,11 @@ class UserControllerPolicy
 
     public function userRoles(User $user)
     {
-        return $user->ecan('user.assignRoles');
+        return $user->can('user.assignRoles');
     }
 
     public function __call($method, $args)
     {
-        return user()->ecan('user.' . $method);
+        return user()->can('user.' . $method);
     }
 }

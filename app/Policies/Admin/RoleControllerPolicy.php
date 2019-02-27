@@ -11,16 +11,16 @@ class RoleControllerPolicy
 
     public function allRoles(User $user)
     {
-        return $user->ecan('user.assignRoles');
+        return $user->can('user.assignRoles');
     }
 
     public function rolePermissions(User $user)
     {
-        return $user->ecan('role.assignPermissions');
+        return $user->can('role.assignPermissions');
     }
 
     public function __call($method, $args)
     {
-        return user()->ecan('role.' . $method);
+        return user()->can('role.' . $method);
     }
 }

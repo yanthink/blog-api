@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\PermissionRequest;
-use App\Models\Permission;
 use App\Transformers\Admin\PermissionTransformer;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
@@ -25,26 +25,15 @@ class PermissionController extends Controller
 
     public function store(PermissionRequest $request)
     {
-        $permission = new Permission;
-        $permission->name = $request->input('name');
-        $permission->display_name = $request->input('display_name');
-        $permission->description = $request->input('description');
-        $permission->save();
-
+        Permission::create($request->only('name', 'display_name'));
         $data = ['status' => true];
-
         return $this->response->created('', compact('data'));
     }
 
     public function update(PermissionRequest $request, Permission $permission)
     {
-        $permission->name = $request->input('name');
-        $permission->display_name = $request->input('display_name');
-        $permission->description = $request->input('description');
-        $permission->save();
-
+        $permission->update($request->only('name', 'display_name'));
         $data = ['status' => true];
-
         return compact('data');
     }
 

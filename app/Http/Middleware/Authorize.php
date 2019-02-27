@@ -10,10 +10,6 @@ class Authorize
 {
     public function handle(Request $request, Closure $next, $namespace = 'App\Policies')
     {
-        if (app()->environment('local') || user()->hasRole('Founder')) {
-            return $next($request);
-        }
-
         $route = $request->route();
         $action = $route->getAction();
 

@@ -3,9 +3,37 @@
 namespace App\Models;
 
 use App\Observers\CommentObserver;
-use Eloquent;
+use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Eloquent
+/**
+ * App\Models\Comment
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $content
+ * @property int $target_id
+ * @property string $target_type
+ * @property int $reply_count
+ * @property int $like_count
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Like[] $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Reply[] $replys
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $target
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereLikeCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereReplyCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereTargetType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereUserId($value)
+ * @mixin \Eloquent
+ */
+class Comment extends Model
 {
     protected $table = 'comments';
 

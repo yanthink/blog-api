@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\UserRequest;
-use App\Models\Role;
 use App\Models\User;
+use App\Transformers\Admin\PermissionTransformer;
 use App\Transformers\Admin\RoleTransformer;
 use App\Transformers\Admin\UserTransformer;
-use Cache;
-use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -33,6 +31,7 @@ class UserController extends Controller
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = $request->input('password');
+        $user->user_info = [];
         $user->save();
 
         $data = ['status' => true];
@@ -62,35 +61,29 @@ class UserController extends Controller
 
     public function userRoles(User $user)
     {
-        $roles = $user->cachedRoles();
-
-        return $this->response->collection($roles, new RoleTransformer);
+        return $this->response->collection($user->roles, new RoleTransformer);
     }
 
     public function assignRoles(Request $request, User $user)
     {
         $this->validate($request, ['roles.*' => 'integer']);
-
-        $roles = $request->input('roles');
-
-        if (!$this->user->hasRole('Founder')) {
-            $roleId = Role::query()->where('name', 'Founder')->value('id');
-            if (in_array($roleId, $roles)) {
-                abort(422, "您没有权限给 {$user->name} 用户分配 Founder 角色");
-            }
-            if ($user->hasRole('Founder')) {
-                abort(422, "您没有权限给 {$user->name} 用户分配角色");
-            }
-        }
-
-        $user->roles()->sync($roles);
-
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(config('entrust.role_user_table'))->flush();
-        }
+        $user->syncRoles($request->input('roles'));
 
         $data = ['status' => true];
+        return compact('data');
+    }
 
+    public function userPermissions(User $user)
+    {
+        return $this->response->collection($user->permissions, new PermissionTransformer);
+    }
+
+    public function assignPermissions(Request $request, User $user)
+    {
+        $this->validate($request, ['permissions.*' => 'integer']);
+        $user->syncPermissions($request->input('permissions'));
+
+        $data = ['status' => true];
         return compact('data');
     }
 }

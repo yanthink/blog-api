@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Traits\ArticleReadCountHelper;
 use App\Models\Traits\EsSearchable;
 use App\Observers\ArticleObserver;
-use Eloquent;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
@@ -18,30 +18,40 @@ use Laravel\Scout\Searchable;
  * @property string $preview
  * @property string $content
  * @property int|null $author_id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
+ * @property int $comment_count
+ * @property int $read_count
+ * @property int $like_count
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \App\Models\User|null $author
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Favorite[] $favorites
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Like[] $likes
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Tag[] $tags
  * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article query()
  * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereCommentCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereLikeCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article wherePreview($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereReadCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withoutTrashed()
  * @mixin \Eloquent
- * @property int $read_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereReadCount($value)
  */
-class Article extends Eloquent
+class Article extends Model
 {
     use SoftDeletes, Searchable, EsSearchable, ArticleReadCountHelper;
 

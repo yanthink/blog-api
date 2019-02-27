@@ -44,18 +44,8 @@ class AuthController extends Controller
         if ($user && Hash::check($password, $user->password)) {
             $token = Auth::login($user);
 
-            $permissions = collect([]);
-            foreach ($user->cachedRoles() as $role) {
-                /**
-                 * @var Role $role
-                 */
-                foreach ($role->cachedPermissions() as $permission) {
-                    $permissions->push($permission->name);
-                }
-            }
-
             $data = [
-                'permissions' => $permissions,
+                'permissions' => $user->getAllPermissions()->pluck('name'),
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'expires_in' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),

@@ -2,7 +2,7 @@
 
 namespace App\Transformers\Admin;
 
-use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
 
 class PermissionTransformer extends BaseTransformer
 {

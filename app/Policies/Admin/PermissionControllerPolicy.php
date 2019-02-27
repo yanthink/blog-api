@@ -11,11 +11,11 @@ class PermissionControllerPolicy
 
     public function allPermissions(User $user)
     {
-        return $user->ecan('role.assignPermissions');
+        return $user->can('role.assignPermissions');
     }
 
     public function __call($method, $args)
     {
-        return user()->ecan('permission.' . $method);
+        return user()->can('permission.' . $method);
     }
 }

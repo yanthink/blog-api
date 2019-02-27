@@ -10,6 +10,6 @@ class ArticleControllerPolicy
 
     public function __call($method, $args)
     {
-        return user()->ecan('article.' . $method);
+        return user()->can('article.' . $method);
     }
 }

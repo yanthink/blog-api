@@ -117,9 +117,11 @@ ApiRoute::version('v1', [
         });
 
         APIRoute::group(['middleware' => ['api.auth', 'authorize:App\Policies\Admin']], function () {
-            APIRoute::get('user/{user}/roles', 'UserController@userRoles');
-            APIRoute::post('user/{user}/assign-roles', 'UserController@assignRoles');
             ApiRoute::get('user/current', 'UserController@current');
+            APIRoute::get('user/{user}/roles', 'UserController@userRoles');
+            APIRoute::post('user/{user}/assign_roles', 'UserController@assignRoles');
+            APIRoute::get('user/{user}/permissions', 'UserController@userPermissions');
+            APIRoute::post('user/{user}/assign_permissions', 'UserController@assignPermissions');
             ApiRoute::resource('user', 'UserController', [
                 'only' => ['index', 'store', 'update'],
             ]);;
@@ -133,7 +135,7 @@ ApiRoute::version('v1', [
 
             APIRoute::get('roles', 'RoleController@allRoles');
             APIRoute::get('role/{role}/permissions', 'RoleController@rolePermissions');
-            APIRoute::post('role/{role}/assign-permissions', 'RoleController@assignPermissions');
+            APIRoute::post('role/{role}/assign_permissions', 'RoleController@assignPermissions');
             ApiRoute::resource('role', 'RoleController', [
                 'except' => ['show', 'destroy'],
             ]);

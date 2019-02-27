@@ -11,16 +11,16 @@ class TagControllerPolicy
 
     public function allTags(User $user)
     {
-        return $user->ecan('article.store');
+        return $user->can('article.store');
     }
 
     public function storeTags(User $user)
     {
-        return $user->ecan('article.store');
+        return $user->can('article.store');
     }
 
     public function __call($method, $args)
     {
-        return user()->ecan('tag.' . $method);
+        return user()->can('tag.' . $method);
     }
 }

@@ -1,23 +1,19 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        DB::table('users')->insert([
-            'name' => 'admin',
-            'email' => '987965424@qq.com',
-            'password' => bcrypt('888888'),
-            'user_info->is_admin' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $user = new User;
+        $user->name = 'admin';
+        $user->we_chat_openid = '';
+        $user->user_info = [
+            'is_admin' => 1,
+        ];
+
+        $user->save();
     }
 }

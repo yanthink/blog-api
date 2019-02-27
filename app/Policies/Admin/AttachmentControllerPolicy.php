@@ -10,6 +10,6 @@ class AttachmentControllerPolicy
 
     public function __call($method, $args)
     {
-        return user()->ecan('attachment.' . $method);
+        return user()->can('attachment.' . $method);
     }
 }

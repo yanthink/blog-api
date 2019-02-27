@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Serializers\DataSerializer;
 use Dingo\Api\Exception\Handler as DingoExceptionHandler;
 use Dingo\Api\Transformer\Factory as TransformerFactory;
 use Dingo\Api\Transformer\Adapter\Fractal;
+use Gate;
 use League\Fractal\Manager as FractalManager;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\ValidationException;
@@ -31,6 +33,10 @@ class AppServiceProvider extends ServiceProvider
             ->setAdapter(function () {
                 return new Fractal((new FractalManager)->setSerializer(new DataSerializer));
             });
+
+        Gate::before(function (User $user, $ability) {
+            return $user->hasRole('Founder') ? true : null;
+        });
     }
 
     /**
