@@ -17,10 +17,10 @@ class ReplyLikeController extends Controller
 
     public function store(Reply $reply)
     {
-        $userId = user('id');
-        $cacheKey = self::class."@store:$userId";
+        $userId = $this->user->id;
+        $lockName = self::class."@store:$userId";
 
-        abort_if(!Cache::add($cacheKey, 1, 1), 422, '操作过于频繁，请稍后再试！');
+        abort_if(!Cache::lock($lockName, 60)->get(), 422, '操作过于频繁，请稍后再试！');
         // abort_if($reply->user_id == $userId, 422, '不能给自己的回复点赞！');
 
         $like = $reply->likes()->withTrashed()->where('user_id', $userId)->first();
@@ -51,7 +51,7 @@ class ReplyLikeController extends Controller
             'likes' => $liked ? [$like] : null,
         ];
 
-        Cache::forget($cacheKey);
+        Cache::lock($lockName)->release();
 
         return compact('data');
     }

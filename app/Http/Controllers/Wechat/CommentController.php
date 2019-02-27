@@ -10,9 +10,9 @@ class CommentController extends Controller
 {
     public function show(Comment $comment)
     {
-        if (user()) {
+        if ($this->user) {
             $comment->load(['likes' => function (MorphMany $builder) {
-                $builder->where('user_id', user('id'));
+                $builder->where('user_id', $this->user->id);
             }]);
 
             $replyId = request('reply_id');

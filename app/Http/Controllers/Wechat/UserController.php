@@ -15,7 +15,7 @@ class UserController extends Controller
     {
         $pageSize = min(request('pageSize', 10), 20);
 
-        $favorites = user()
+        $favorites = $this->user
             ->favorites()
             ->orderBy('id', 'desc')
             ->paginate($pageSize);
@@ -27,7 +27,7 @@ class UserController extends Controller
     {
         $pageSize = min(request('pageSize', 10), 20);
 
-        $comments = user()
+        $comments = $this->user
             ->comments()
             ->orderBy('id', 'desc')
             ->paginate($pageSize);
@@ -39,7 +39,7 @@ class UserController extends Controller
     {
         $pageSize = min(request('pageSize', 10), 20);
 
-        $replys = user()
+        $replys = $this->user
             ->replys()
             ->orderBy('id', 'desc')
             ->paginate($pageSize);
@@ -51,7 +51,7 @@ class UserController extends Controller
     {
         $pageSize = min(request('pageSize', 10), 20);
 
-        $likes = user()
+        $likes = $this->user
             ->likes()
             ->orderBy('id', 'desc')
             ->paginate($pageSize);
@@ -63,7 +63,7 @@ class UserController extends Controller
     {
         $pageSize = min(request('pageSize', 10), 20);
 
-        $notifications = user()
+        $notifications = $this->user
             ->notifications()
             ->orderBy('created_at', 'desc')
             ->paginate($pageSize);
@@ -73,14 +73,14 @@ class UserController extends Controller
 
     public function notificationUnreadCount()
     {
-        $data = user()->unreadNotifications()->count();
+        $data = $this->user->unreadNotifications()->count();
 
         return compact('data');
     }
 
     public function notificationRead($id)
     {
-        $data = user()->unreadNotifications()->where('id', $id)->update(['read_at' => now()]);
+        $data = $this->user->unreadNotifications()->where('id', $id)->update(['read_at' => now()]);
 
         return compact('data');
 

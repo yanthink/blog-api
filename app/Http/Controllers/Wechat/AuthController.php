@@ -7,6 +7,7 @@ use Auth;
 use Carbon\Carbon;
 use EasyWeChat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class AuthController extends Controller
 {
@@ -44,7 +45,7 @@ class AuthController extends Controller
 
         if (!$user) {
             $user = new User;
-            $user->name = array_get($userInfo, 'nickName', '');
+            $user->name = Arr::get($userInfo, 'nickName', '');
             $user->we_chat_openid = $openId;
             $user->user_info = $userInfo;
 

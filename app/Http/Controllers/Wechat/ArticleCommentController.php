@@ -27,9 +27,9 @@ class ArticleCommentController extends Controller
             ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
-        if (user()) {
+        if ($this->user) {
             $comments->load(['likes' => function(MorphMany $builder) {
-                $builder->where('user_id', user('id'));
+                $builder->where('user_id', $this->user->id);
             }]);
         }
 
@@ -39,7 +39,7 @@ class ArticleCommentController extends Controller
     public function store(CommentRequest $request, Article $article)
     {
         $comment = new Comment($request->all());
-        $comment->user_id = user('id');
+        $comment->user_id = $this->user->id;
         $comment->reply_count = 0;
         $comment->like_count = 0;
         $article->comments()->save($comment);

@@ -3,6 +3,7 @@
 namespace App\Transformers\Admin;
 
 use App\Models\Article;
+use Illuminate\Support\Str;
 use Parsedown;
 
 class ArticleTransformer extends BaseTransformer
@@ -13,10 +14,10 @@ class ArticleTransformer extends BaseTransformer
     {
         $data = $article->toArray();
         $data['html_content'] = Parsedown::instance()->setMarkupEscaped(true)->text($article->content);
-        $data['description'] = str_limit(
+        $data['description'] = Str::limit(
             htmlspecialchars_decode(
                 preg_replace('/<\/?.*?>/', '', $data['html_content'])
-            ), 500);
+            ), 500, '...');
         $data['highlight'] = $article->highlight;
         $data['url'] = url("article/$article->id");
 

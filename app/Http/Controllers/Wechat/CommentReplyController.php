@@ -27,9 +27,9 @@ class CommentReplyController extends Controller
             ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
-        if (user()) {
+        if ($this->user) {
             $replys->load(['likes' => function(MorphMany $builder) {
-                $builder->where('user_id', user('id'));
+                $builder->where('user_id', $this->user->id);
             }]);
         }
 
@@ -39,7 +39,7 @@ class CommentReplyController extends Controller
     public function store(ReplyRequest $request, Comment $comment)
     {
         $reply = new Reply($request->all());
-        $reply->user_id = user('id');
+        $reply->user_id = $this->user->id;
         $reply->like_count = 0;
         $comment->replys()->save($reply);
 

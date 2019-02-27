@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class Authorize
 {
@@ -13,7 +14,7 @@ class Authorize
         $route = $request->route();
         $action = $route->getAction();
 
-        $action = array_add($action, 'controller', $action['uses']);
+        $action = Arr::add($action, 'controller', $action['uses']);
 
         list($class, $method) = array_pad(explode('@', $action['controller'], 2), 2, '');
 

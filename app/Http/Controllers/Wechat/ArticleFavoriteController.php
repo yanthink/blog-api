@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Wechat;
 
 use App\Models\Article;
 use App\Models\Favorite;
-use App\Models\Like;
-use App\Transformers\ArticleTransformer;
 use Cache;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ArticleFavoriteController extends Controller
 {
@@ -18,10 +15,10 @@ class ArticleFavoriteController extends Controller
 
     public function store(Article $article)
     {
-        $userId = user('id');
-        $cacheKey = self::class."@store:$userId";
+        $userId = $this->user->id;
+        $lockName = self::class."@store:$userId";
 
-        abort_if(!Cache::add($cacheKey, 1, 1), 422, '操作过于频繁，请稍后再试！');
+        abort_if(!Cache::lock($lockName, 60)->get(), 422, '操作过于频繁，请稍后再试！');
 
         $favorite = $article->favorites()->withTrashed()->where('user_id', $userId)->first();
 
@@ -45,7 +42,7 @@ class ArticleFavoriteController extends Controller
             'favorites' => $isFavorite ? [$favorite] : null,
         ];
 
-        Cache::forget($cacheKey);
+        Cache::lock($lockName)->release();
 
         return compact('data');
     }

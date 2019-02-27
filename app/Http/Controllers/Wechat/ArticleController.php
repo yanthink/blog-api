@@ -43,13 +43,13 @@ class ArticleController extends Controller
 
         $article->readCountIncrement();
 
-        if (user()) {
+        if ($this->user) {
             $article->load([
                 'likes' => function (MorphMany $builder) {
-                    $builder->where('user_id', user('id'));
+                    $builder->where('user_id', $this->user->id);
                 },
                 'favorites' => function (MorphMany $builder) {
-                    $builder->where('user_id', user('id'));
+                    $builder->where('user_id', $this->user->id);
                 },
             ]);
 
