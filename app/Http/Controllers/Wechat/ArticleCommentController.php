@@ -12,7 +12,7 @@ class ArticleCommentController extends Controller
 {
     public function __construct()
     {
-        $this->rateLimit(1, .1); // 6秒钟1次
+        $this->rateLimit(1, 6); // 6秒钟1次 todo
         $this->middleware('api.auth')->except('index');
         $this->middleware('api.throttle')->only('store');
     }

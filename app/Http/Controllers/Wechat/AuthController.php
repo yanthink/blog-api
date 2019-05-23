@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Wechat;
 
 use App\Models\User;
 use Auth;
+use Cache;
 use Carbon\Carbon;
 use EasyWeChat;
 use Illuminate\Http\Request;
@@ -26,6 +27,11 @@ class AuthController extends Controller
         ]);
 
         $code = $request->input('code');
+        $lockName = self::class . "@store:$code";
+
+        $lock = Cache::lock($lockName, 60);
+
+        abort_if(!$lock->get(), 422, '操作过于频繁，请稍后再试！');
 
         $miniProgram = EasyWeChat::miniProgram();
 
@@ -37,7 +43,7 @@ class AuthController extends Controller
         $userInfo = $request->input('userInfo');
         $rawData = $request->input('rawData');
         $signature = $request->input('signature');
-        $signature2 = sha1($rawData.$sessionKey);
+        $signature2 = sha1($rawData . $sessionKey);
 
         abort_if($signature !== $signature2, 403, '数据不合法！');
 
@@ -60,6 +66,8 @@ class AuthController extends Controller
             'expires_in' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
             'unread_count' => $user->unreadNotifications()->count(),
         ];
+
+        $lock->release();
 
         return compact('data');
     }

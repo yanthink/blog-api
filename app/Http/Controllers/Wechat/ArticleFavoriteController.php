@@ -18,7 +18,9 @@ class ArticleFavoriteController extends Controller
         $userId = $this->user->id;
         $lockName = self::class."@store:$userId";
 
-        abort_if(!Cache::lock($lockName, 60)->get(), 422, '操作过于频繁，请稍后再试！');
+        $lock = Cache::lock($lockName, 60);
+
+        abort_if(!$lock->get(), 422, '操作过于频繁，请稍后再试！');
 
         $favorite = $article->favorites()->withTrashed()->where('user_id', $userId)->first();
 
@@ -42,7 +44,7 @@ class ArticleFavoriteController extends Controller
             'favorites' => $isFavorite ? [$favorite] : null,
         ];
 
-        Cache::lock($lockName)->release();
+        $lock->release();
 
         return compact('data');
     }

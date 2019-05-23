@@ -18,9 +18,11 @@ class ArticleLikeController extends Controller
     public function store(Article $article)
     {
         $userId = $this->user->id;
-        $lockName = self::class."@store:$userId";
+        $lockName = self::class . "@store:$userId";
 
-        abort_if(!Cache::lock($lockName, 60)->get(), 422, '操作过于频繁，请稍后再试！');
+        $lock = Cache::lock($lockName, 60);
+
+        abort_if(!$lock->get(), 422, '操作过于频繁，请稍后再试！');
         // abort_if($article->author_id == $userId,  422, '不能给自己的文章点赞！');
 
 
@@ -53,7 +55,7 @@ class ArticleLikeController extends Controller
             'likes' => $liked ? [$like] : null,
         ];
 
-        Cache::lock($lockName)->release();
+        $lock->release();
 
         return compact('data');
     }
