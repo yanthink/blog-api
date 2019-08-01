@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\ArticleRequest;
-use App\Jobs\SaveArticleAttachment;
+use App\Jobs\PushArticleImagesToTargetDisk;
 use App\Models\Article;
 use App\Transformers\Admin\ArticleTransformer;
 use Artisan;
@@ -62,7 +62,7 @@ class ArticleController extends Controller
 
         $article->tags()->sync($request->input('tags'));
 
-        dispatch(new SaveArticleAttachment($article));
+        dispatch(new PushArticleImagesToTargetDisk($article));
 
         if (app()->environment('production')) {
             Artisan::queue('baidu-link:submit', [
@@ -87,7 +87,7 @@ class ArticleController extends Controller
 
         $article->tags()->sync($request->input('tags'));
 
-        dispatch(new SaveArticleAttachment($article));
+        dispatch(new PushArticleImagesToTargetDisk($article));
 
         if (app()->environment('production')) {
             Artisan::queue('baidu-link:submit', [

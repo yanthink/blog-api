@@ -110,15 +110,18 @@ class ElasticsearchEngine extends Engine
      */
     public function paginate(Builder $builder, $perPage, $page)
     {
-        $result = $this->performSearch($builder, [
+        $results = $this->performSearch($builder, [
             'numericFilters' => $this->filters($builder),
             'from' => (($page * $perPage) - $perPage),
             'size' => $perPage,
         ]);
 
-        $result['nbPages'] = $result['hits']['total'] / $perPage;
+        // 7.x 返回结构和 6.x 稍有不同
+        $total = is_numeric($results['hits']['total']) ? $results['hits']['total'] : $results['hits']['total']['value'];
 
-        return $result;
+        $results['nbPages'] = $total / $perPage;
+
+        return $results;
     }
 
     /**
@@ -232,7 +235,10 @@ class ElasticsearchEngine extends Engine
      */
     public function map($results, $model)
     {
-        if ($results['hits']['total'] === 0) {
+        // 7.x 返回结构和 6.x 稍有不同
+        $total = is_numeric($results['hits']['total']) ? $results['hits']['total'] : $results['hits']['total']['value'];
+
+        if ($total === 0) {
             return Collection::make();
         }
 
@@ -263,7 +269,10 @@ class ElasticsearchEngine extends Engine
      */
     public function getTotalCount($results)
     {
-        return $results['hits']['total'];
+        // 7.x 返回结构和 6.x 稍有不同
+        $total = is_numeric($results['hits']['total']) ? $results['hits']['total'] : $results['hits']['total']['value'];
+
+        return $total;
     }
 
     /**

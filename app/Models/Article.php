@@ -80,7 +80,7 @@ class Article extends Model
 
     public function shouldBeSearchable()
     {
-        return true;
+        return $this->status == 1;
     }
 
     // -------------- relations ------------------

@@ -3,9 +3,9 @@
 * 产品名称：个人博客系统api接口
 * 项目代号：blog-api
 * 演示地址：https://www.einsition.com
-* 前端项目地址：https://github.com/yanthink/blog
+* 前端项目地址：https://github.com/yanthink/blog-v2
 
-该系统使用 Laravel5.7 编写而成。
+该系统使用 Laravel5.8 编写而成。
 
 
 ## 功能如下
@@ -17,32 +17,24 @@
 - 通知 websocket 广播；
 - 用户认证 -- 后台登录、退出；
 - 多角色权限管理；
-- 附件上传 -- 支持清除无用的附件；
+- 附件上传 -- 支持清除无效的附件；
 - 文章管理 -- 列表、详情、发布、修改、删除；
 - 用户管理 -- 列表、添加、修改、分配角色；
 - 定时清除无用的附件；
 - Debugbar;
 
-## 后台截图
-![文章列表](http://qiniu.einsition.com/article/a27/32077943eb94be253f1ef4bfee6a1ad7.png)
-
-![文章详情](http://qiniu.einsition.com/article/a27/afb57458fedc4d53626c9b6e6f26136d.png)
-
-![文章发布](http://qiniu.einsition.com/article/a27/e800fb0dc80eb18d7d437ed61c283149.png)
-
-![文章预览](http://qiniu.einsition.com/article/a27/3ef3cf768ebdffcba8eb42bf94a22e7f.png)
 
 ## 运行环境要求
 
 - Nginx 1.8+
-- PHP 7.0+
+- PHP >= 7.1.3
 - MySQL 5.7+
 - Redis 3.0+
 - Elasticsearch 6.0+
 
 ## 开发环境部署/安装
 
-本项目代码使用 PHP 框架 [Laravel 5.7](https://d.laravel-china.org/docs/5.7/) 开发，本地开发环境使用 [Laravel Valet](https://laravel-china.org/docs/laravel/5.7/valet)。
+本项目代码使用 PHP 框架 [Laravel 5.8](https://d.laravel-china.org/docs/5.8/) 开发，本地开发环境使用 [Laravel Valet](https://laravel-china.org/docs/laravel/5.7/valet)。
 
 ### 基础安装
 
@@ -141,7 +133,7 @@ $ php artisan es:init
 
 | 命令行名字 | 说明 | Cron | 代码调用 |
 | --- | --- | --- | --- |
-| `remove-tmp-attachment` | 删除临时附件 | 每天凌晨2点执行一次 | 无 |
+| `remove-expired-attachment` | 删除过期附件 | 每天凌晨2点执行一次 | 无 |
 | `es:init` | 初始化elasticsearch | 无 | 无 |
 | `sync-article-read-count` | 将Redis的文章阅读次数数据同步到数据库中 |  每天凌晨0点执行一次 | 无 |
 
@@ -149,7 +141,7 @@ $ php artisan es:init
 
 | 名称 | 说明 | 调用时机 |
 | --- | --- | --- |
-| SaveArticleAttachment.php | 保存临时附件 | 发布文章和更新文章 |
+| PushArticleImagesToTargetDisk.php | 将文章图片保存到targetDisk | 发布文章和更新文章 |
 
 
 ## 小程序二维码

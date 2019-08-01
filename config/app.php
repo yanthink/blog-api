@@ -216,7 +216,7 @@ return [
 
     ],
 
-    'attachment_disk' => env('ATTACHMENT_DISK', 'public'), // 附件存储disk
+    'image_target_disk' => env('IMAGE_TARGET_DISK', 'public'), // 图片存储disk
 
     'spider_domain' => env('SPIDER_DOMAIN', 'blog-api.test'),
 

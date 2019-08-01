@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V2;
 
 use App\Http\Requests\ArticleRequest;
-use App\Jobs\SaveArticleAttachment;
+use App\Jobs\PushArticleImagesToTargetDisk;
 use App\Models\Article;
 use App\Transformers\V2\ArticleTransformer;
 use Illuminate\Database\Eloquent\Builder;
@@ -67,7 +67,7 @@ class ArticleController extends Controller
 
         $article->tags()->sync($request->input('tags'));
 
-        dispatch(new SaveArticleAttachment($article));
+        dispatch(new PushArticleImagesToTargetDisk($article));
 
         $data = ['status' => true];
         return $this->response->created('', compact('data'));
@@ -75,6 +75,10 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
+        $isFounder = user() && user()->hasRole('Founder');
+
+        abort_if(!$isFounder && !$article->status, 404);
+
         return $this->response->item($article, new ArticleTransformer);
     }
 
@@ -88,7 +92,7 @@ class ArticleController extends Controller
 
         $article->tags()->sync($request->input('tags'));
 
-        dispatch(new SaveArticleAttachment($article));
+        dispatch(new PushArticleImagesToTargetDisk($article));
 
         $data = ['status' => true];
         return compact('data');

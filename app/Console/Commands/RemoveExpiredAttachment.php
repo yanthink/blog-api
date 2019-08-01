@@ -5,11 +5,11 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Storage;
 
-class RemoveTmpAttachment extends Command
+class RemoveExpiredAttachment extends Command
 {
-    protected $signature = 'remove-tmp-attachment';
+    protected $signature = 'remove-expired-attachment';
 
-    protected $description = '删除临时附件';
+    protected $description = '删除过期附件';
 
     public function handle()
     {
