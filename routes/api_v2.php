@@ -34,5 +34,8 @@ ApiRoute::version('v2', [
 
     ApiRoute::get('tags/all', 'TagController@all');
 
+    // 微信小程序码
+    ApiRoute::get('wechat/login_code', 'WechatController@loginCode');
+
     ApiRoute::post('attachments/upload', 'AttachmentController@upload');
 });

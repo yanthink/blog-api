@@ -54,9 +54,6 @@ class ArticleController extends Controller
 
     public function store(ArticleRequest $request)
     {
-        $data = ['status' => true];
-        return $this->response->created('', compact('data'));
-
         $article = new Article;
         $article->title = $request->input('title');
         $article->preview = $request->input('preview');

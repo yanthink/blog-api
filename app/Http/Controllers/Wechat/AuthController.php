@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Wechat;
 
+use App\Events\WechatScanLogin;
 use App\Models\User;
 use Auth;
 use Cache;
@@ -68,6 +69,13 @@ class AuthController extends Controller
         ];
 
         $lock->release();
+
+        $uuid = $request->input('uuid');
+
+        if ($uuid) {
+            $permissions = $user->getAllPermissions()->pluck('name');
+            event(new WechatScanLogin($uuid, "Bearer $token", $permissions));
+        }
 
         return compact('data');
     }
