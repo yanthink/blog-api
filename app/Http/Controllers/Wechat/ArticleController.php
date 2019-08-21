@@ -44,7 +44,7 @@ class ArticleController extends Controller
         $article->readCountIncrement();
 
         if ($this->user) {
-            $article->load([
+            $article->loadMissing([
                 'likes' => function (MorphMany $builder) {
                     $builder->where('user_id', $this->user->id);
                 },
@@ -56,7 +56,7 @@ class ArticleController extends Controller
             $commentId = request('comment_id');
 
             if ($commentId > 0) {
-                $article->load(['comments' => function (MorphMany $builder) use ($commentId) {
+                $article->loadMissing(['comments' => function (MorphMany $builder) use ($commentId) {
                     $builder->where('id', $commentId);
                 }, 'comments.user']);
             }

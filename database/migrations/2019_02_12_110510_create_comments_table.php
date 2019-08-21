@@ -16,7 +16,7 @@ class CreateCommentsTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id'); // 评论用户
-            $table->string('content'); // 评论内容
+            $table->string('content', 1024); // 评论内容
             $table->morphs('target');
             $table->unsignedInteger('reply_count')->default(0); // 回复条数
             $table->unsignedInteger('like_count')->default(0); // 点赞次数

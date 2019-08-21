@@ -13,13 +13,14 @@ class ArticleTransformer extends BaseTransformer
     public function transform(Article $article)
     {
         $data = $article->toArray();
-        $data['html_content'] = Parsedown::instance()->setMarkupEscaped(true)->text($article->content);
-        $data['description'] = Str::limit(
-            htmlspecialchars_decode(
-                preg_replace('/<\/?.*?>/', '', $data['html_content'])
-            ), 500, '...');
+        if (!isset($data['html_content'])) {
+            $data['html_content'] = Parsedown::instance()
+                ->setMarkupEscaped(true)
+                ->setBreaksEnabled(true)
+                ->text($article->content);
+        }
         $data['highlight'] = $article->highlight;
-        $data['url'] = url("article/$article->id");
+        $data['current_read_count'] = $article->getCurrentReadCount();
 
         return $data;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Wechat;
+namespace App\Http\Controllers\V2;
 
 use App\Models\Comment;
 use App\Transformers\CommentTransformer;
@@ -11,7 +11,7 @@ class CommentController extends Controller
     public function show(Comment $comment)
     {
         if ($this->user) {
-            $comment->loadMissing(['likes' => function (MorphMany $builder) {
+            $comment->load(['likes' => function (MorphMany $builder) {
                 $builder->where('user_id', $this->user->id);
             }]);
 

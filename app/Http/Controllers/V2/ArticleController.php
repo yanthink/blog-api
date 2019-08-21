@@ -7,6 +7,7 @@ use App\Jobs\PushArticleImagesToTargetDisk;
 use App\Models\Article;
 use App\Transformers\V2\ArticleTransformer;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ArticleController extends Controller
 {
@@ -22,7 +23,7 @@ class ArticleController extends Controller
             return $this->search();
         }
 
-        $isFounder = user() && user()->hasRole('Founder');
+        $isFounder = $this->user && $this->user->hasRole('Founder');
 
         $pageSize = min(request('pageSize', 10), 20);
 
@@ -72,9 +73,30 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
-        $isFounder = user() && user()->hasRole('Founder');
+        $isFounder = $this->user && $this->user->hasRole('Founder');
 
         abort_if(!$isFounder && !$article->status, 404);
+
+        $article->readCountIncrement();
+
+        if ($this->user) {
+            $article->load([
+                'likes' => function (MorphMany $builder) {
+                    $builder->where('user_id', $this->user->id);
+                },
+                'favorites' => function (MorphMany $builder) {
+                    $builder->where('user_id', $this->user->id);
+                },
+            ]);
+
+            $commentId = request('comment_id');
+
+            if ($commentId > 0) {
+                $article->load(['comments' => function (MorphMany $builder) use ($commentId) {
+                    $builder->where('id', $commentId);
+                }, 'comments.user']);
+            }
+        }
 
         return $this->response->item($article, new ArticleTransformer);
     }

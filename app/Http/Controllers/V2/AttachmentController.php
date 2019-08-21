@@ -9,7 +9,7 @@ class AttachmentController extends Controller
 {
     public function __construct()
     {
-        $this->rateLimit(30, 3600); // 60分钟30次
+        $this->rateLimit(30, 60); // 60分钟30次
         $this->middleware('api.throttle');
     }
 

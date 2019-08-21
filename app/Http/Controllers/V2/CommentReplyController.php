@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Wechat;
+namespace App\Http\Controllers\V2;
 
 use App\Http\Requests\ReplyRequest;
 use App\Models\Comment;
 use App\Models\Reply;
-use App\Transformers\ReplyTransformer;
+use App\Transformers\V2\ReplyTransformer;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class CommentReplyController extends Controller
@@ -28,7 +28,7 @@ class CommentReplyController extends Controller
             ->paginate($pageSize);
 
         if ($this->user) {
-            $replys->loadMissing(['likes' => function(MorphMany $builder) {
+            $replys->loadMissing(['likes' => function (MorphMany $builder) {
                 $builder->where('user_id', $this->user->id);
             }]);
         }

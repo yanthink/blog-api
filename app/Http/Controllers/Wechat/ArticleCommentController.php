@@ -12,7 +12,7 @@ class ArticleCommentController extends Controller
 {
     public function __construct()
     {
-        $this->rateLimit(1, 6); // 6秒钟1次 todo
+        $this->rateLimit(1, .1); // 6秒钟1次
         $this->middleware('api.auth')->except('index');
         $this->middleware('api.throttle')->only('store');
     }
@@ -28,7 +28,7 @@ class ArticleCommentController extends Controller
             ->paginate($pageSize);
 
         if ($this->user) {
-            $comments->load(['likes' => function(MorphMany $builder) {
+            $comments->loadMissing(['likes' => function(MorphMany $builder) {
                 $builder->where('user_id', $this->user->id);
             }]);
         }

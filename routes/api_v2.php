@@ -31,6 +31,32 @@ ApiRoute::version('v2', [
     ApiRoute::resource('articles', 'ArticleController', [
         'only' => ['index', 'store', 'show', 'update'],
     ]);
+    ApiRoute::resource('articles.comments', 'ArticleCommentController', [
+        'only' => ['index', 'store'],
+    ]);
+
+    // 评论
+    ApiRoute::resource('comments', 'CommentController', [
+        'only' => ['show'],
+    ]);
+    // 评论回复
+    ApiRoute::resource('comments.replys', 'CommentReplyController', [
+        'only' => ['index', 'store'],
+    ]);
+    // 评论点赞
+    ApiRoute::resource('comments.like', 'CommentLikeController', [
+        'only' => ['store', 'index'],
+    ]);
+
+    // 回复
+    ApiRoute::resource('replys', 'ReplyController', [
+        'only' => ['show'],
+    ]);
+    // 回复点赞
+    ApiRoute::resource('replys.like', 'ReplyLikeController', [
+        'only' => ['store'],
+    ]);
+
 
     ApiRoute::get('tags/all', 'TagController@all');
 
