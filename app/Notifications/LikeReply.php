@@ -38,6 +38,8 @@ class LikeReply extends Notification implements ShouldQueue
 
         if ($this->like->target->target_type == Comment::class) {
             $data['comment_id'] = $this->like->target->target_id;
+            $data['target_root_id'] = $this->like->target->target->target_id;
+            $data['target_root_title'] = $this->like->target->target->target->title;
         }
 
         return $data;

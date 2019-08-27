@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Comment;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -34,6 +33,8 @@ class CommentArticle extends Notification implements ShouldQueue
             'content' => $this->comment->content, // 评论内容
             'target_id' => $this->comment->target_id, // 文章id
             'target_name' => $this->comment->target->title, // 文章标题
+            'target_root_id' => $this->comment->target_id,
+            'target_root_title' => $this->comment->target->title,
         ];
     }
 }

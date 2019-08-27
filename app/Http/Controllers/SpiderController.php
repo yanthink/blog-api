@@ -14,8 +14,8 @@ class SpiderController extends Controller
     public function render(Request $request, Selenium $selenium)
     {
         $selenium->browse(function (Browser $browser) use ($request) {
-            $url = 'https://www.einsition.com' . $request->getRequestUri();
-            echo $browser->visit($url)->waitFor('#layout')->driver->getPageSource();
+            $url = url($request->getRequestUri());
+            echo $browser->visit($url)->waitFor('.ant-layout')->driver->getPageSource();
             exit;
         });
     }

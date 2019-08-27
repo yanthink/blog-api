@@ -37,6 +37,8 @@ class UserController extends Controller
             return compact('data');
         }
 
+        $user->unread_count = $user->unreadNotifications()->count();
+
         return $this->response->item($user, new UserTransformer);
     }
 }

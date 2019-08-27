@@ -14,7 +14,7 @@ class CommentTransformer extends BaseTransformer
     public function transform(Comment $comment)
     {
         $data = $comment->toArray();
-        $data['content'] = htmlentities($comment->content);
+        // $data['content'] = htmlentities($comment->content);
 
         return $data;
     }

@@ -21,30 +21,25 @@ const wss = new WebSocket.Server({
     verifyClient({req}, cb) {
         try {
             const urlParams = url.parse(req.url, true);
-
-            let uuid = urlParams.query.uuid;
-
+            const token = urlParams.query.token || req.headers.authorization.split(' ')[1];
             const jwtSecret = env('JWT_SECRET');
             const algorithm = env('JWT_ALGO', 'HS256');
 
-            if (!uuid) {
-                const {authorization} = req.headers;
-                const jwtString = authorization.split(' ')[1];
-                const payload = jwt.verify(jwtString, jwtSecret, {algorithm});
-                uuid = payload.sub;
+            const {sub, nbf, exp} = jwt.verify(token, jwtSecret, {algorithm});
+
+            if (Date.now() / 1000 > exp) {
+                cb(false, 401, 'token已过期.')
             }
 
-            if (!uuid) {
-                console.info('无法验证令牌签名.');
-                cb(false, 401, '无法验证令牌签名.');
+            if (Date.now() / 1000 < nbf) {
+                cb(false, 401, 'token未到生效时间.')
             }
 
-            if (!uuid instanceof Number && clients[uuid]) {
-                console.info('无法验证令牌签名.');
-                cb(false, 401, '无法验证令牌签名.');
+            if (!sub) {
+                cb(false, 401, '无法验证令牌签名.')
             }
 
-            cb(true);
+            cb(true)
         } catch (e) {
             console.info(e);
             cb(false, 401, 'Token could not be parsed from the request.');
@@ -54,44 +49,23 @@ const wss = new WebSocket.Server({
 });
 
 const clients = {};
-const clientStatistics = {
-    clients: {},
-    count: 0,
-};
 
 wss.on('connection', (ws, req) => {
     try {
         const urlParams = url.parse(req.url, true);
-
-        let uuid = urlParams.query.uuid;
-
+        const token = urlParams.query.token || req.headers.authorization.split(' ')[1];
         const jwtSecret = env('JWT_SECRET');
         const algorithm = env('JWT_ALGO', 'HS256');
 
-        if (!uuid) {
-            const {authorization} = req.headers;
-            const jwtString = authorization.split(' ')[1];
-            const payload = jwt.verify(jwtString, jwtSecret, {algorithm});
-            uuid = payload.sub;
-        }
-
-        if (clients[uuid] && clients[uuid].readyState === 1) {
-            try {
-                clients[uuid].close();
-                clientStatistics.count--;
-            } catch (e) {
-                //
-            }
-        }
-
-
-        console.info('[%s] connection：%s', getNowDateTimeString(), uuid);
+        const {sub} = jwt.verify(token, jwtSecret, {algorithm});
+        const uuid = sub;
 
         ws.uuid = uuid;
-        clients[uuid] = ws;
+        if (!clients[uuid]) {
+            clients[uuid] = [];
+        }
 
-        clientStatistics.clients[uuid] = getNowDateTimeString();
-        clientStatistics.count++;
+        clients[uuid].push(ws);
     } catch (e) {
         ws.close();
     }
@@ -99,26 +73,27 @@ wss.on('connection', (ws, req) => {
     ws.on('message', message => { // 接收消息事件
         if (ws.uuid) {
             console.info('[%s] message：%s %s', getNowDateTimeString(), ws.uuid, message);
-
-            if (ws.uuid === 1 && message === 'get_client_statistics') {
-                ws.send(JSON.stringify(clientStatistics));
-            }
         }
     });
 
     ws.on('close', () => { // 关闭链接事件
         if (ws.uuid) {
             console.info('[%s] closed：%s', getNowDateTimeString(), ws.uuid);
-            try {
-                delete clients[ws.uuid];
-                delete clientStatistics.clients[ws.uuid];
-                clientStatistics.count--;
-            } catch (e) {
-                //
+
+            const wss = clients[ws.uuid];
+
+            if (wss instanceof Array) {
+                const index = wss.indexOf(ws);
+
+                if (index > -1) {
+                    wss.splice(index, 1);
+                    if (wss.length === 0) {
+                        delete clients[ws.uuid];
+                    }
+                }
             }
         }
     })
-
 });
 
 
@@ -129,17 +104,19 @@ redis.psubscribe('*', function (err, count) {
 redis.on('pmessage', (subscrbed, channel, message) => { // 接收 laravel 推送的消息
     console.info('[%s] %s %s', getNowDateTimeString(), channel, message);
 
-    const {event, data} = JSON.parse(message);
+    const {event} = JSON.parse(message);
     const uuid = channel.split('.')[1];
+    const wss = clients[uuid];
+
     switch (event) {
         case 'Illuminate\\Notifications\\Events\\BroadcastNotificationCreated':
-            if (clients[uuid] && clients[uuid].readyState === 1) {
-                clients[uuid].send(message)
-            }
-            break;
         case 'App\\Events\\WechatScanLogin':
-            if (clients[uuid] && clients[uuid].readyState === 1) {
-                clients[uuid].send(message)
+            if (wss instanceof Array) {
+                wss.forEach(ws => {
+                    if (ws.readyState === 1) {
+                        ws.send(message);
+                    }
+                });
             }
             break;
     }

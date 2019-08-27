@@ -98,6 +98,16 @@ class ArticleController extends Controller
             }
         }
 
+        if ($notificationId = request('notification_id')) {
+            $row = $this->user->unreadNotifications()->where('id', $notificationId)->update(['read_at' => now()]);
+
+            if ($row) {
+                return $this->response
+                    ->item($article, new ArticleTransformer)
+                    ->withHeader('unread_count', $this->user->unreadNotifications()->count());
+            }
+        }
+
         return $this->response->item($article, new ArticleTransformer);
     }
 

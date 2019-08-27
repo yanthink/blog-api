@@ -33,6 +33,8 @@ class LikeArticle extends Notification implements ShouldQueue
             'content' => '', // 内容
             'target_id' => $this->like->target_id, // 文章id
             'target_name' => $this->like->target->title, // 文章标题
+            'target_root_id' => $this->like->target_id,
+            'target_root_title' => $this->like->target->title,
         ];
     }
 }

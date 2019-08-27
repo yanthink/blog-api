@@ -64,4 +64,14 @@ ApiRoute::version('v2', [
     ApiRoute::get('wechat/login_code', 'WechatController@loginCode');
 
     ApiRoute::post('attachments/upload', 'AttachmentController@upload');
+
+    // 个人中心
+    ApiRoute::group(['prefix' => 'account', 'middleware' => 'api.auth'], function () {
+        // 收藏
+        ApiRoute::get('favorites', 'AccountController@favorites');
+        ApiRoute::get('comments', 'AccountController@comments');
+        ApiRoute::get('replys', 'AccountController@replys');
+        ApiRoute::get('likes', 'AccountController@likes');
+        ApiRoute::get('notifications', 'AccountController@notifications');
+    });
 });

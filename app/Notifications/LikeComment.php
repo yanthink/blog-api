@@ -33,6 +33,8 @@ class LikeComment extends Notification implements ShouldQueue
             'content' => '', // 内容
             'target_id' => $this->like->target_id, // 评论id
             'target_name' => $this->like->target->content, // 评论内容
+            'target_root_id' => $this->like->target->target_id,
+            'target_root_title' => $this->like->target->target->title,
         ];
     }
 }

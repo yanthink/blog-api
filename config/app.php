@@ -218,7 +218,7 @@ return [
 
     'image_target_disk' => env('IMAGE_TARGET_DISK', 'public'), // 图片存储disk
 
-    'spider_domain' => env('SPIDER_DOMAIN', 'blog-api.test'),
+    'spider_domain' => env('SPIDER_DOMAIN', 'spider.blog-api.test'),
 
     'baidu_urls_token' => env('BAIDU_URLS_TOKEN'),
 

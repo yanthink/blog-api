@@ -40,6 +40,8 @@ class ReplyComment extends Notification implements ShouldQueue
 
         if ($this->reply->target_type == Comment::class) {
             $data['comment_id'] = $this->reply->target_id;
+            $data['target_root_id'] = $this->reply->target->target_id;
+            $data['target_root_title'] = $this->reply->target->target->title;
         }
 
         return $data;
