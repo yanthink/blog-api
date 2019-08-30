@@ -26,6 +26,10 @@ ApiRoute::version('v2', [
     });
 
     ApiRoute::get('users/current', 'UserController@current');
+    ApiRoute::get('users/{user}/permissions', 'UserController@permissions');
+    ApiRoute::get('users/{user}/roles', 'UserController@roles');
+    APIRoute::post('users/{user}/assign_permissions', 'UserController@assignPermissions');
+    APIRoute::post('users/{user}/assign_roles', 'UserController@assignRoles');
     ApiRoute::resource('users', 'UserController', ['only' => ['index']]);
 
     ApiRoute::resource('articles', 'ArticleController', [
@@ -57,13 +61,25 @@ ApiRoute::version('v2', [
         'only' => ['store'],
     ]);
 
-
+    // tags
     ApiRoute::get('tags/all', 'TagController@all');
 
     // 微信小程序码
     ApiRoute::get('wechat/login_code', 'WechatController@loginCode');
 
-    ApiRoute::post('attachments/upload', 'AttachmentController@upload');
+    // 角色
+    ApiRoute::get('roles/all', 'RoleController@all');
+    ApiRoute::get('roles/{role}/permissions', 'RoleController@permissions');
+    APIRoute::post('roles/{role}/assign_permissions', 'RoleController@assignPermissions');
+    ApiRoute::resource('roles', 'RoleController', [
+        'except' => ['show', 'destroy'],
+    ]);
+
+    // 权限
+    ApiRoute::get('permissions/all', 'PermissionController@all');
+    APIRoute::resource('permissions', 'PermissionController', [
+        'except' => ['show', 'destroy']
+    ]);
 
     // 个人中心
     ApiRoute::group(['prefix' => 'account', 'middleware' => 'api.auth'], function () {
@@ -74,4 +90,7 @@ ApiRoute::version('v2', [
         ApiRoute::get('likes', 'AccountController@likes');
         ApiRoute::get('notifications', 'AccountController@notifications');
     });
+
+    // 附件
+    ApiRoute::post('attachments/upload', 'AttachmentController@upload');
 });

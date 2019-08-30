@@ -35,9 +35,9 @@ class AppServiceProvider extends ServiceProvider
                 return new Fractal((new FractalManager)->setSerializer(new DataSerializer));
             });
 
-//        Gate::before(function (User $user, $ability) {
-//            return $user->hasRole('Founder') ? true : null;
-//        });
+        Gate::before(function (User $user, $ability) {
+            return $user->hasRole('Founder') ? true : null;
+        });
 
         if ($this->app->environment('local')) {
             DB::enableQueryLog();

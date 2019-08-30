@@ -4,7 +4,10 @@ namespace App\Http\Controllers\V2;
 
 use App\Models\User;
 use App\Transformers\V2\UserTransformer;
+use App\Transformers\V2\RoleTransformer;
+use App\Transformers\V2\PermissionTransformer;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -26,6 +29,34 @@ class UserController extends Controller
             ->paginate($pageSize);
 
         return $this->response->paginator($users, new UserTransformer);
+    }
+
+    public function roles(User $user)
+    {
+        return $this->response->collection($user->roles, new RoleTransformer);
+    }
+
+    public function permissions(User $user)
+    {
+        return $this->response->collection($user->permissions, new PermissionTransformer);
+    }
+
+    public function assignRoles(Request $request, User $user)
+    {
+        $this->validate($request, ['roles.*' => 'integer']);
+        $user->syncRoles($request->input('roles'));
+
+        $data = ['status' => true];
+        return compact('data');
+    }
+
+    public function assignPermissions(Request $request, User $user)
+    {
+        $this->validate($request, ['permissions.*' => 'integer']);
+        $user->syncPermissions($request->input('permissions'));
+
+        $data = ['status' => true];
+        return compact('data');
     }
 
     public function current()
