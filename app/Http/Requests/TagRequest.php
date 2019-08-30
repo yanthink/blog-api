@@ -3,10 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class ReplyRequest extends FormRequest
+class TagRequest extends FormRequest
 {
+
     public function authorize()
     {
         return true;
@@ -15,17 +15,19 @@ class ReplyRequest extends FormRequest
     public function rules()
     {
         return [
-            'content' => 'required|max:1024',
-            'parent_id' => [
-                Rule::exists('replys', 'id'),
+            'name' => [
+                'required',
+                'between:2,10',
             ],
+            'order' => 'required|integer|min:0|max:9999',
         ];
     }
 
     public function attributes()
     {
         return [
-            'content' => '内容',
+            'name' => '标签名称',
+            'order' => '排序编号',
         ];
     }
 }

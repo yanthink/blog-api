@@ -63,9 +63,16 @@ ApiRoute::version('v2', [
 
     // tags
     ApiRoute::get('tags/all', 'TagController@all');
+    APIRoute::resource('tags', 'TagController', [
+        'except' => ['show', 'destroy']
+    ]);
 
     // 微信小程序码
     ApiRoute::get('wechat/login_code', 'WechatController@loginCode');
+
+    ApiRoute::resource('notifications', 'NotificationController', [
+        'only' => ['index'],
+    ]);
 
     // 角色
     ApiRoute::get('roles/all', 'RoleController@all');

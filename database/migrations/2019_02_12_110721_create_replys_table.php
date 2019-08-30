@@ -16,7 +16,7 @@ class CreateReplysTable extends Migration
         Schema::create('replys', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id'); // 回复用户
-            $table->string('content'); // 回复内容
+            $table->string('content', 1024); // 回复内容
             $table->morphs('target');
             $table->unsignedInteger('parent_id')->default(0); // 回复父id
             $table->unsignedInteger('like_count')->default(0); // 点赞次数

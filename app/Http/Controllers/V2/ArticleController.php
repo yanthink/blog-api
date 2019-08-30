@@ -96,15 +96,15 @@ class ArticleController extends Controller
                     $builder->where('id', $commentId);
                 }, 'comments.user']);
             }
-        }
 
-        if ($notificationId = request('notification_id')) {
-            $row = $this->user->unreadNotifications()->where('id', $notificationId)->update(['read_at' => now()]);
+            if ($notificationId = request('notification_id')) {
+                $row = $this->user->unreadNotifications()->where('id', $notificationId)->update(['read_at' => now()]);
 
-            if ($row) {
-                return $this->response
-                    ->item($article, new ArticleTransformer)
-                    ->withHeader('unread_count', $this->user->unreadNotifications()->count());
+                if ($row) {
+                    return $this->response
+                        ->item($article, new ArticleTransformer)
+                        ->withHeader('unread_count', $this->user->unreadNotifications()->count());
+                }
             }
         }
 
