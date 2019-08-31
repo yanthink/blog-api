@@ -28,11 +28,6 @@ class AuthController extends Controller
         ]);
 
         $code = $request->input('code');
-        $lockName = self::class . "@store:$code";
-
-        $lock = Cache::lock($lockName, 60);
-
-        abort_if(!$lock->get(), 422, '操作过于频繁，请稍后再试！');
 
         $miniProgram = EasyWeChat::miniProgram();
 
@@ -40,6 +35,10 @@ class AuthController extends Controller
 
         $openId = $miniProgramSession->openid;
         $sessionKey = $miniProgramSession->session_key;
+
+        $lockName = self::class . "@store:$openId";
+        $lock = Cache::lock($lockName, 60);
+        abort_if(!$lock->get(), 422, '操作过于频繁，请稍后再试！');
 
         $userInfo = $request->input('userInfo');
         $rawData = $request->input('rawData');

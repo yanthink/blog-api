@@ -14,7 +14,7 @@ class AddWeChatOpenidToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('we_chat_openid')->after('password')->default('');
+            $table->string('we_chat_openid')->nullable()->unique()->after('password');
         });
     }
 
