@@ -51,9 +51,10 @@ class AuthController extends Controller
 
         if (!$user) {
             $user = new User;
-            $user->name = Arr::get($userInfo, 'nickName', '');
+            // $user->name = Arr::get($userInfo, 'nickName', '');
             $user->we_chat_openid = $openId;
             $user->user_info = $userInfo;
+            $user->password = '';
 
             $user->save();
         }

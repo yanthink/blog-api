@@ -96,6 +96,8 @@ ApiRoute::version('v2', [
         ApiRoute::get('replys', 'AccountController@replys');
         ApiRoute::get('likes', 'AccountController@likes');
         ApiRoute::get('notifications', 'AccountController@notifications');
+        ApiRoute::post('update_base_info', 'AccountController@updateBaseInfo');
+        ApiRoute::post('update_password', 'AccountController@updatePassword');
     });
 
     // 附件

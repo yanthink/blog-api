@@ -10,6 +10,10 @@ class UserTransformer extends BaseTransformer
     {
         $data = $user->toArray();
 
+        if (!$user->name) {
+            $data['name'] = Arr::get($user->user_info, 'nickName', '');
+        }
+
         return $data;
     }
 }

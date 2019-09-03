@@ -9,7 +9,7 @@ class UserObserver
 {
     public function saving(User $user)
     {
-        if (Hash::needsRehash($user->password)) {
+        if ($user->password && Hash::needsRehash($user->password)) {
             $user->password = bcrypt($user->password);
         }
     }

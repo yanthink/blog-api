@@ -7,6 +7,7 @@ use App\Models\Reply;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Arr;
 
 class ReplyComment extends Notification implements ShouldQueue
 {
@@ -32,7 +33,7 @@ class ReplyComment extends Notification implements ShouldQueue
             'form_id' => $this->reply->id, // 回复id
             'form_user_id' => $this->reply->user_id, // 回复用户id
             'form_user_name' => $this->reply->user->name, // 回复用户名
-            'form_user_avatar' => $this->reply->user->user_info->avatarUrl,
+            'form_user_avatar' => Arr::get($this->reply->user->user_info, 'avatarUrl'),
             'content' => $this->reply->content, // 回复内容
             'target_id' => $target->id, // parent_id 或 评论id
             'target_name' => $target->content, // parent 或 评论内容

@@ -123,7 +123,7 @@ $ php artisan es:init
 | [dingo/api](https://github.com/dingo/api) | 处理api接口的开源插件 | 用于api接口 |
 | [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth) | 身份验证的软件包 | 用于api认证  |
 | [predis/predis](https://github.com/nrk/predis.git) | Redis 官方首推的 PHP 客户端开发包 | 缓存驱动 Redis 基础扩展包 |
-| [zizaco/entrust](https://github.com/Zizaco/entrust) | 角色权限管理 | 角色和权限控制 |
+| [spatie/laravel-permissiont](https://github.com/spatie/laravel-permission) | 角色权限管理 | 角色和权限控制 |
 | [zgldh/qiniu-laravel-storage](https://github.com/zgldh/qiniu-laravel-storage) | Qiniu 云储存 Laravel 5 Storage版 | 存储附件 |
 | [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) | 代码提示及补全工具 | 代码提示及补全 |
 | [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar) | 页面调试工具栏 (对 phpdebugbar 的封装) | 开发环境中的 DEBUG |

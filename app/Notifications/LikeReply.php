@@ -7,6 +7,7 @@ use App\Models\Like;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Arr;
 
 class LikeReply extends Notification implements ShouldQueue
 {
@@ -30,7 +31,7 @@ class LikeReply extends Notification implements ShouldQueue
             'form_id' => $this->like->id, // 点赞id
             'form_user_id' => $this->like->user_id, // 点赞用户id
             'form_user_name' => $this->like->user->name, // 点赞用户名
-            'form_user_avatar' => $this->like->user->user_info->avatarUrl,
+            'form_user_avatar' => Arr::get($this->like->user->user_info, 'avatarUrl'),
             'content' => '', // 内容
             'target_id' => $this->like->target_id, // 回复id
             'target_name' => $this->like->target->content, // 回复内容

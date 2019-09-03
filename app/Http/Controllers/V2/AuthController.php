@@ -28,7 +28,7 @@ class AuthController extends Controller
         $password = $request->input('password');
 
         $user = User::query()
-            ->where('is_admin', 1)
+            // ->where('is_admin', 1)
             ->where('name', $account)
             ->first();
 

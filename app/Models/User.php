@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Observers\UserObserver;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Arr;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -53,7 +54,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $fillable = ['name', 'email', 'password'];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'we_chat_openid'];
 
     protected $guard_name = 'api';
 
@@ -71,6 +72,15 @@ class User extends Authenticatable implements JWTSubject
     {
         parent::boot();
         self::observe(UserObserver::class);
+    }
+
+    public function getNameAttribute($value)
+    {
+        if (!$value) {
+            return Arr::get($this->user_info, 'nickName', '');
+        }
+
+        return $value;
     }
 
     /**
@@ -100,7 +110,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function getUserInfoAttribute($value)
     {
-        return json_decode($value);
+        return json_decode($value, true);
     }
 
     public function favorites()

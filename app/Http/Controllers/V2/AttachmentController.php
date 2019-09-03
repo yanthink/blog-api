@@ -18,7 +18,7 @@ class AttachmentController extends Controller
         $isFounder = user() && user()->hasRole('Founder');
 
         $rules = [
-            'file' => 'required|image|mimes:png,jpg,jpeg,gif|max:' . ($isFounder ? 2048 : 200),
+            'file' => 'required|image|mimes:png,jpg,jpeg,gif|max:' . ($isFounder ? 2048 : 500),
         ];
 
         $this->validate($request, $rules);

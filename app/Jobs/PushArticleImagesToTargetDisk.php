@@ -174,7 +174,9 @@ class PushArticleImagesToTargetDisk implements ShouldQueue
             $article->content = str_replace($sourceImagesMatched, $targetImagesReplace, $article->content);
         }
 
-        $article->save();
+        if ($article->isDirty()) {
+            $article->save();
+        }
     }
 
     /**
