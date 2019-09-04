@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Wechat;
+namespace App\Http\Controllers\V2;
 
 use App\Models\Article;
 use App\Models\Like;

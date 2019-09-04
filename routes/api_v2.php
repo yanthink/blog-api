@@ -38,6 +38,12 @@ ApiRoute::version('v2', [
     ApiRoute::resource('articles.comments', 'ArticleCommentController', [
         'only' => ['index', 'store'],
     ]);
+    ApiRoute::resource('articles.likes', 'ArticleLikeController', [
+        'only' => ['store'],
+    ]);
+    ApiRoute::resource('articles.favorites', 'ArticleFavoriteController', [
+        'only' => ['store'],
+    ]);
 
     // 评论
     ApiRoute::resource('comments', 'CommentController', [
