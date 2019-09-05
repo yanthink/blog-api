@@ -57,10 +57,11 @@ wss.on('connection', (ws, req) => {
         const jwtSecret = env('JWT_SECRET');
         const algorithm = env('JWT_ALGO', 'HS256');
 
-        const {sub} = jwt.verify(token, jwtSecret, {algorithm});
+        const {sub, exp} = jwt.verify(token, jwtSecret, {algorithm});
         const uuid = sub;
 
         ws.uuid = uuid;
+        ws.exp = exp;
         if (!clients[uuid]) {
             clients[uuid] = [];
         }
@@ -73,6 +74,9 @@ wss.on('connection', (ws, req) => {
     ws.on('message', message => { // 接收消息事件
         if (ws.uuid) {
             console.info('[%s] message：%s %s', getNowDateTimeString(), ws.uuid, message);
+        }
+        if (ws.exp && Date.now() / 1000 > ws.exp) {
+            ws.close();
         }
     });
 

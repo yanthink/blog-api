@@ -12,7 +12,6 @@ class ReplyTransformer extends BaseTransformer
     public function transform(Reply $reply)
     {
         $data = $reply->toArray();
-        $data['content'] = htmlentities($reply->content);
 
         return $data;
     }
