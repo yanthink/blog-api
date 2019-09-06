@@ -80,10 +80,6 @@
         "1": {
             "type": "path",
             "url": "packages/selenium"
-        },
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.laravel-china.org"
         }
     }
 }
