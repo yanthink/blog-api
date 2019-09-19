@@ -66,7 +66,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'display_name' => '发布文章',
         ]);
         Permission::create([
-            'name' => 'article.update',
+            'name' => 'articles.update',
             'display_name' => '修改文章',
         ]);
         Permission::create([
@@ -78,8 +78,20 @@ class RolesAndPermissionsSeeder extends Seeder
             'display_name' => '删除文章',
         ]);
         Permission::create([
-            'name' => 'attachments.upload',
-            'display_name' => '上传附件',
+            'name' => 'tags.index',
+            'display_name' => '标签列表',
+        ]);
+        Permission::create([
+            'name' => 'tags.store',
+            'display_name' => '新建标签',
+        ]);
+        Permission::create([
+            'name' => 'tags.update',
+            'display_name' => '	更新标签',
+        ]);
+        Permission::create([
+            'name' => 'notifications.index',
+            'display_name' => '	通知列表',
         ]);
 
         // create roles and assign created permissions

@@ -9,6 +9,7 @@ class UsersTableSeeder extends Seeder
     {
         $user = new User;
         $user->name = 'admin';
+        $user->password = bcrypt('888888');
         $user->we_chat_openid = '';
         $user->user_info = [
             'is_admin' => 1,

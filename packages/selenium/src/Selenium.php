@@ -4,6 +4,7 @@ namespace Yanthink\Selenium;
 
 use Closure;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Illuminate\Support\Str;
 use ReflectionFunction;
 use Illuminate\Support\Collection;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
@@ -134,7 +135,7 @@ class Selenium
      */
     protected function createDriver()
     {
-        $method = 'create' . studly_case(static::$driver) . 'Driver';
+        $method = 'create' . Str::studly(static::$driver) . 'Driver';
 
         if (method_exists($this, $method)) {
             return $this->$method();
