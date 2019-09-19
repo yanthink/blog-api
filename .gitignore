@@ -2,7 +2,6 @@
 /public/hot
 /public/storage
 /storage/*.key
-/storage
 /vendor
 /.idea
 /.vscode
@@ -14,4 +13,6 @@ yarn-error.log
 .env
 .DS_Store
 /database/blog.sql
+
+BlogApiValetDriver.php
 
