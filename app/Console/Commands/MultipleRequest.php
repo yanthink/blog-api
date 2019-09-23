@@ -68,14 +68,14 @@ class MultipleRequest extends Command
 
         $client = new Client;
 
-        $millisecond = getMillisecond();
+        $millisecond = microtime(true);
 
         $pool = new Pool($client, $requests($this->concurrency), [
             'concurrency' => $this->concurrency,
             'options' => $this->options,
             'fulfilled' => function (Response $response, $index) use ($millisecond) {
                 $body = $response->getBody()->getContents();
-                $runTime = (getMillisecond() - $millisecond) . 'ms';
+                $runTime = (microtime(true) - $millisecond) . 'ms';
                 $this->info('=========================================================================');
                 $this->info("第 $index 个请求成功");
                 $this->info("响应内容 ===> $body");
@@ -89,7 +89,7 @@ class MultipleRequest extends Command
                 if ($exception->hasResponse()) {
                     $body = $exception->getResponse()->getBody()->getContents();
                 }
-                $runTime = (getMillisecond() - $millisecond) . 'ms';
+                $runTime = (microtime(true) - $millisecond) . 'ms';
                 $this->error('=========================================================================');
                 $this->error("第 $index 个请求失败");
                 $this->error("响应内容 ===> $body");

@@ -104,6 +104,7 @@ ApiRoute::version('v2', [
         ApiRoute::get('notifications', 'AccountController@notifications');
         ApiRoute::post('update_base_info', 'AccountController@updateBaseInfo');
         ApiRoute::post('update_password', 'AccountController@updatePassword');
+        ApiRoute::post('send_email_code', 'AccountController@sendEmailCode');
     });
 
     // 附件

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2;
 
 use App\Jobs\PushAvatarImageToTargetDisk;
+use App\Mail\VerificationCode;
 use App\Models\User;
 use App\Transformers\V2\FavoriteTransformer;
 use App\Transformers\V2\CommentTransformer;
@@ -10,6 +11,8 @@ use App\Transformers\V2\ReplyTransformer;
 use App\Transformers\V2\LikeTransformer;
 use App\Transformers\V2\NotificationTransformer;
 use App\Transformers\V2\UserTransformer;
+use Cache;
+use Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -20,6 +23,14 @@ use Hash;
 
 class AccountController extends Controller
 {
+    protected $userNamePattern = '/^(?!_)(?!.*?_$)[a-zA-Z0-9_\x{4e00}-\x{9fa5}]{1,10}$/u';
+
+    public function __construct()
+    {
+        $this->rateLimit(1, 2); // 2分1次
+        $this->middleware('api.throttle')->only('sendEmailCode');
+    }
+
     public function favorites()
     {
         $pageSize = min(request('pageSize', 10), 20);
@@ -80,13 +91,36 @@ class AccountController extends Controller
         return $this->response->paginator($notifications, new NotificationTransformer);
     }
 
+    public function sendEmailCode(Request $request)
+    {
+        $this->validate($request, ['email' => 'required|email']);
+
+        $email = $request->input('email');
+        $code = random_int(1000, 9999);
+        $identifyingCode = Str::random(6);
+
+        $cacheKey = 'email_code:' . $this->user->id;
+        $data = compact('email', 'code', 'identifyingCode');
+
+        if (!Cache::add($cacheKey, $data, 120)) {
+            abort(429, '操作过于频繁，请稍后再试！');
+        }
+
+        $message = (new VerificationCode($this->user->name, $code, $identifyingCode))->onQueue('emails');
+        Mail::to($email)->queue($message);
+
+        $data = [
+            'identifyingCode' => $identifyingCode,
+        ];
+        return compact('data');
+    }
+
     public function updateBaseInfo(Request $request)
     {
         $this->validate($request, [
             'name' => [
                 'required',
-                'string',
-                'max:10',
+                'regex:' . $this->userNamePattern,
                 Rule::unique('users')->where(function (Builder $builder) {
                     $builder->where('id', '<>', $this->user->id);
                 }),
@@ -116,7 +150,17 @@ class AccountController extends Controller
             $this->user->name = $name;
         }
 
-        if ($email) {
+        if ($email && $email != $this->user->email) {
+            $identifyingCode = $request->input('identifyingCode');
+            $code = $request->input('email_code');
+
+            $cacheKey = 'email_code:' . $this->user->id;
+            $data = Cache::get($cacheKey, []);
+
+            if ($data != compact('email', 'code', 'identifyingCode')) {
+                abort(422, '验证码校验失败！');
+            }
+
             $this->user->email = $email;
         }
 
@@ -171,6 +215,10 @@ class AccountController extends Controller
 
         if (!$this->user->getOriginal('name')) {
             $name = Arr::get($this->user->user_info, 'nickName');
+
+            if (!preg_match($this->userNamePattern, $name)) {
+                abort(422, '用户名格式不正确，请重新设置用户名！');
+            }
 
             if (User::where('name', $name)->exists()) {
                 abort(422, "用户名「${name}」已存在，请重新设置用户名！");

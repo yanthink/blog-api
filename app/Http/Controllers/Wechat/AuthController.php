@@ -51,10 +51,16 @@ class AuthController extends Controller
 
         if (!$user) {
             $user = new User;
-            // $user->name = Arr::get($userInfo, 'nickName', '');
             $user->we_chat_openid = $openId;
             $user->user_info = $userInfo;
             $user->password = '';
+
+            $nickName = Arr::get($userInfo, 'nickName', '');
+            if (preg_match('/^(?!_)(?!.*?_$)[a-zA-Z0-9_\x{4e00}-\x{9fa5}]{1,10}$/u', $nickName)) {
+                if (!User::where('name', $nickName)->exists()) {
+                    $user->name = $nickName;
+                }
+            }
 
             $user->save();
         }

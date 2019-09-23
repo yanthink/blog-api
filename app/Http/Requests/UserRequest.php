@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
+    protected $userNamePattern = '/^(?!_)(?!.*?_$)[a-zA-Z0-9_\x{4e00}-\x{9fa5}]{1,10}$/u';
+
     public function authorize()
     {
         return true;
@@ -19,7 +21,7 @@ class UserRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                'regex:/^([\x{4E00}-\x{9FA5}\x{f900}-\x{fa2d}]|[a-zA-Z])([\x{4E00}-\x{9FA5}\x{f900}-\x{fa2d}]|[a-zA-Z0-9_-]){1,20}$/u',
+                'regex:'.$this->userNamePattern,
                 Rule::unique('users')->where(function (Builder $builder) {
                     if ($this->route()->hasParameter('user')) {
                         $user = $this->route('user');
