@@ -50,6 +50,10 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withoutTrashed()
  * @mixin \Eloquent
+ * @property-read int|null $comments_count
+ * @property-read int|null $favorites_count
+ * @property-read int|null $likes_count
+ * @property-read int|null $tags_count
  */
 class Article extends Model
 {

@@ -32,6 +32,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereTargetType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereUserId($value)
  * @mixin \Eloquent
+ * @property-read int|null $likes_count
+ * @property-read int|null $replys_count
  */
 class Comment extends Model
 {

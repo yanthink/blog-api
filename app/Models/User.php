@@ -45,6 +45,15 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUserInfo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeChatOpenid($value)
  * @mixin \Eloquent
+ * @property mixed|null $settings
+ * @property-read int|null $comments_count
+ * @property-read int|null $favorites_count
+ * @property-read int|null $likes_count
+ * @property-read int|null $notifications_count
+ * @property-read int|null $permissions_count
+ * @property-read int|null $replys_count
+ * @property-read int|null $roles_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereSettings($value)
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -54,7 +63,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $fillable = ['name', 'email', 'password'];
 
-    protected $hidden = ['password', 'remember_token', 'we_chat_openid'];
+    protected $hidden = ['password', 'remember_token', 'we_chat_openid', 'settings'];
 
     protected $guard_name = 'api';
 
@@ -105,10 +114,20 @@ class User extends Authenticatable implements JWTSubject
 
     public function setUserInfoAttribute($userInfo)
     {
-        $this->attributes['user_info'] = json_encode($userInfo);
+        $this->attributes['user_info'] = is_array($userInfo) ? json_encode($userInfo) : $userInfo;
     }
 
     public function getUserInfoAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function setSettingsAttribute($settings)
+    {
+        $this->attributes['settings'] = is_array($settings) ? json_encode($settings) : $settings;
+    }
+
+    public function getSettingsAttribute($value)
     {
         return json_decode($value, true);
     }

@@ -3,7 +3,10 @@
 namespace App\Notifications;
 
 use App\Models\Like;
+use App\Models\User;
+use App\Models\UserOnline;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Arr;
@@ -19,9 +22,31 @@ class LikeComment extends Notification implements ShouldQueue
         $this->like = $like;
     }
 
-    public function via()
+    public function via(User $notifiable)
     {
-        return ['database', 'broadcast'];
+        $via = ['database'];
+
+        if (
+            $notifiable->email &&
+            (!$notifiable->settings || $notifiable->settings['like_notify']) &&
+            !UserOnline::where('user_id', $notifiable->id)->exists()
+        ) {
+            $via[] = 'mail';
+            return $via;
+        }
+
+        $via[] = 'broadcast';
+        return $via;
+    }
+
+    public function toMail()
+    {
+        $like = $this->like;
+        $like->loadMissing(['user', 'target.target']);
+
+        return (new MailMessage)
+            ->subject($like->user->name . ' 赞了您的评论')
+            ->markdown('emails.notifications.like_comment', compact('like'));
     }
 
     public function toArray()

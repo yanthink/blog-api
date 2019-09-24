@@ -10,6 +10,14 @@ class UserTransformer extends BaseTransformer
 {
     public function transform(User $user)
     {
+        if ($user->id == user('id')) {
+            $hidden = $user->getHidden();
+            $hidden = Arr::where($hidden, function($item) {
+                return $item != 'settings';
+            });
+            $user->setHidden($hidden);
+        }
+
         $data = $user->toArray();
 
         if (!$user->name) {

@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Reply whereTargetType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Reply whereUserId($value)
  * @mixin \Eloquent
+ * @property-read int|null $likes_count
  */
 class Reply extends Model
 {

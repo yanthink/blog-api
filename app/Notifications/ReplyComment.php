@@ -4,7 +4,10 @@ namespace App\Notifications;
 
 use App\Models\Comment;
 use App\Models\Reply;
+use App\Models\User;
+use App\Models\UserOnline;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Arr;
@@ -20,9 +23,31 @@ class ReplyComment extends Notification implements ShouldQueue
         $this->reply = $reply;
     }
 
-    public function via()
+    public function via(User $notifiable)
     {
-        return ['database', 'broadcast'];
+        $via = ['database'];
+
+        if (
+            $notifiable->email &&
+            (!$notifiable->settings || $notifiable->settings['reply_notify']) &&
+            !UserOnline::where('user_id', $notifiable->id)->exists()
+        ) {
+            $via[] = 'mail';
+            return $via;
+        }
+
+        $via[] = 'broadcast';
+        return $via;
+    }
+
+    public function toMail()
+    {
+        $reply = $this->reply;
+        $reply->loadMissing(['user', 'parent.user', 'target.target', 'target.user']);
+
+        return (new MailMessage)
+            ->subject($reply->user->name . ' 回复了您的评论')
+            ->markdown('emails.notifications.reply_comment', compact('reply'));
     }
 
     public function toArray()

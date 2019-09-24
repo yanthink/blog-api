@@ -198,6 +198,26 @@ class AccountController extends Controller
         return $this->response->item($this->user, new UserTransformer);
     }
 
+    public function updateSettings(Request $request)
+    {
+        $this->validate($request, [
+            'settings.like_notify' => 'required|boolean',
+            'settings.reply_notify' => 'required|boolean',
+        ]);
+
+        $settings = Arr::only($request->input('settings'), ['like_notify', 'reply_notify']);
+
+        if ($settings && $settings != $this->user->settings) {
+            $this->user->settings = $settings;
+        }
+
+        if ($this->user->isDirty()) {
+            $this->user->save();
+        }
+
+        return $this->response->item($this->user, new UserTransformer);
+    }
+
     public function updatePassword(Request $request)
     {
         $this->validate($request, [
@@ -207,7 +227,7 @@ class AccountController extends Controller
         if ($this->user->password) {
             $oldPassword = $request->input('old_password');
 
-            if (Hash::check($oldPassword, $this->user->password)) {
+            if (!Hash::check($oldPassword, $this->user->password)) {
                 abort(422, '旧密码不正确！');
             }
         }

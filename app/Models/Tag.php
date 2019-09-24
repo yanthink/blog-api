@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read int|null $articles_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereOrder($value)
  */
 class Tag extends Model
 {
