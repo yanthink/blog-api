@@ -139,7 +139,7 @@ class AccountController extends Controller
             'user_info.geographic.city.label' => 'string|max:10',
             'user_info.geographic.city.key' => 'string|max:6',
             'user_info.address' => 'string|max:40',
-            'user_info.avatarUrl' => 'string|max:120',
+            'user_info.avatarUrl' => 'string|max:255',
         ]);
 
         $name = $request->input('name');

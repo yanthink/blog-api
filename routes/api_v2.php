@@ -32,6 +32,8 @@ ApiRoute::version('v2', [
     APIRoute::post('users/{user}/assign_roles', 'UserController@assignRoles');
     ApiRoute::resource('users', 'UserController', ['only' => ['index']]);
 
+    ApiRoute::resource('users_online', 'UserOnlineController', ['only' => ['index']]);
+
     ApiRoute::resource('articles', 'ArticleController', [
         'only' => ['index', 'store', 'show', 'update'],
     ]);

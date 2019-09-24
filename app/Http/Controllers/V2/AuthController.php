@@ -28,8 +28,8 @@ class AuthController extends Controller
         $password = $request->input('password');
 
         $user = User::query()
-            // ->where('is_admin', 1)
             ->where('name', $account)
+            ->orWhere('email', $account)
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
