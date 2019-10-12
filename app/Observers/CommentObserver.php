@@ -2,21 +2,18 @@
 
 namespace App\Observers;
 
-use App\Models\Article;
 use App\Models\Comment;
-use App\Notifications\CommentArticle;
 
 class CommentObserver
 {
-    public function created(Comment $comment)
+    public function saved(Comment $comment)
     {
-        if ($comment->target_type == Article::class) {
-            $comment->target->increment('comment_count');
+        if (request()->has('content')) {
+            $type = request('type', 'markdown');
+            $data = [$type => request("content.$type")];
 
-            if ($comment->target->author_id != $comment->user_id) {
-                $comment->target->author->notify(new CommentArticle($comment)); // 评论文章通知
-                // todo 订阅收藏通知
-            }
+            $comment->content()->updateOrCreate([], $data);
+            $comment->loadMissing('content');
         }
     }
 }

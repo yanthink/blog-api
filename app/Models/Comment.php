@@ -2,70 +2,76 @@
 
 namespace App\Models;
 
-use App\Observers\CommentObserver;
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use Overtrue\LaravelFollow\Traits\CanBeVoted;
 
-/**
- * App\Models\Comment
- *
- * @property int $id
- * @property int $user_id
- * @property string $content
- * @property int $target_id
- * @property string $target_type
- * @property int $reply_count
- * @property int $like_count
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Like[] $likes
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Reply[] $replys
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $target
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereLikeCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereReplyCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereTargetType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereUserId($value)
- * @mixin \Eloquent
- * @property-read int|null $likes_count
- * @property-read int|null $replys_count
- */
 class Comment extends Model
 {
+    use SoftDeletes;
+    use Filterable;
+    use CanBeVoted;
+
+    const COMMENTABLES = [
+        Article::class,
+    ];
+
+    const CACHE_FIELDS = [
+        'comments_count' => 0,
+        'up_voters_count' => 0,
+        'down_voters_count' => 0,
+    ];
+
     protected $table = 'comments';
 
-    protected $fillable = ['content'];
+    protected $fillable = [
+        'commentable_id',
+        'commentable_type',
+        'user_id',
+        'root_id',
+        'parent_id',
+        'cache',
+    ];
 
-    const UPDATED_AT = null;
+    protected $with = ['user', 'content'];
 
-    public static function boot()
+    protected $casts = [
+        'id' => 'int',
+        'user_id' => 'int',
+        'root_id' => 'int',
+        'parent_id' => 'int',
+        'cache' => 'json',
+    ];
+
+    protected $appends = [
+        'has_up_voted',
+        'has_down_voted',
+    ];
+
+    public function getHasUpVotedAttribute()
     {
-        parent::boot();
-        self::observe(CommentObserver::class);
+        return $this->isUpvotedBy(Auth::id());
+    }
+
+    public function getHasDownVotedAttribute()
+    {
+        return $this->isDownvotedBy(Auth::id());
+    }
+
+    public function commentable()
+    {
+        return $this->morphTo();
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        $this->belongsTo(User::class);
     }
 
-    public function target()
+    public function content()
     {
-        return $this->morphTo('target');
-    }
-
-    public function likes()
-    {
-        return $this->morphMany(Like::class, 'target');
-    }
-
-    public function replys()
-    {
-        return $this->morphMany(Reply::class, 'target');
+        return $this->morphOne(Content::class, 'contentable');
     }
 }

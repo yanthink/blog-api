@@ -3,9 +3,9 @@
 * 产品名称：个人博客系统api接口
 * 项目代号：blog-api
 * 演示地址：https://www.einsition.com
-* 前端项目地址：https://github.com/yanthink/blog-v2
+* 前端源码：https://github.com/yanthink/blog-v2
 
-该系统使用 Laravel5.8 编写而成。
+该项目基于 Laravel6.0 开发。
 
 
 ## 功能如下
@@ -35,7 +35,7 @@
 
 ## 开发环境部署/安装
 
-本项目代码使用 PHP 框架 [Laravel 5.8](https://d.laravel-china.org/docs/5.8/) 开发，本地开发环境使用 [Laravel Valet](https://laravel-china.org/docs/laravel/5.7/valet)。
+本项目代码使用 PHP 框架 [Laravel 6.0](https://learnku.com/docs/laravel/6.x) 开发，本地开发环境使用 [Laravel Valet](https://learnku.com/docs/laravel/6.x/valet/5128)。
 
 ### 基础安装
 
@@ -43,22 +43,19 @@
 
 克隆 `blog-api` 源代码到本地：
 
-    > git clone https://github.com/yanthink/blog-api.git
+    git clone https://github.com/yanthink/blog-api.git
 
 #### 2. 安装扩展包依赖
-```shell
-$ composer install
-```
+
+    composer install
 
 #### 3. 生成配置文件
 
-```shell
-$ cp .env.example .env
-```
+    cp .env.example .env
 
 你可以根据情况修改 `.env` 文件里的内容，如数据库连接、缓存、邮件设置等：
 
-```
+```ini
 APP_URL=http://api.blog.test
 ...
 DB_HOST=localhost
@@ -69,25 +66,19 @@ DB_PASSWORD=
 
 #### 4. 生成秘钥
 
-```shell
-$ php artisan key:generate
-```
+    php artisan key:generate
 
-#### 5. 生成 JWT_SECRET
+#### 5. 创建软连接
 
-```shell
-$ php artisan jwt:secret
-```
+    php artisan storage:link
 
-#### 6. 创建软连接
-```shell
-$ php artisan storage:link
-```
+#### 6. 生成数据表及生成测试数据
 
-#### 7. 生成数据表及生成测试数据
-```shell
-$ php artisan migrate --seed
-```
+    php artisan migrate --seed
+
+#### 7. 生成加密 oauth_clients
+
+    php artisan passport:install
 
 初始的用户角色权限已使用数据迁移生成。
 
@@ -99,19 +90,20 @@ password: 888888
 ```
 
 #### 8. 安装elasticsearch
-```shell
-$ brew install elasticsearch
-```
+
+    brew install elasticsearch
 
 #### 9. 安装elasticsearch-analysis-ik
-```shell
-$ cd $(brew --prefix elasticsearch)
-$ ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.4/elasticsearch-analysis-ik-6.2.4.zip
+
+```bash
+cd $(brew --prefix elasticsearch)
+./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.4/elasticsearch-analysis-ik-6.2.4.zip
 ```
 
 #### 10. 初始化Elasticsearch
-```shell
-$ php artisan es:init
+
+```bash
+php artisan es:init
 ```
 
 至此, 安装完成 ^_^。
@@ -128,15 +120,13 @@ $ php artisan es:init
 | [zgldh/qiniu-laravel-storage](https://github.com/zgldh/qiniu-laravel-storage) | Qiniu 云储存 Laravel 5 Storage版 | 存储附件 |
 | [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) | 代码提示及补全工具 | 代码提示及补全 |
 | [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar) | 页面调试工具栏 (对 phpdebugbar 的封装) | 开发环境中的 DEBUG |
-| [overtrue/laravel-wechat](https://github.com/overtrue/laravel-wechat) | 微信 SDK for Laravel 5 / Lumen | 微信小程序登录 |
+| [overtrue/laravel-wechat](https://github.com/overtrue/laravel-wechat) | 微信 SDK for Laravel / Lumen | 微信小程序登录 |
 
 ## 自定义 Artisan 命令
 
 | 命令行名字 | 说明 | Cron | 代码调用 |
 | --- | --- | --- | --- |
-| `remove-expired-attachment` | 删除过期附件 | 每天凌晨2点执行一次 | 无 |
 | `es:init` | 初始化elasticsearch | 无 | 无 |
-| `sync-article-read-count` | 将Redis的文章阅读次数数据同步到数据库中 |  每天凌晨0点执行一次 | 无 |
 
 ## 队列清单
 

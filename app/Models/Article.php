@@ -2,69 +2,110 @@
 
 namespace App\Models;
 
-use App\Models\Traits\ArticleReadCountHelper;
-use App\Models\Traits\EsSearchable;
-use App\Observers\ArticleObserver;
+use App\Models\Traits\EsHighlightAttributes;
+use EloquentFilter\Filterable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Scout\Searchable;
+use Overtrue\LaravelFollow\Traits\CanBeFavorited;
+use Overtrue\LaravelFollow\Traits\CanBeLiked;
 
-/**
- * App\Models\Article
- *
- * @property int $id
- * @property int $status
- * @property string $title
- * @property string $preview
- * @property string $content
- * @property int|null $author_id
- * @property int $comment_count
- * @property int $read_count
- * @property int $like_count
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \App\Models\User|null $author
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Favorite[] $favorites
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Like[] $likes
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Tag[] $tags
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Article onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereAuthorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereCommentCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereLikeCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article wherePreview($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereReadCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withoutTrashed()
- * @mixin \Eloquent
- * @property-read int|null $comments_count
- * @property-read int|null $favorites_count
- * @property-read int|null $likes_count
- * @property-read int|null $tags_count
- */
 class Article extends Model
 {
-    use SoftDeletes, Searchable, EsSearchable, ArticleReadCountHelper;
+    use SoftDeletes;
+    use Filterable;
+    use Searchable;
+    use EsHighlightAttributes;
+    use CanBeFavorited;
+    use CanBeLiked;
+
+    const CACHE_FIELDS = [
+        'views_count' => 0,
+        'favorites_count' => 0,
+        'likes_count' => 0,
+        'comments_count' => 0,
+    ];
 
     protected $table = 'articles';
+
+    protected $with = ['content'];
+
+    protected $fillable = [
+        'user_id',
+        'visible',
+        'title',
+        'preview',
+        'cache->views_count',
+        'cache->favorites_count',
+        'cache->likes_count',
+        'cache->comments_count',
+    ];
+
+    protected $casts = [
+        'id' => 'int',
+        'user_id' => 'int',
+        'cache' => 'json',
+    ];
+
+    protected $appends = [
+        // 'has_favorited',
+        // 'has_liked',
+    ];
 
     public static function boot()
     {
         parent::boot();
-        self::observe(ArticleObserver::class);
+
+        static::addGlobalScope('visible', function (Builder $builder) {
+            $builder->where('visible', 1);
+        });
+    }
+
+    public function setCacheAttribute($value)
+    {
+        $value = is_array($value) ? $value : json_decode($value ?? '{}', true);
+
+        $this->attributes['cache'] = json_encode(
+            array_merge($this->cache, Arr::only($value, array_keys(self::CACHE_FIELDS)))
+        );
+    }
+
+    public function getCacheAttribute($value)
+    {
+        return array_merge(self::CACHE_FIELDS, json_decode($value ?? '{}', true));
+    }
+
+    public function getHasFavoritedAttribute()
+    {
+        return $this->isFavoritedBy(Auth::id());
+    }
+
+    public function getHasLikedAttribute()
+    {
+        return $this->isLikedBy(Auth::id());
+    }
+
+    public function content()
+    {
+        return $this->morphOne(Content::class, 'contentable');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 
     // 定义索引里面的type
@@ -78,38 +119,12 @@ class Article extends Model
     {
         return [
             'title' => $this->title,
-            'content' => $this->content,
+            'content' => $this->content ? $this->content->markdown : '',
         ];
     }
 
     public function shouldBeSearchable()
     {
-        return $this->status == 1;
-    }
-
-    // -------------- relations ------------------
-    public function author()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class);
-    }
-
-    public function likes()
-    {
-        return $this->morphMany(Like::class, 'target');
-    }
-
-    public function favorites()
-    {
-        return $this->morphMany(Favorite::class, 'target');
-    }
-
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'target');
+        return !!$this->visible;
     }
 }

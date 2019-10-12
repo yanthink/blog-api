@@ -1,7 +1,5 @@
 <?php
 
-require __DIR__ . '/helpers.php';
-
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -14,7 +12,7 @@ require __DIR__ . '/helpers.php';
 */
 
 $app = new Illuminate\Foundation\Application(
-    realpath(__DIR__.'/../')
+    $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
 /*

@@ -27,6 +27,6 @@ class WechatScanLogin implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new PrivateChannel('scan-login.' . $this->uuid);
+        return new PrivateChannel('scan_login.' . $this->uuid);
     }
 }

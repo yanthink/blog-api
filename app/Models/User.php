@@ -2,153 +2,139 @@
 
 namespace App\Models;
 
-use App\Observers\UserObserver;
-use Illuminate\Notifications\Notifiable;
+use EloquentFilter\Filterable;
+use Hash;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Passport\HasApiTokens;
+use Overtrue\LaravelFollow\Traits\CanFavorite;
+use Overtrue\LaravelFollow\Traits\CanLike;
+use Overtrue\LaravelFollow\Traits\CanVote;
 use Spatie\Permission\Traits\HasRoles;
 
-/**
- * App\Models\User
- *
- * @property int $id
- * @property string $name
- * @property string|null $email
- * @property string $password
- * @property string $we_chat_openid
- * @property mixed|null $user_info
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $is_admin
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Favorite[] $favorites
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Like[] $likes
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Reply[] $replys
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User permission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User role($roles, $guard = null)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereIsAdmin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUserInfo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeChatOpenid($value)
- * @mixin \Eloquent
- * @property mixed|null $settings
- * @property-read int|null $comments_count
- * @property-read int|null $favorites_count
- * @property-read int|null $likes_count
- * @property-read int|null $notifications_count
- * @property-read int|null $permissions_count
- * @property-read int|null $replys_count
- * @property-read int|null $roles_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereSettings($value)
- */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use Notifiable, HasRoles;
+    use Notifiable;
+    use Filterable;
+    use HasApiTokens;
+    use HasRoles;
+    use CanFavorite;
+    use CanLike;
+    use CanVote;
+
+    const SETTINGS_FIELDS = [
+        'comment_email_notify' => true,
+        'like_email_notify' => true,
+    ];
+
+    const EXTENDS_FIELDS = [
+        'country' => 'China',
+        'province' => '',
+        'city' => '',
+        'geographic' => null,
+    ];
+
+    const CACHE_FIELDS = [
+        'unread_count' => 0,
+        'article_count' => 0,
+        'comment_count' => 0,
+        'like_count' => 0,
+        'favorite_count' => 0,
+    ];
+
+    const SENSITIVE_FIELDS = [
+        'wechat_openid',
+        'settings',
+    ];
 
     protected $table = 'users';
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = [
+        'username',
+        'email',
+        'wechat_openid',
+        'password',
+        'avatar',
+        'gender',
+        'bio',
+        'extends',
+        'settings',
+        'cache',
+    ];
 
-    protected $hidden = ['password', 'remember_token', 'we_chat_openid', 'settings'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'wechat_openid',
+        'settings',
+    ];
 
-    protected $guard_name = 'api';
+    protected $casts = [
+        'id' => 'int',
+        'extends' => 'json',
+        'settings' => 'json',
+        'cache' => 'json',
+    ];
 
-    /**
-     * 接收用户的频道广播通知.
-     *
-     * @return string
-     */
-    public function receivesBroadcastNotificationsOn()
+    protected $appends = [
+        'has_password',
+    ];
+
+    public function setSettingsAttribute($value)
     {
-        return 'notification.' . $this->id;
-    }
+        $value = is_array($value) ? $value : json_decode($value ?? '{}', true);
 
-    public static function boot()
-    {
-        parent::boot();
-        self::observe(UserObserver::class);
-    }
-
-    public function getNameAttribute($value)
-    {
-        if (!$value) {
-            return Arr::get($this->user_info, 'nickName', '');
-        }
-
-        return $value;
-    }
-
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-
-    public function setUserInfoAttribute($userInfo)
-    {
-        $this->attributes['user_info'] = is_array($userInfo) ? json_encode($userInfo) : $userInfo;
-    }
-
-    public function getUserInfoAttribute($value)
-    {
-        return json_decode($value, true);
-    }
-
-    public function setSettingsAttribute($settings)
-    {
-        $this->attributes['settings'] = is_array($settings) ? json_encode($settings) : $settings;
+        $this->attributes['settings'] = json_encode(
+            array_merge($this->settings, Arr::only($value, array_keys(self::SETTINGS_FIELDS)))
+        );
     }
 
     public function getSettingsAttribute($value)
     {
-        return json_decode($value, true);
+        return array_merge(self::SETTINGS_FIELDS, json_decode($value ?? '{}', true));
     }
 
-    public function favorites()
+    public function setExtendsAttribute($value)
     {
-        return $this->hasMany(Favorite::class);
+        $value = is_array($value) ? $value : json_decode($value ?? '{}', true);
+
+        $this->attributes['extends'] = json_encode(
+            array_merge($this->extends, Arr::only($value, array_keys(self::EXTENDS_FIELDS)))
+        );
     }
 
-    public function comments()
+    public function getExtendsAttribute($value)
     {
-        return $this->hasMany(Comment::class);
+        return array_merge(self::EXTENDS_FIELDS, json_decode($value ?? '{}', true));
     }
 
-    public function replys()
+    public function setCacheAttribute($value)
     {
-        return $this->hasMany(Reply::class);
+        $value = is_array($value) ? $value : json_decode($value ?? '{}', true);
+
+        $this->attributes['cache'] = json_encode(
+            array_merge($this->cache, Arr::only($value, array_keys(self::CACHE_FIELDS)))
+        );
     }
 
-    public function likes()
+    public function getCacheAttribute($value)
     {
-        return $this->hasMany(Like::class);
+        return array_merge(self::CACHE_FIELDS, json_decode($value ?? '{}', true));
+    }
+
+    public function getHasPasswordAttribute()
+    {
+        return !Hash::needsRehash($this->password);
+    }
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
+
+    public function findForPassport($identifier)
+    {
+        return $this->orWhere('email', $identifier)->orWhere('username', $identifier)->first();
     }
 }

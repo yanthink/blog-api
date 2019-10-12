@@ -2,55 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-use App\Transformers\ArticleTransformer;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        if (request('keyword')) {
-            return $this->search();
-        }
-
-        $pageSize = min(request('pageSize', 10), 20);
-
-        $articles = Article::query()
-            ->when(request('author_id'), function (Builder $builder, $authorId) {
-                $builder->where('author_id', $authorId);
-            })
-            ->when(request('tags'), function (Builder $builder, $tags) {
-                $builder->whereHas('tags', function (Builder $builder) use ($tags) {
-                    $builder->whereIn('tags.id', $tags);
-                });
-            })
-            ->where('status', 1)
-            ->orderBy('id', 'desc')
-            ->paginate($pageSize);
-
-        return $this->response->paginator($articles, new ArticleTransformer);
+        $this->middleware(['auth:api'])->except(['index', 'show', 'search']);
     }
 
-    public function search()
+    public function index(Request $request)
     {
-        $pageSize = min(request('pageSize', 10), 20);
+        if ($request->has('q') && $request->get('q')) {
+            return $this->search($request);
+        }
 
-        $articles = Article
-            ::search(strtolower(request('keyword')))
-            ->paginate($pageSize);
+        $articles = Article::query()
+                           ->orderByDesc('id')
+                           ->filter($request->all())
+                           ->paginate($request->get('per_page'));
 
-        return $this->response->paginator($articles, new ArticleTransformer);
+        return ArticleResource::collection($articles);
+    }
+
+    public function search(Request $request)
+    {
+        $articles = Article::search($request->get('q'))->paginate($request->get('per_page'));
+
+        return ArticleResource::collection($articles);
     }
 
     public function show(Article $article)
     {
-        abort_if(!$article->status, 404, '没有找到文章！');
+        abort_if(!$article->visible, 404);
 
-        $article->readCountIncrement();
+        $article->update(['cache->views_count' => $article->cache['views_count'] + 1]);
 
-        return $this->response->item($article, new ArticleTransformer);
+        return new ArticleResource($article);
     }
 }

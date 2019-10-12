@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Cookie\CookieJar;
@@ -10,6 +9,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class MultipleRequest extends Command
 {
@@ -57,7 +57,7 @@ class MultipleRequest extends Command
             }
         }
 
-        $jar = CookieJar::fromArray(['JSESSIONID' => '402F8BC5C1CD06EE2FCD007AC19A7B98'], '192.168.1.146');
+        $jar = CookieJar::fromArray(['JSESSIONID' => Str::random(32)], config('app.site_url'));
         $this->options['cookies'] = $jar;
 
         $requests = function ($total) use ($uri, $method) {
@@ -68,33 +68,37 @@ class MultipleRequest extends Command
 
         $client = new Client;
 
-        $millisecond = microtime(true);
+        $runStart = microtime(true);
 
         $pool = new Pool($client, $requests($this->concurrency), [
             'concurrency' => $this->concurrency,
             'options' => $this->options,
-            'fulfilled' => function (Response $response, $index) use ($millisecond) {
+            'fulfilled' => function (Response $response, $index) use ($runStart) {
                 $body = $response->getBody()->getContents();
-                $runTime = (microtime(true) - $millisecond) . 'ms';
+                $runTime = (microtime(true) - $runStart) . 'ms';
+                $this->line('');
                 $this->info('=========================================================================');
                 $this->info("第 $index 个请求成功");
                 $this->info("响应内容 ===> $body");
                 $this->info("运行时间 ===> $runTime");
                 $this->info('=========================================================================');
+                $this->line('');
 
                 $this->countedAndCheckEnded();
             },
-            'rejected' => function (RequestException $exception, $index) use ($millisecond) {
+            'rejected' => function (RequestException $exception, $index) use ($runStart) {
                 $body = $exception->getMessage();
                 if ($exception->hasResponse()) {
                     $body = $exception->getResponse()->getBody()->getContents();
                 }
-                $runTime = (microtime(true) - $millisecond) . 'ms';
+                $runTime = (microtime(true) - $runStart) . 'ms';
+                $this->line('');
                 $this->error('=========================================================================');
                 $this->error("第 $index 个请求失败");
                 $this->error("响应内容 ===> $body");
                 $this->error("运行时间 ===> $runTime");
                 $this->error('=========================================================================');
+                $this->line('');
 
                 $this->countedAndCheckEnded();
             },
@@ -127,7 +131,6 @@ class MultipleRequest extends Command
     public function countedAndCheckEnded()
     {
         if (++$this->counter >= $this->concurrency) {
-            $this->info('');
             $this->alert("请求结束！");
         }
     }

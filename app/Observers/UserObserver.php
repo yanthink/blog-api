@@ -9,6 +9,10 @@ class UserObserver
 {
     public function saving(User $user)
     {
+        if (is_null($user->getOriginal('settings'))) {
+            $user->settings = [];
+        }
+
         if ($user->password && Hash::needsRehash($user->password)) {
             $user->password = bcrypt($user->password);
         }

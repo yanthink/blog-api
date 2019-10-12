@@ -2,55 +2,66 @@
 
 namespace App\Providers;
 
+use App\Models\Article;
+use App\Models\Comment;
+use App\Models\Content;
 use App\Models\User;
-use App\Serializers\DataSerializer;
+use App\Observers\ArticleObserver;
+use App\Observers\CommentObserver;
+use App\Observers\ContentObserver;
+use App\Observers\UserObserver;
+use App\Services\EsEngine;
+use App\Validators\UsernameValidator;
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
+use Carbon\Carbon;
 use DB;
-use Dingo\Api\Exception\Handler as DingoExceptionHandler;
-use Dingo\Api\Transformer\Factory as TransformerFactory;
-use Dingo\Api\Transformer\Adapter\Fractal;
+use Elasticsearch\ClientBuilder;
 use Gate;
-use League\Fractal\Manager as FractalManager;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\ValidationException;
-use Dingo\Api\Exception\ResourceException;
+use Laravel\Scout\EngineManager;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
+    protected $validators = [
+        'username' => UsernameValidator::class,
+    ];
+
     public function boot()
     {
-        $this->app->make(DingoExceptionHandler::class)
-            ->register(function (ValidationException $exception) {
-                $errMsg = $exception->validator->getMessageBag()->first();
-                $errors = $exception->errors();
-                throw new ResourceException($errMsg, $errors);
-            });
+        Carbon::setLocale('zh');
 
-        $this->app->make(TransformerFactory::class)
-            ->setAdapter(function () {
-                return new Fractal((new FractalManager)->setSerializer(new DataSerializer));
-            });
-
-        Gate::before(function (User $user, $ability) {
+        Gate::before(function (User $user) {
             return $user->hasRole('Founder') ? true : null;
         });
 
+        Article::observe(ArticleObserver::class);
+        Comment::observe(CommentObserver::class);
+        Content::observe(ContentObserver::class);
+        User::observe(UserObserver::class);
+
+        $this->registerValidators();
+        $this->registerEsEngine();
+
         if ($this->app->environment('local')) {
             DB::enableQueryLog();
+
+            $this->app->register(IdeHelperServiceProvider::class);
         }
     }
 
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
+    protected function registerValidators()
     {
-        //
+        foreach ($this->validators as $rule => $validator) {
+            Validator::extend($rule, "{$validator}@validate");
+        }
+    }
+
+    protected function registerEsEngine()
+    {
+        resolve(EngineManager::class)->extend('es', function ($app) {
+            return new EsEngine(ClientBuilder::create()->setHosts(config('scout.elasticsearch.hosts'))->build(),
+                config('scout.elasticsearch.index'));
+        });
     }
 }

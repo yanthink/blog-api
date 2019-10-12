@@ -13,7 +13,13 @@ class BaiduLinkSubmit extends Command
     public function handle()
     {
         $urls = $this->option('url');
-        $api = 'http://data.zz.baidu.com/urls?site=https://www.einsition.com&token=' . config('app.baidu_urls_token');
+
+        $params = [
+            'site' => config('app.site_url'),
+            'token' => config('app.baidu_urls_token'),
+        ];
+
+        $api = 'http://data.zz.baidu.com/urls?'.http_build_query($params);
 
         $ch = curl_init();
         $options = [
