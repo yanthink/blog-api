@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Content;
 use App\Services\Filter\SensitiveFilter;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Cache;
  */
 class FilterContentSensitiveWords
 {
+    use Dispatchable;
+
     protected $content;
 
     /**

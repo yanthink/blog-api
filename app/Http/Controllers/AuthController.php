@@ -2,39 +2,108 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\WechatLogined;
 use App\Models\User;
 use Cache;
-use EasyWeChat;
-use Exception;
-use GuzzleHttp\Client;
+use Overtrue\LaravelWeChat\Facade as EasyWeChat;
+use EasyWeChat\Kernel\Http\StreamResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['login', 'wechatLogin', 'wechatRegister']);
+        $this->middleware('throttle:10,1')->only(['loginCode']);
+        $this->middleware('auth:api')->except([
+            'loginCode',
+            'login',
+            'wechatScanLogin',
+            'wechatLogin',
+            'wechatRegister',
+        ]);
+    }
+
+    public function loginCode()
+    {
+        $uuid = Str::random(16);
+
+        $miniProgram = EasyWeChat::miniProgram();
+
+        $response = $miniProgram->app_code->getUnlimit($uuid, [
+            'page' => 'pages/auth/scan-login',
+            'width' => 280,
+        ]);
+
+        if ($response instanceof StreamResponse) {
+            Cache::add("scan_login_key_{$uuid}", 1, now()->addMinutes(2));
+
+            $response->getBody()->rewind();
+            $base64_img = base64_encode($response->getBody()->getContents());
+
+            $data = compact('uuid', 'base64_img');
+
+            return compact('data');
+        }
+
+        return $response;
     }
 
     public function login(Request $request)
     {
-        try {
-            $token = app(Client::class)->post(url('/oauth/token'), [
-                'form_params' => [
-                    'grant_type' => 'password',
-                    'client_id' => config('passport.clients.password.client_id'),
-                    'client_secret' => config('passport.clients.password.client_secret'),
-                    'username' => $request->input('username'),
-                    'password' => $request->input('password'),
-                    'scope' => '',
-                ],
-            ]);
+        $this->validate($request, [
+            'account' => 'required_without:email',
+            'password' => 'required',
+        ]);
 
-            return $token;
-        } catch (Exception $e) {
-            abort($e->getCode(), $e->getMessage());
+        $account = $request->input('account');
+        $password = $request->input('password');
+
+        $user = User::query()
+                    ->where('username', $account)
+                    ->orWhere('email', $account)
+                    ->first();
+
+        if ($user && Hash::check($password, $user->password)) {
+            $token = $user->createToken('wechat user token');
+
+            $data = [
+                'access_token' => $token->accessToken,
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+            ];
+
+            return compact('data');
         }
+
+        abort(422, '用户名或密码不正确');
+    }
+
+    public function wechatScanLogin(Request $request)
+    {
+        $this->validate($request, [
+            'code' => 'required',
+            'uuid' => 'required|size:16',
+        ]);
+
+        $code = $request->input('code');
+        $uuid = $request->input('uuid');
+
+        abort_if(!Cache::has("scan_login_key_{$uuid}"), 422, '小程序码无效或已过期！');
+
+        $miniProgram = EasyWeChat::miniProgram();
+        $miniProgramSession = $miniProgram->auth->session($code);
+
+        $user = User::query()->where('wechat_openid', $miniProgramSession->openid)->first();
+
+        abort_if(!$user, 406, '用户不存在！');
+
+        $token = $user->createToken('web user token');
+
+        broadcast(new WechatLogined($uuid, $token->accessToken, $user->getAllPermissions()->pluck('name')));
+
+        return $this->withNoContent();
     }
 
     public function wechatLogin(Request $request)
@@ -46,7 +115,7 @@ class AuthController extends Controller
         $miniProgram = EasyWeChat::miniProgram();
         $miniProgramSession = $miniProgram->auth->session($request->input('code'));
 
-        $user = User::where('wechat_openid', $miniProgramSession->openid)->first();
+        $user = User::query()->where('wechat_openid', $miniProgramSession->openid)->first();
 
         abort_if(!$user, 406, '用户不存在！');
 
@@ -74,7 +143,7 @@ class AuthController extends Controller
         $openId = $miniProgramSession->openid;
         $sessionKey = $miniProgramSession->session_key;
 
-        $lockName = self::class."@store:$openId";
+        $lockName = 'wechat_register_'.$openId;
         $lock = Cache::lock($lockName, 5);
         abort_if(!$lock->get(), 429, '请勿重复操作！');
 
@@ -85,7 +154,7 @@ class AuthController extends Controller
 
         abort_if($signature !== $signature2, 403, '数据不合法！');
 
-        $user = User::where('wechat_openid', $openId)->first();
+        $user = User::query()->where('wechat_openid', $openId)->first();
 
         if (!$user) {
             $user = new User;
@@ -106,6 +175,7 @@ class AuthController extends Controller
 
             $user->extends = [
                 'country' => 'China',
+                'nick_name' => Arr::get($userInfo, 'nickName'),
                 'province' => Arr::get($userInfo, 'province'),
                 'city' => Arr::get($userInfo, 'city'),
                 'geographic' => Arr::get($userInfo, 'geographic'),
@@ -114,6 +184,7 @@ class AuthController extends Controller
             $user->save();
         }
 
+        $lock->release();
 
         $token = $user->createToken('wechat user token');
 

@@ -20,8 +20,8 @@ class ArticleController extends Controller
         }
 
         $articles = Article::query()
-                           ->orderByDesc('id')
                            ->filter($request->all())
+                           ->orderByDesc('id')
                            ->paginate($request->get('per_page'));
 
         return ArticleResource::collection($articles);
@@ -39,6 +39,8 @@ class ArticleController extends Controller
         abort_if(!$article->visible, 404);
 
         $article->update(['cache->views_count' => $article->cache['views_count'] + 1]);
+
+        $article->append(['has_favorited', 'has_liked']);
 
         return new ArticleResource($article);
     }

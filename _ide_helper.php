@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 6.0.4 on 2019-10-10 09:56:14.
+ * Generated for Laravel 6.0.4 on 2019-10-15 14:05:33.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14347,26 +14347,6 @@ namespace Illuminate\Support\Facades {
  
 }
 
-namespace Illuminate\Support { 
-
-    /**
-     * 
-     *
-     */ 
-    class Arr {
-         
-    }
-
-    /**
-     * 
-     *
-     */ 
-    class Str {
-         
-    }
- 
-}
-
 namespace Facade\Ignition\Facades { 
 
     /**
@@ -14882,8 +14862,6 @@ namespace Overtrue\LaravelWeChat {
 namespace  { 
 
     class App extends \Illuminate\Support\Facades\App {}
-
-    class Arr extends \Illuminate\Support\Arr {}
 
     class Artisan extends \Illuminate\Support\Facades\Artisan {}
 
@@ -17705,8 +17683,6 @@ namespace  {
     class Session extends \Illuminate\Support\Facades\Session {}
 
     class Storage extends \Illuminate\Support\Facades\Storage {}
-
-    class Str extends \Illuminate\Support\Str {}
 
     class URL extends \Illuminate\Support\Facades\URL {}
 

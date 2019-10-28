@@ -121,7 +121,8 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', 'blog_database_'),
+            // todo 加前缀后广播 Channel 也会自动加前缀，这回导致前端和后端的 Channel 对不上
+            'prefix' => env('REDIS_PREFIX', ''),
         ],
 
         'default' => [

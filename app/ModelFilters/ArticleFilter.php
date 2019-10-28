@@ -3,6 +3,7 @@
 namespace App\ModelFilters;
 
 use EloquentFilter\ModelFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleFilter extends ModelFilter
@@ -26,4 +27,10 @@ class ArticleFilter extends ModelFilter
         }
     }
 
+    public function tags($id)
+    {
+        $this->related('tags', function (Builder $builder) use ($id) {
+            $builder->whereIn('tags.id', (array)$id);
+        });
+    }
 }

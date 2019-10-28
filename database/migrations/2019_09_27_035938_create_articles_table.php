@@ -8,12 +8,13 @@ class CreateArticlesTable extends Migration
 {
     public function up()
     {
-        Schema::create('articles', function(Blueprint $table) {
+        Schema::create('articles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->boolean('visible')->default(true);
-            $table->string('title')->comment('标题');
-            $table->string('preview')->comment('预览图');
+            $table->string('title');
+            $table->string('preview');
+            $table->bigInteger('heat')->default(0)->index()->comment('热度');
             $table->json('cache')->nullable()->comment('数据缓存');
             $table->timestamps();
             $table->softDeletes();

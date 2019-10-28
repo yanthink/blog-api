@@ -6,10 +6,14 @@ use EloquentFilter\ModelFilter;
 
 class UserFilter extends ModelFilter
 {
-
-    public function name($name)
+    public function username($username)
     {
-        $this->where('name', 'like', sprintf('%%%s%%', $name));
+        $this->where('username', 'like', sprintf('%%%s%%', $username));
+    }
+
+    public function q($q)
+    {
+        $this->where('username', 'like', sprintf('%s%%', $q));
     }
 
 }

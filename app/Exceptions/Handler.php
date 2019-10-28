@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\Translation\Exception\InvalidResourceException;
 
 class Handler extends ExceptionHandler
 {
@@ -23,6 +25,10 @@ class Handler extends ExceptionHandler
 
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof ValidationException) {
+            abort(422, $exception->validator->getMessageBag()->first());
+        }
+
         return parent::render($request, $exception);
     }
 }

@@ -2,17 +2,16 @@
 
 namespace App\Providers;
 
+use App\Listeners\RelationToggledListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Overtrue\LaravelFollow\Events\RelationToggled;
+
 
 class EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
-        'Laravel\Passport\Events\AccessTokenCreated' => [
-            // 'App\Listeners\RevokeOldTokens',
-        ],
-
-        'Laravel\Passport\Events\RefreshTokenCreated' => [
-            // 'App\Listeners\PruneOldTokens',
+        RelationToggled::class => [
+            RelationToggledListener::class,
         ],
     ];
 

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Observers\ArticleObserver;
 use App\Observers\CommentObserver;
 use App\Observers\ContentObserver;
+use App\Observers\NotificationObserver;
 use App\Observers\UserObserver;
 use App\Services\EsEngine;
 use App\Validators\UsernameValidator;
@@ -17,6 +18,7 @@ use Carbon\Carbon;
 use DB;
 use Elasticsearch\ClientBuilder;
 use Gate;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\EngineManager;
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         Comment::observe(CommentObserver::class);
         Content::observe(ContentObserver::class);
         User::observe(UserObserver::class);
+        DatabaseNotification::observe(NotificationObserver::class);
 
         $this->registerValidators();
         $this->registerEsEngine();

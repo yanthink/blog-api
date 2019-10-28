@@ -14,12 +14,14 @@
         "laravel/framework": "^6.0",
         "laravel/passport": "^7.5",
         "laravel/scout": "^7.2",
+        "laravel/telescope": "^2.1",
         "laravel/tinker": "^1.0",
         "overtrue/laravel-follow": "^1.1",
         "overtrue/laravel-wechat": "^5.0",
         "spatie/laravel-permission": "^3.0",
         "tamayo/laravel-scout-elastic": "^5.0",
-        "tucker-eric/eloquentfilter": "^2.0"
+        "tucker-eric/eloquentfilter": "^2.0",
+        "zgldh/qiniu-laravel-storage": "^0.10.3"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",

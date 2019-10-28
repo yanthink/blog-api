@@ -71,12 +71,16 @@ DB_PASSWORD=
 #### 5. 创建软连接
 
     php artisan storage:link
+    
+#### 6. 安装 telescope
+    
+    php artisan telescope:install
 
-#### 6. 生成数据表及生成测试数据
+#### 7. 生成数据表及生成测试数据
 
     php artisan migrate --seed
 
-#### 7. 生成加密 oauth_clients
+#### 8. 生成加密 oauth_clients
 
     php artisan passport:install
 

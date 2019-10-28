@@ -40,20 +40,25 @@ class Resource extends JsonResource
             $includes = array_filter(explode(',', $includes));
         }
 
-        $parsed = [];
-        foreach ($includes as $include) {
-            $nested = explode('.', $include);
+        $getFullIncludes = function ($includes) {
+            $parsed = [];
+            foreach ($includes as $include) {
+                $nested = explode('.', $include);
 
-            $part = array_shift($nested);
-            $parsed[] = $part;
-
-            while (count($nested) > 0) {
-                $part .= '.'.array_shift($nested);
+                $part = array_shift($nested);
                 $parsed[] = $part;
-            }
-        }
 
-        $requestedIncludes = array_intersect(static::$availableIncludes, array_values(array_unique($parsed)));
+                while (count($nested) > 0) {
+                    $part .= '.'.array_shift($nested);
+                    $parsed[] = $part;
+                }
+            }
+
+            return array_values(array_unique($parsed));
+        };
+
+
+        $requestedIncludes = array_intersect($getFullIncludes(static::$availableIncludes), $getFullIncludes($includes));
 
         return $requestedIncludes;
     }

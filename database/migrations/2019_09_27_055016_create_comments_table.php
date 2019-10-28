@@ -14,7 +14,7 @@ class CreateCommentsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('root_id')->default(0);
             $table->unsignedBigInteger('parent_id')->default(0);
-            $table->unsignedInteger('popular')->default(0)->index();
+            $table->bigInteger('heat')->default(0)->index()->comment('热度');
             $table->json('cache')->nullable();
             $table->timestamps();
             $table->softDeletes();

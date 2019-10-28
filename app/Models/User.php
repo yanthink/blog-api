@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ToggleVote;
 use EloquentFilter\Filterable;
 use Hash;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +14,62 @@ use Overtrue\LaravelFollow\Traits\CanLike;
 use Overtrue\LaravelFollow\Traits\CanVote;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * App\Models\User
+ * @property int $id
+ * @property string|null $username
+ * @property string|null $email
+ * @property string|null $wechat_openid 小程序OPENID
+ * @property string $password
+ * @property string $avatar
+ * @property string $gender
+ * @property string $bio 座右铭
+ * @property array|null $settings 个人设置
+ * @property array|null $extends 扩展数据
+ * @property array|null $cache 数据缓存
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Article[] $articles
+ * @property-read int|null $articles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
+ * @property-read int|null $clients_count
+ * @property-read mixed $has_password
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
+ * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User filter($input = [], $filter = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User paginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User simplePaginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereBeginsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereBio($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCache($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereEndsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereExtends($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereLike($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereSettings($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWechatOpenid($value)
+ * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
+ * @property-read int|null $comments_count
+ */
 class User extends Authenticatable
 {
     use Notifiable;
@@ -22,6 +79,7 @@ class User extends Authenticatable
     use CanFavorite;
     use CanLike;
     use CanVote;
+    use ToggleVote;
 
     const SETTINGS_FIELDS = [
         'comment_email_notify' => true,
@@ -30,6 +88,7 @@ class User extends Authenticatable
 
     const EXTENDS_FIELDS = [
         'country' => 'China',
+        'nick_name' => '',
         'province' => '',
         'city' => '',
         'geographic' => null,
@@ -37,10 +96,8 @@ class User extends Authenticatable
 
     const CACHE_FIELDS = [
         'unread_count' => 0,
-        'article_count' => 0,
-        'comment_count' => 0,
-        'like_count' => 0,
-        'favorite_count' => 0,
+        'articles_count' => 0,
+        'comments_count' => 0,
     ];
 
     const SENSITIVE_FIELDS = [
@@ -61,6 +118,9 @@ class User extends Authenticatable
         'extends',
         'settings',
         'cache',
+        'cache->unread_count',
+        'cache->articles_count',
+        'cache->comments_count',
     ];
 
     protected $hidden = [
@@ -128,13 +188,34 @@ class User extends Authenticatable
         return !Hash::needsRehash($this->password);
     }
 
+    public function getUsernameAttribute($value)
+    {
+        return $value ?? $this->extends['nick_name'];
+    }
+
     public function articles()
     {
         return $this->hasMany(Article::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function findForPassport($identifier)
     {
         return $this->orWhere('email', $identifier)->orWhere('username', $identifier)->first();
+    }
+
+    public function refreshCache()
+    {
+        $this->update([
+            'cache' => array_merge($this->cache, [
+                'unread_count' => $this->unreadNotifications()->count(),
+                'articles_count' => $this->articles()->count(),
+                'comments_count' => $this->comments()->count(),
+            ]),
+        ]);
     }
 }

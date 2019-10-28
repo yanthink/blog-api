@@ -80,4 +80,6 @@ return [
 
     ],
 
+    'attachment_disk' => env('ATTACHMENT_DISK', 'public'),
+
 ];
