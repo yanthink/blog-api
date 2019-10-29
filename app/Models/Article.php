@@ -16,7 +16,6 @@ use Overtrue\LaravelFollow\Traits\CanBeLiked;
 
 /**
  * App\Models\Article
- *
  * @property int $id
  * @property int $user_id
  * @property int $visible
@@ -185,6 +184,11 @@ class Article extends Model
         return $this->relationLoaded('likers')
             ? $this->likers->contains(Auth::user())
             : $this->isLikedBy(Auth::id());
+    }
+
+    public function getUrlAttribute()
+    {
+        return sprintf('%s/articles/%d', config('app.site_url'), $this->id);
     }
 
     public function content()

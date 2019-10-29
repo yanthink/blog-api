@@ -193,6 +193,11 @@ class User extends Authenticatable
         return $value ?? $this->extends['nick_name'];
     }
 
+    public function getUrlAttribute()
+    {
+        return sprintf('%s/%s', config('app.site_url'), $this->username);
+    }
+
     public function articles()
     {
         return $this->hasMany(Article::class);

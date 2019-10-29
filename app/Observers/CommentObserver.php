@@ -2,8 +2,12 @@
 
 namespace App\Observers;
 
+use App\Jobs\FetchContentMentions;
 use App\Jobs\PushContentImagesToAttachmentDisk;
+use App\Models\Article;
 use App\Models\Comment;
+use App\Notifications\CommentMyArticle;
+use App\Notifications\ReplyMyComment;
 use Illuminate\Support\Facades\Auth;
 
 class CommentObserver
@@ -50,6 +54,16 @@ class CommentObserver
         if ($comment->root_id) {
             $comment->root->refreshCache();
         }
+
+        switch ($comment->commentable_type) {
+            case Article::class:
+                if (!$comment->parent_id) {
+                    $comment->commentable->user->notify(new CommentMyArticle($comment));
+                } else {
+                    $comment->parent->user->notify(new ReplyMyComment($comment));
+                }
+                break;
+        }
     }
 
     public function updated(Comment $comment)
@@ -74,6 +88,7 @@ class CommentObserver
 
             // jobs 会有 update, 所以不能在 Content Model 事件里触发，否则会导致死循环。
             PushContentImagesToAttachmentDisk::dispatch($comment->content);
+            FetchContentMentions::dispatch($comment->content);
         }
     }
 }

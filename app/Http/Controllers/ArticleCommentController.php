@@ -56,8 +56,6 @@ class ArticleCommentController extends Controller
 
         $article->comments()->save($comment);
 
-        $article->user->notify(new CommentMyArticle($comment));
-
         $lock->release();
 
         return new CommentResource($comment);

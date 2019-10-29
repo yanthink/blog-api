@@ -8,4 +8,8 @@
 识别码：{{$identifyingCode}}
 
 有效期：2分钟
+
+Thanks.
+
+{{ config('app.name') }}
 @endcomponent

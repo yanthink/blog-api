@@ -12,3 +12,30 @@ if (!function_exists('friendly_numbers')) {
         return (string)$n;
     }
 }
+
+if (!function_exists('is_online')) {
+    function is_online($user)
+    {
+        $id = $user instanceof \App\Models\User ? $user->id : $user;
+
+        try {
+            $response = resolve(\GuzzleHttp\Client::class)->get(
+                sprintf(
+                    '%s/apps/%s/channels/%s',
+                    config('app.laravel_echo_server_url'),
+                    config('app.laravel_echo_server_app_id'),
+                    new \Illuminate\Broadcasting\PrivateChannel('App.Models.User.'.$id)
+                ),
+                [
+                    'query' => ['auth_key' => config('app.laravel_echo_server_key')],
+                ]
+            );
+
+            $result = json_decode($response->getBody()->getContents());
+
+            return $result->occupied;
+        } catch (Exception $exception) {
+            return false;
+        }
+    }
+}

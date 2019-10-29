@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\FetchContentMentions;
 use App\Jobs\PushContentImagesToAttachmentDisk;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,7 @@ class ArticleObserver
 
             // jobs 会有 update, 所以不能在 Content Model 事件里触发，否则会导致死循环。
             PushContentImagesToAttachmentDisk::dispatch($article->content);
+            FetchContentMentions::dispatch($article->content);
         }
     }
 }

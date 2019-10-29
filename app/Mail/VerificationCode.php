@@ -34,6 +34,6 @@ class VerificationCode extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.users.code');
+        return $this->markdown('mails.verification_code');
     }
 }

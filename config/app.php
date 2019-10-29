@@ -58,6 +58,12 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'laravel_echo_server_url' => env('LARAVEL_ECHO_SERVER_URL', 'http://localhost:6001'),
+
+    'laravel_echo_server_app_id' => env('LARAVEL_ECHO_SERVER_APP_ID'),
+
+    'laravel_echo_server_key' => env('LARAVEL_ECHO_SERVER_KEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
