@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\MissingValue;
+use Illuminate\Support\Str;
 
 class Resource extends JsonResource
 {
@@ -60,6 +60,19 @@ class Resource extends JsonResource
 
         $requestedIncludes = array_intersect($getFullIncludes(static::$availableIncludes), $getFullIncludes($includes));
 
-        return $requestedIncludes;
+        $relations = [];
+
+        foreach ($requestedIncludes as $relation) {
+            $method = Str::camel(str_replace('.', '_', $relation)).'Query';
+            if (method_exists(static::class, $method)) {
+                $relations[$relation] = function ($query) use ($method) {
+                    forward_static_call([static::class, $method], $query);
+                };
+                continue;
+            }
+            $relations[] = $relation;
+        }
+
+        return $relations;
     }
 }

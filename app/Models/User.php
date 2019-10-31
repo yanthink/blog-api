@@ -16,6 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User
+ *
  * @property int $id
  * @property string|null $username
  * @property string|null $email
@@ -69,6 +70,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
  * @property-read int|null $comments_count
+ * @property-read mixed $url
  */
 class User extends Authenticatable
 {

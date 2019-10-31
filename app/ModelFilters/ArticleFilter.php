@@ -27,10 +27,10 @@ class ArticleFilter extends ModelFilter
         }
     }
 
-    public function tags($id)
+    public function tagIds($ids)
     {
-        $this->related('tags', function (Builder $builder) use ($id) {
-            $builder->whereIn('tags.id', (array)$id);
+        $this->related('tags', function (Builder $builder) use ($ids) {
+            $builder->whereIn('tags.id', (array)$ids);
         });
     }
 }

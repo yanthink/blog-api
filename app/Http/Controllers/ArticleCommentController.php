@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CommentResource;
 use App\Models\Article;
 use App\Models\Comment;
-use App\Notifications\CommentMyArticle;
 use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,18 +14,27 @@ class ArticleCommentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:api'])->except(['index']);
+        $this->middleware(['auth:api'])->except(['index', 'show']);
     }
 
-    public function index(Request $request, Article $article)
+    public function index(Request $request, $articleId)
     {
-        $comments = $article->comments()
-                            ->filter($request->all())
-                            ->orderByDesc('heat')
-                            ->orderBy('id')
-                            ->paginate($request->get('per_page'));
+        $comments = Comment::query()
+                           ->where('commentable_type', Article::class)
+                           ->where('commentable_id', $articleId)
+                           ->filter($request->all())
+                           ->orderByDesc('heat')
+                           ->orderBy('id')
+                           ->paginate($request->get('per_page'));
 
         return CommentResource::collection($comments);
+    }
+
+    public function show($article, Comment $comment)
+    {
+        $comment->append(['has_up_voted', 'has_down_voted']);
+
+        return new CommentResource($comment);
     }
 
     public function store(Request $request, Article $article)

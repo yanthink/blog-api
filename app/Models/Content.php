@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Content
- *
  * @property int $id
  * @property string $contentable_type
  * @property int $contentable_id
@@ -17,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $contentable
+ * @property mixed $combine_markdown
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $mentions
  * @property-read int|null $mentions_count
  * @method static bool|null forceDelete()
@@ -56,6 +56,20 @@ class Content extends Model
         'id' => 'int',
         'contentable_id' => 'int',
     ];
+
+    protected $appends = ['combine_markdown'];
+
+    public function setCombineMarkdownAttribute($value)
+    {
+        $this->combine_markdown = $value;
+    }
+
+    public function getCombineMarkdownAttribute()
+    {
+        $this->combine_markdown = $this->combine_markdown ?? $this->markdown;
+
+        return $this->combine_markdown;
+    }
 
     public function contentable()
     {

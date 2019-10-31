@@ -7,7 +7,6 @@
 @endphp
 
 [{{ '@' . $comment->user->username }}]({{ $comment->user->url }})
-
 @if ($comment->commentable_type === App\Models\Article::class)
 评论了您的文章 [《{{ $comment->commentable->title }}》]({{ $comment->commentable->url .'#comment-'.$comment->id}}) ：
 @endif

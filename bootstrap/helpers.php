@@ -28,6 +28,7 @@ if (!function_exists('is_online')) {
                 ),
                 [
                     'query' => ['auth_key' => config('app.laravel_echo_server_key')],
+                    'timeout' => 3,
                 ]
             );
 

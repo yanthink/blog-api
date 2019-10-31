@@ -12,7 +12,7 @@ class CreateCommentsTable extends Migration
             $table->bigIncrements('id');
             $table->morphs('commentable');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('root_id')->default(0);
+            $table->unsignedBigInteger('root_id')->default(0)->index();
             $table->unsignedBigInteger('parent_id')->default(0);
             $table->bigInteger('heat')->default(0)->index()->comment('热度');
             $table->json('cache')->nullable();

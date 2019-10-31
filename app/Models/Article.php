@@ -16,6 +16,7 @@ use Overtrue\LaravelFollow\Traits\CanBeLiked;
 
 /**
  * App\Models\Article
+ *
  * @property int $id
  * @property int $user_id
  * @property int $visible
@@ -67,6 +68,7 @@ use Overtrue\LaravelFollow\Traits\CanBeLiked;
  * @property-read mixed $friendly_comments_count
  * @property-read mixed $friendly_likes_count
  * @property-read mixed $friendly_views_count
+ * @property-read mixed $url
  */
 class Article extends Model
 {

@@ -29,7 +29,7 @@
 
 - Nginx 1.8+
 - PHP >= 7.1.3
-- MySQL 5.7+
+- MySQL 8.0+
 - Redis 3.0+
 - Elasticsearch 6.0+
 
