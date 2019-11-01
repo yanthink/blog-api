@@ -20,6 +20,8 @@ class PushContentImagesToAttachmentDisk implements ShouldQueue
 
     public $timeout = 120;
 
+    public $queue = 'high';
+
     protected $content;
 
     protected $tmpDisk;

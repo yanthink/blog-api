@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Mail\ReplyComment;
+use App\Mail\NewComment;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -30,12 +30,18 @@ class ReplyMyComment extends Notification implements ShouldQueue
             return ['database', 'broadcast'];
         }
 
-        return ['database', 'mail'];
+        $via = ['database'];
+
+        if ($notifiable->settings['comment_email_notify']) {
+            $via[] = 'mail';
+        }
+
+        return $via;
     }
 
     public function toMail(User $notifiable)
     {
-        return (new ReplyComment($this->comment))->to($notifiable->email);
+        return (new NewComment($this->comment))->to($notifiable->email);
     }
 
     public function toArray()

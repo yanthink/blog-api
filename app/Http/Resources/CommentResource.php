@@ -59,8 +59,9 @@ class CommentResource extends Resource
         $databaseQuery = $builder->getQuery()->getQuery();
         $databaseQuery->wheres = [];
         $databaseQuery->columns = ['*'];
+        $databaseQuery->orders = [];
 
-        $builder->fromSub($subSql, 'new_comments')->withTrashed()->where('new_comments.rank', '<=', 3);
+        $builder->fromSub($subSql, 'new_comments')->withoutGlobalScopes()->where('new_comments.rank', '<=', 3);
 
         $builder->when(Auth::id(), function (Builder $builder, $id) {
             $builder->with([

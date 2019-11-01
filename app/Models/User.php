@@ -85,7 +85,7 @@ class User extends Authenticatable
 
     const SETTINGS_FIELDS = [
         'comment_email_notify' => true,
-        'like_email_notify' => true,
+        'liked_email_notify' => true,
     ];
 
     const EXTENDS_FIELDS = [

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Content
+ *
  * @property int $id
  * @property string $contentable_type
  * @property int $contentable_id

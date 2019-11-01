@@ -2,27 +2,37 @@
 
 namespace App\Notifications;
 
-use App\Mail\NewComment;
+use App\Mail\Liked;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notification;
 
-class CommentMyArticle extends Notification implements ShouldQueue
+class UpVotedMyComment extends Notification implements ShouldQueue
 {
     use Queueable;
 
     protected $comment;
 
-    public function __construct(Comment $comment)
+    protected $causer;
+
+    /**
+     * UpVotedMyComment constructor.
+     *
+     * @param Comment $comment
+     * @param User|Model $causer
+     */
+    public function __construct(Comment $comment, $causer)
     {
         $this->comment = $comment;
+        $this->causer = $causer;
     }
 
     public function via(User $notifiable)
     {
-        if ($notifiable->id == $this->comment->user_id) {
+        if ($notifiable->id == $this->causer->id) {
             return [];
         }
 
@@ -32,7 +42,7 @@ class CommentMyArticle extends Notification implements ShouldQueue
 
         $via = ['database'];
 
-        if ($notifiable->settings['comment_email_notify']) {
+        if ($notifiable->settings['liked_email_notify']) {
             $via[] = 'mail';
         }
 
@@ -41,15 +51,15 @@ class CommentMyArticle extends Notification implements ShouldQueue
 
     public function toMail(User $notifiable)
     {
-        return (new NewComment($this->comment))->to($notifiable->email);
+        return (new Liked($this->comment, $this->causer))->to($notifiable->email);
     }
 
     public function toArray()
     {
         return [
-            'user_id' => $this->comment->user->id,
-            'username' => $this->comment->user->username,
-            'avatar' => $this->comment->user->avatar,
+            'user_id' => $this->causer->id,
+            'username' => $this->causer->username,
+            'avatar' => $this->causer->avatar,
             'comment_id' => $this->comment->id,
             'content' => $this->comment->content->markdown,
             'article_id' => $this->comment->commentable->id,

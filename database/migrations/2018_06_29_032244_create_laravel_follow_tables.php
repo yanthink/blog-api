@@ -28,10 +28,24 @@ class CreateLaravelFollowTables extends Migration
             $table->softDeletes();
 
             $table->foreign($userForeignKey)
-                ->references(config('follow.users_table_primary_key', 'id'))
-                ->on(config('follow.users_table_name', 'users'))
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                  ->references(config('follow.users_table_primary_key', 'id'))
+                  ->on(config('follow.users_table_name', 'users'))
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
+        });
+
+        Schema::create(config('follow.followable_table', 'followables').'_cache', function (Blueprint $table) {
+            $userForeignKey = config('follow.users_table_foreign_key', 'user_id');
+            $table->unsignedBigInteger($userForeignKey);
+            $table->morphs('followable');
+            $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
+            $table->timestamps();
+
+            $table->foreign($userForeignKey)
+                  ->references(config('follow.users_table_primary_key', 'id'))
+                  ->on(config('follow.users_table_name', 'users'))
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
         });
     }
 
@@ -40,10 +54,15 @@ class CreateLaravelFollowTables extends Migration
      */
     public function down()
     {
-        Schema::table(config('follow.followable_table', 'followables'), function ($table) {
+        Schema::table(config('follow.followable_table', 'followables'), function (Blueprint $table) {
             $table->dropForeign(config('follow.followable_table', 'followables').'_user_id_foreign');
         });
 
+        Schema::table(config('follow.followable_table', 'followables').'_cache', function (Blueprint $table) {
+            $table->dropForeign(config('follow.followable_table', 'followables').'_cache_user_id_foreign');
+        });
+
         Schema::drop(config('follow.followable_table', 'followables'));
+        Schema::drop(config('follow.followable_table', 'followables').'_cache');
     }
 }
