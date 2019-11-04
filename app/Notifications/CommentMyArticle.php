@@ -32,7 +32,7 @@ class CommentMyArticle extends Notification implements ShouldQueue
 
         $via = ['database'];
 
-        if ($notifiable->settings['comment_email_notify']) {
+        if ($notifiable->email && $notifiable->settings['comment_email_notify']) {
             $via[] = 'mail';
         }
 

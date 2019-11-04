@@ -14,7 +14,13 @@ use Illuminate\Support\Facades\Auth;
  */
 class CommentResource extends Resource
 {
-    protected static $availableIncludes = ['user', 'parent.user', 'children.user', 'children.parent.user'];
+    protected static $availableIncludes = [
+        'user',
+        'parent.user',
+        'children.user',
+        'children.parent.user',
+        'commentable',
+    ];
 
     public function toArray($request)
     {
@@ -41,6 +47,7 @@ class CommentResource extends Resource
         return array_merge($data, [
             'content' => new ContentResource($this->resource->content),
             'user' => new UserResource($this->whenLoaded('user')),
+            'commentable' => new ArticleResource($this->whenLoaded('commentable')),
             'parent' => new CommentResource($this->whenLoaded('parent')),
             'children' => CommentResource::collection($this->whenLoaded('children')),
             'upvoters' => $this->when(false, null),
@@ -52,8 +59,12 @@ class CommentResource extends Resource
     {
         $subBuilder = clone $builder;
 
+        $order = 'heat desc, id asc';
+        if ($id = request('top_comment')) {
+            $order = "id = $id desc ".$order;
+        }
         $subSql = $subBuilder
-            ->selectRaw('*, row_number() over(partition by root_id order by heat desc, id asc) as `rank`')
+            ->selectRaw("*, row_number() over(partition by root_id order by $order) as `rank`")
             ->toSql();
 
         $databaseQuery = $builder->getQuery()->getQuery();

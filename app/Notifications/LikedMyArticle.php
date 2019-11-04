@@ -42,7 +42,7 @@ class LikedMyArticle extends Notification implements ShouldQueue
 
         $via = ['database'];
 
-        if ($notifiable->settings['liked_email_notify']) {
+        if ($notifiable->email && $notifiable->settings['liked_email_notify']) {
             $via[] = 'mail';
         }
 

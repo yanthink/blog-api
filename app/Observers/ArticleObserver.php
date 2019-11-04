@@ -60,7 +60,7 @@ class ArticleObserver
             $article->loadMissing('content');
 
             // jobs 会有 update, 所以不能在 Content Model 事件里触发，否则会导致死循环。
-            PushContentImagesToAttachmentDisk::dispatch($article->content);
+            PushContentImagesToAttachmentDisk::dispatch($article->content)->onQueue('high');
             FetchContentMentions::dispatch($article->content);
         }
     }

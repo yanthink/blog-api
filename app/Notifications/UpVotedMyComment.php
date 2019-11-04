@@ -42,7 +42,7 @@ class UpVotedMyComment extends Notification implements ShouldQueue
 
         $via = ['database'];
 
-        if ($notifiable->settings['liked_email_notify']) {
+        if ($notifiable->email && $notifiable->settings['liked_email_notify']) {
             $via[] = 'mail';
         }
 
@@ -61,9 +61,12 @@ class UpVotedMyComment extends Notification implements ShouldQueue
             'username' => $this->causer->username,
             'avatar' => $this->causer->avatar,
             'comment_id' => $this->comment->id,
+            'parent_id' => $this->comment->parent_id,
+            'root_id' => $this->comment->root_id,
             'content' => $this->comment->content->markdown,
-            'article_id' => $this->comment->commentable->id,
-            'article_title' => $this->comment->commentable->title,
+            'commentable_id' => $this->comment->commentable_id,
+            'commentable_type' => $this->comment->commentable_type,
+            'commentable_title' => $this->comment->commentable->title,
         ];
     }
 }

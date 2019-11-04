@@ -10,8 +10,6 @@ class VerificationCode extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $queue = 'high';
-
     /**
      * @var string 用户名
      */

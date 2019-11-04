@@ -24,6 +24,11 @@ class CommentFilter extends ModelFilter
         $this->where('parent_id', $id);
     }
 
+    public function topComment($id)
+    {
+        $this->orderByRaw("`id` = $id desc");
+    }
+
     public function loadMyVoteRelations()
     {
         $this->when(Auth::id(), function (Builder $builder, $id) {

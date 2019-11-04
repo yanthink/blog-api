@@ -17,4 +17,6 @@ Route::apiResource('articles.comments', 'ArticleCommentController');
 
 Route::get('search/users', 'UserController@search');
 
+Route::get('user/notifications', 'UserController@notifications');
+
 Route::post('attachments/upload', 'AttachmentController@upload');

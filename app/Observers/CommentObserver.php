@@ -87,7 +87,7 @@ class CommentObserver
             $comment->loadMissing('content');
 
             // jobs 会有 update, 所以不能在 Content Model 事件里触发，否则会导致死循环。
-            PushContentImagesToAttachmentDisk::dispatch($comment->content);
+            PushContentImagesToAttachmentDisk::dispatch($comment->content)->onQueue('high');
             FetchContentMentions::dispatch($comment->content);
         }
     }

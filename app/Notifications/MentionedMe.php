@@ -36,7 +36,13 @@ class MentionedMe extends Notification implements ShouldQueue
             return ['database', 'broadcast'];
         }
 
-        return ['database', 'mail'];
+        $via = ['database'];
+
+        if ($notifiable->email) {
+            $via[] = 'mail';
+        }
+
+        return $via;
     }
 
     public function toMail(User $notifiable)
@@ -64,6 +70,8 @@ class MentionedMe extends Notification implements ShouldQueue
             case Comment::class:
                 $data = array_merge($data, [
                     'comment_id' => $this->content->contentable_id,
+                    'parent_id' => $this->content->contentable->parent_id,
+                    'root_id' => $this->content->contentable->root_id,
                     'commentable_id' => $this->content->contentable->commentable_id,
                     'commentable_type' => $this->content->contentable->commentable_type,
                     'commentable_title' => $this->content->contentable->commentable->title,
