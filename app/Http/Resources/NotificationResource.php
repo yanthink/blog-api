@@ -19,7 +19,7 @@ class NotificationResource extends Resource
         return $data;
     }
 
-    public function getCreatedAtTimeago()
+    protected function getCreatedAtTimeago()
     {
         $now = now();
 

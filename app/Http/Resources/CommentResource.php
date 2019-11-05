@@ -22,6 +22,11 @@ class CommentResource extends Resource
         'commentable',
     ];
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return array
+     */
     public function toArray($request)
     {
         if ($this->resource->relationLoaded('upvoters')) {
@@ -32,9 +37,12 @@ class CommentResource extends Resource
             $this->resource->append(['has_down_voted']);
         }
 
-        if ($this->resource->relationLoaded('parent') && !!$this->resource->parent->root_id) {
+        if (
+            $this->resource->relationLoaded('parent') &&
+            ($request->routeIs('user.comments') || !!$this->resource->parent->root_id)
+        ) {
             $this->resource->content->combine_markdown = sprintf(
-                '%s//[@%s](%s)：%s',
+                '%s //[@%s](%s)：%s',
                 $this->resource->content->markdown,
                 $this->resource->parent->user->username,
                 $this->resource->parent->user->url,
@@ -61,7 +69,7 @@ class CommentResource extends Resource
 
         $order = 'heat desc, id asc';
         if ($id = request('top_comment')) {
-            $order = "id = $id desc ".$order;
+            $order = "id = $id desc, ".$order;
         }
         $subSql = $subBuilder
             ->selectRaw("*, row_number() over(partition by root_id order by $order) as `rank`")

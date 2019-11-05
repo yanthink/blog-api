@@ -34,35 +34,11 @@ class Resource extends JsonResource
 
     public static function getRequestIncludes()
     {
-        $includes = request('include');
-
-        if (!is_array($includes)) {
-            $includes = array_filter(explode(',', $includes));
-        }
-
-        $getFullIncludes = function ($includes) {
-            $parsed = [];
-            foreach ($includes as $include) {
-                $nested = explode('.', $include);
-
-                $part = array_shift($nested);
-                $parsed[] = $part;
-
-                while (count($nested) > 0) {
-                    $part .= '.'.array_shift($nested);
-                    $parsed[] = $part;
-                }
-            }
-
-            return array_values(array_unique($parsed));
-        };
-
-
-        $requestedIncludes = array_intersect($getFullIncludes(static::$availableIncludes), $getFullIncludes($includes));
+        $includes = array_intersect(parse_includes(static::$availableIncludes), parse_includes());
 
         $relations = [];
 
-        foreach ($requestedIncludes as $relation) {
+        foreach ($includes as $relation) {
             $method = Str::camel(str_replace('.', '_', $relation)).'Query';
             if (method_exists(static::class, $method)) {
                 $relations[$relation] = function ($query) use ($method) {

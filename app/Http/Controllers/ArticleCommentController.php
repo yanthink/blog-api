@@ -25,7 +25,7 @@ class ArticleCommentController extends Controller
                            ->filter($request->all())
                            ->orderByDesc('heat')
                            ->orderBy('id')
-                           ->paginate($request->get('per_page'));
+                           ->paginate($request->get('per_page', 10));
 
         return CommentResource::collection($comments);
     }

@@ -40,3 +40,31 @@ if (!function_exists('is_online')) {
         }
     }
 }
+
+if (!function_exists('parse_includes')) {
+    function parse_includes($includes = null)
+    {
+        if (is_null($includes)) {
+            $includes = request('include');
+        }
+
+        if (!is_array($includes)) {
+            $includes = array_filter(explode(',', $includes));
+        }
+
+        $parsed = [];
+        foreach ($includes as $include) {
+            $nested = explode('.', $include);
+
+            $part = array_shift($nested);
+            $parsed[] = $part;
+
+            while (count($nested) > 0) {
+                $part .= '.'.array_shift($nested);
+                $parsed[] = $part;
+            }
+        }
+
+        return array_values(array_unique($parsed));
+    }
+}

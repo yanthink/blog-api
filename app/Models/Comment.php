@@ -95,8 +95,6 @@ class Comment extends Model
 
     protected $table = 'comments';
 
-    protected $perPage = 10;
-
     protected $fillable = [
         'commentable_id',
         'commentable_type',

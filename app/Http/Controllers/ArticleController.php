@@ -22,7 +22,7 @@ class ArticleController extends Controller
         $articles = Article::query()
                            ->filter($request->all())
                            ->orderByDesc('id')
-                           ->paginate($request->get('per_page'));
+                           ->paginate($request->get('per_page', 10));
 
         return ArticleResource::collection($articles);
     }

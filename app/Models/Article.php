@@ -97,8 +97,6 @@ class Article extends Model
 
     protected $table = 'articles';
 
-    protected $perPage = 10;
-
     protected $with = ['content'];
 
     protected $fillable = [
