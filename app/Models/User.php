@@ -94,12 +94,14 @@ class User extends Authenticatable
         'province' => '',
         'city' => '',
         'geographic' => null,
+        'address' => '',
     ];
 
     const CACHE_FIELDS = [
         'unread_count' => 0,
         'articles_count' => 0,
         'comments_count' => 0,
+        'username_modify_count' => 0,
     ];
 
     const SENSITIVE_FIELDS = [
@@ -123,6 +125,7 @@ class User extends Authenticatable
         'cache->unread_count',
         'cache->articles_count',
         'cache->comments_count',
+        'cache->username_modify_count',
     ];
 
     protected $hidden = [

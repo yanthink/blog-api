@@ -22,11 +22,6 @@ class CommentResource extends Resource
         'commentable',
     ];
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return array
-     */
     public function toArray($request)
     {
         if ($this->resource->relationLoaded('upvoters')) {

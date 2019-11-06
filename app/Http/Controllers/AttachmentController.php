@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Storage;
@@ -30,6 +31,6 @@ class AttachmentController extends Controller
             'url' => $disk->url($path),
         ];
 
-        return compact('data');
+        return new Resource($data);
     }
 }

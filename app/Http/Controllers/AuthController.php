@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\WechatLogined;
+use App\Http\Resources\Resource;
 use App\Models\User;
 use Cache;
 use Overtrue\LaravelWeChat\Facade as EasyWeChat;
@@ -45,7 +46,7 @@ class AuthController extends Controller
 
             $data = compact('uuid', 'base64_img');
 
-            return compact('data');
+            return new Resource($data);
         }
 
         return $response;
@@ -74,7 +75,7 @@ class AuthController extends Controller
                 'permissions' => $user->getAllPermissions()->pluck('name'),
             ];
 
-            return compact('data');
+            return new Resource($data);
         }
 
         abort(422, '用户名或密码不正确');
@@ -125,7 +126,7 @@ class AuthController extends Controller
             'access_token' => $token->accessToken,
         ];
 
-        return compact('data');
+        return new Resource($data);
     }
 
     public function wechatRegister(Request $request)
@@ -192,6 +193,6 @@ class AuthController extends Controller
             'access_token' => $token->accessToken,
         ];
 
-        return compact('data');
+        return new Resource($data);
     }
 }
