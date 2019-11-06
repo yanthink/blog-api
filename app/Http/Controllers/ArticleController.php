@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ArticleRequest;
 use App\Http\Resources\ArticleResource;
+use App\Jobs\PushImageToAttachmentDisk;
 use App\Models\Article;
 use Illuminate\Http\Request;
 
@@ -21,7 +23,7 @@ class ArticleController extends Controller
 
         $articles = Article::query()
                            ->filter($request->all())
-                           ->orderByDesc('id')
+                           ->latest()
                            ->paginate($request->get('per_page', 10));
 
         return ArticleResource::collection($articles);
@@ -43,5 +45,35 @@ class ArticleController extends Controller
         $article->append(['has_favorited', 'has_liked']);
 
         return new ArticleResource($article);
+    }
+
+    public function store(ArticleRequest $request)
+    {
+        $this->authorize('store', Article::class);
+
+        $article = new Article;
+        $article->title = $request->input('title');
+        $article->preview = $request->input('preview');
+        $article->visible = $request->input('visible');
+        $article->save();
+
+        $article->tags()->sync($request->input('tags'));
+
+        return $this->withNoContent();
+    }
+
+    public function update(ArticleRequest $request, Article $article)
+    {
+        $this->authorize('update', $article);
+
+        $article->title = $request->input('title');
+        $article->preview = $request->input('preview');
+        $article->visible = $request->input('visible');
+        $article->updated_at = now();
+        $article->save();
+
+        $article->tags()->sync($request->input('tags'));
+
+        return $this->withNoContent();
     }
 }

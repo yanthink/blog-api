@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\Content;
+use App\Models\Tag;
 use App\Models\User;
 use App\Observers\ArticleObserver;
 use App\Observers\CommentObserver;
 use App\Observers\ContentObserver;
 use App\Observers\NotificationObserver;
+use App\Observers\TagObserver;
 use App\Observers\UserObserver;
 use App\Services\EsEngine;
 use App\Validators\UsernameValidator;
@@ -32,15 +34,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Carbon::setLocale('zh');
-
-        Gate::before(function (User $user) {
-            return $user->hasRole('Founder') ? true : null;
-        });
-
         Article::observe(ArticleObserver::class);
         Comment::observe(CommentObserver::class);
         Content::observe(ContentObserver::class);
         User::observe(UserObserver::class);
+        Tag::observe(TagObserver::class);
         DatabaseNotification::observe(NotificationObserver::class);
 
         $this->registerValidators();

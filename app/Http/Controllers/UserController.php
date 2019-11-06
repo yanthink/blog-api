@@ -6,9 +6,11 @@ use App\Events\UnreadNotificationsChange;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\FollowRelationResource;
 use App\Http\Resources\NotificationResource;
+use App\Http\Resources\PermissionsResource;
 use App\Http\Resources\Resource;
+use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
-use App\Jobs\PushAvatarToAttachmentDisk;
+use App\Jobs\PushImageToAttachmentDisk;
 use App\Mail\VerificationCode;
 use App\Models\FollowRelation;
 use App\Models\User;
@@ -19,12 +21,59 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:api');
+    }
+
+    public function index(Request $request)
+    {
+        $this->authorize('index', User::class);
+
+        $users = User::query()
+                     ->filter($request->all())
+                     ->latest()
+                     ->paginate($request->get('per_page', 10));
+
+        return UserResource::collection($users);
+    }
+
+    public function roles(User $user)
+    {
+        $this->authorize('index', Role::class);
+
+        return RoleResource::collection($user->roles);
+    }
+
+    public function permissions(User $user)
+    {
+        $this->authorize('index', Permission::class);
+
+        return PermissionsResource::collection($user->permissions);
+    }
+
+    public function assignRoles(Request $request, User $user)
+    {
+        $this->authorize('assignRoles', User::class);
+        $this->validate($request, ['roles.*' => 'integer']);
+        $user->syncRoles($request->input('roles'));
+
+        return $this->withNoContent();
+    }
+
+    public function assignPermissions(Request $request, User $user)
+    {
+        $this->authorize('assignPermissions', User::class);
+
+        $this->validate($request, ['permissions.*' => 'integer']);
+        $user->syncPermissions($request->input('permissions'));
+
+        return $this->withNoContent();
     }
 
     public function me(Request $request)
@@ -163,7 +212,7 @@ class UserController extends Controller
         }
 
         if ($avatar && $avatar != $user->avatar) {
-            $avatar = PushAvatarToAttachmentDisk::dispatchNow($avatar, 'avatar/'.$user->id.'/'.md5($user->id));
+            $avatar = PushImageToAttachmentDisk::dispatchNow($avatar, 'avatar/'.$user->id.'/'.md5($user->id));
 
             if ($avatar) {
                 $user->avatar = $avatar;

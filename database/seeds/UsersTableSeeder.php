@@ -8,7 +8,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $user = new User;
-        $user->name = 'admin';
+        $user->username = 'admin';
         $user->password = bcrypt('888888');
         $user->gender = 'male';
 

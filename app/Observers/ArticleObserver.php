@@ -4,8 +4,10 @@ namespace App\Observers;
 
 use App\Jobs\FetchContentMentions;
 use App\Jobs\PushContentImagesToAttachmentDisk;
+use App\Jobs\PushImageToAttachmentDisk;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ArticleObserver
 {
@@ -18,10 +20,6 @@ class ArticleObserver
 
     public function saving(Article $article)
     {
-        if (is_null($article->getOriginal('cache'))) {
-            $article->cache = [];
-        }
-
         if ($article->isDirty(['cache'])) {
             $heat = .001 * ($article->created_at->timestamp - 1514736000)
                     + Article::HEAT_VIEWS * $article->cache['views_count']
@@ -30,6 +28,25 @@ class ArticleObserver
                     + Article::HEAT_FAVORITE * $article->cache['favorites_count'];
 
             $article->heat = (integer)$heat;
+        }
+
+        if (is_null($article->getOriginal('cache'))) {
+            $article->cache = [];
+        }
+    }
+
+    public function saved(Article $article)
+    {
+        if ($article->preview && Str::startsWith($article->preview, \Storage::disk('public')->url('tmp'))) {
+            $preview = PushImageToAttachmentDisk::dispatchNow(
+                $article->preview,
+                'articles/'.$article->id.'/preview_'.md5($article->id)
+            );
+
+            if ($preview) {
+                $article->preview = $preview;
+                $article->save();
+            }
         }
     }
 

@@ -16,7 +16,6 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User
- *
  * @property int $id
  * @property string|null $username
  * @property string|null $email
@@ -145,6 +144,8 @@ class User extends Authenticatable
     protected $appends = [
         'has_password',
     ];
+
+    protected $guard_name = 'api';
 
     public function setSettingsAttribute($value)
     {

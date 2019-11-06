@@ -5,13 +5,14 @@ namespace App\Jobs;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Exception;
+use Illuminate\Support\Str;
 use Storage;
 
-class PushAvatarToAttachmentDisk
+class PushImageToAttachmentDisk
 {
     use Dispatchable;
 
-    protected $avatar;
+    protected $image;
 
     protected $filename;
 
@@ -19,9 +20,9 @@ class PushAvatarToAttachmentDisk
 
     protected $attachmentDisk;
 
-    public function __construct($avatar, $filename, $attachmentDisk = null)
+    public function __construct($image, $filename, $attachmentDisk = null)
     {
-        $this->avatar = $avatar;
+        $this->image = $image;
 
         $this->filename = $filename;
 
@@ -41,6 +42,10 @@ class PushAvatarToAttachmentDisk
 
     public function handle()
     {
+        if (!Str::startsWith($this->image, $this->tmpDisk->url('tmp'))) {
+            return false;
+        }
+
         $tmpUrlPattern = addcslashes(
             preg_replace(
                 '/^(https?)?:\/\//i',
@@ -48,11 +53,7 @@ class PushAvatarToAttachmentDisk
                 $this->tmpDisk->url('/')
             ), '/.');
 
-        if (!preg_match("/$tmpUrlPattern/i", $this->avatar)) {
-            return false;
-        }
-
-        $tmpImagePath = preg_replace("/^$tmpUrlPattern/", '', $this->avatar);
+        $tmpImagePath = preg_replace("/^$tmpUrlPattern/", '', $this->image);
 
         if (!$this->tmpDisk->exists($tmpImagePath)) {
             return false;

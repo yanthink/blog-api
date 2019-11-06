@@ -14,6 +14,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->nullable()->unique();
             $table->string('wechat_openid')->nullable()->unique()->comment('小程序OPENID');
             $table->string('password');
+            $table->rememberToken();
             $table->string('avatar');
             $table->enum('gender', ['male', 'female'])->default('male');
             $table->string('bio')->comment('座右铭');

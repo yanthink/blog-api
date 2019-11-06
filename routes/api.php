@@ -9,8 +9,9 @@ Route::post('auth/wechat_register', 'AuthController@wechatRegister');
 Route::post('relations/{relation}', 'RelationController@toggleRelation')->name('relations.toggle');
 
 Route::get('tags/all', 'TagController@all');
+Route::apiResource('tags', 'TagController')->except(['show', 'destroy']);
 
-Route::apiResource('articles', 'ArticleController');
+Route::apiResource('articles', 'ArticleController')->except(['destroy']);
 Route::apiResource('articles.comments', 'ArticleCommentController');
 
 Route::get('search/users', 'UserController@search');
@@ -23,5 +24,19 @@ Route::post('user/send_email_code', 'UserController@sendEmailCode');
 Route::post('user/base_info', 'UserController@updateBaseInfo');
 Route::post('user/settings', 'UserController@updateSettings');
 Route::post('user/password', 'UserController@updatePassword');
+
+Route::get('users/{user}/permissions', 'UserController@permissions');
+Route::get('users/{user}/roles', 'UserController@roles');
+Route::post('users/{user}/assign_permissions', 'UserController@assignPermissions');
+Route::post('users/{user}/assign_roles', 'UserController@assignRoles');
+Route::apiResource('users', 'UserController')->only(['index']);
+
+Route::get('roles/all', 'RoleController@all');
+Route::get('roles/{role}/permissions', 'RoleController@permissions');
+Route::post('roles/{role}/assign_permissions', 'RoleController@assignPermissions');
+Route::apiResource('roles', 'RoleController')->except(['destroy']);
+
+Route::get('permissions/all', 'PermissionController@all');
+Route::apiResource('permissions', 'PermissionController')->except(['destroy']);
 
 Route::post('attachments/upload', 'AttachmentController@upload');

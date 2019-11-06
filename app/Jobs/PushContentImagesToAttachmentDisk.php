@@ -80,7 +80,7 @@ class PushContentImagesToAttachmentDisk implements ShouldQueue
             preg_replace(
                 '/^(https?)?:\/\//i',
                 '(?:https?)?://',
-                $this->attachmentDisk->url('/')
+                $this->attachmentDisk->url($attachmentPath)
             ), '/.');
         $attachmentImagePattern = str_replace(
             ['label', 'href', 'title'],
@@ -101,7 +101,7 @@ class PushContentImagesToAttachmentDisk implements ShouldQueue
 
         $attachmentImages = collect($attachmentImages)
             ->map(function ($url) use ($attachmentUrlPattern) {
-                return preg_replace("/^$attachmentUrlPattern/", '', $url);
+                return str_replace($this->attachmentDisk->url('/'), '', $url);
             })
             ->all();
 
@@ -123,7 +123,7 @@ class PushContentImagesToAttachmentDisk implements ShouldQueue
             preg_replace(
                 '/^(https?)?:\/\//i',
                 '(?:https?)?://',
-                $this->tmpDisk->url('/')
+                $this->tmpDisk->url('tmp')
             ), '/.');
         $tmpImagePattern = str_replace(
             ['label', 'href', 'title'],
@@ -142,7 +142,7 @@ class PushContentImagesToAttachmentDisk implements ShouldQueue
                  * $match[3] title
                  */
                 $tmpImageUrl = $match[2];
-                $tmpImagePath = preg_replace("/^$tmpUrlPattern/", '', $tmpImageUrl);
+                $tmpImagePath = str_replace($this->tmpDisk->url('/'), '', $tmpImageUrl);
 
                 if ($this->tmpDisk->exists($tmpImagePath)) {
                     $tmpFile = $this->tmpDisk->path($tmpImagePath);
