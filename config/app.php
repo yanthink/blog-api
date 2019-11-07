@@ -173,6 +173,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Laravel\Telescope\TelescopeServiceProvider::class, // telescope 需要安装 bcmath 扩展
 
         /*
          * Application Service Providers...
@@ -181,7 +182,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class, // telescope 需要安装 bcmath 扩展
         App\Providers\RouteServiceProvider::class,
 
     ],

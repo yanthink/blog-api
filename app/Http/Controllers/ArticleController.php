@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ArticleRequest;
 use App\Http\Resources\ArticleResource;
-use App\Jobs\PushImageToAttachmentDisk;
 use App\Models\Article;
 use Illuminate\Http\Request;
 

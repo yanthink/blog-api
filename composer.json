@@ -40,7 +40,8 @@
         "laravel": {
             "dont-discover": [
                 "tamayo/laravel-scout-elastic",
-                "barryvdh/laravel-ide-helper"
+                "barryvdh/laravel-ide-helper",
+                "laravel/telescope"
             ]
         }
     },

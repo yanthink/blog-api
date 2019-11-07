@@ -30,6 +30,10 @@ class ArticleObserver
             $article->heat = (integer)$heat;
         }
 
+        if (is_null($article->preview)) {
+            $article->preview = '';
+        }
+
         if (is_null($article->getOriginal('cache'))) {
             $article->cache = [];
         }

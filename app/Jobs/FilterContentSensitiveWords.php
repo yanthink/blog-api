@@ -49,7 +49,7 @@ class FilterContentSensitiveWords
 
             Cache::increment($cacheKey);
 
-            $this->content = $sensitiveFilter->replace($this->content, '***');
+            $this->content = $sensitiveFilter->replace($this->content, '&#x2A;&#x2A;&#x2A;');
         }
 
         return $this->content;

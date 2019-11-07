@@ -34,6 +34,7 @@ class CommentResource extends Resource
 
         if (
             $this->resource->relationLoaded('parent') &&
+            $this->resource->parent &&
             ($request->routeIs('user.comments') || !!$this->resource->parent->root_id)
         ) {
             $this->resource->content->combine_markdown = sprintf(

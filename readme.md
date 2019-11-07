@@ -75,6 +75,9 @@ DB_PASSWORD=
 #### 6. 安装 telescope
     
     php artisan telescope:install
+    php artisan telescope:publish
+    
+> telescope 需要安装 bcmath 扩展，否则程序无报错但也无法运行（可以选择不启用，或者注释掉 `config/app.php` 下面的 `TelescopeServiceProvider` 服务提供注册）
 
 #### 7. 生成数据表及生成测试数据
 
@@ -110,35 +113,28 @@ cd $(brew --prefix elasticsearch)
 php artisan es:init
 ```
 
+#### 11. 安装 laravel-echo-server
+
+    npm install -g laravel-echo-server
+    laravel-echo-server client:add
+
+根据情况修改 `laravel-echo-server.json` 和 `.env` 配置，最后启动 laravel-echo server
+
+    laravel-echo-server start
+    
+nginx 配置
+
+    location /socket.io {
+        proxy_pass http://127.0.0.1:6001;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_redirect off;
+        proxy_read_timeout 60s;
+    }
+    
+
 至此, 安装完成 ^_^。
-
-
-## 扩展包使用情况
-
-| 扩展包 | 一句话描述 | 本项目应用场景 |
-| --- | --- | --- |
-| [dingo/api](https://github.com/dingo/api) | 处理api接口的开源插件 | 用于api接口 |
-| [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth) | 身份验证的软件包 | 用于api认证  |
-| [predis/predis](https://github.com/nrk/predis.git) | Redis 官方首推的 PHP 客户端开发包 | 缓存驱动 Redis 基础扩展包 |
-| [spatie/laravel-permissiont](https://github.com/spatie/laravel-permission) | 角色权限管理 | 角色和权限控制 |
-| [zgldh/qiniu-laravel-storage](https://github.com/zgldh/qiniu-laravel-storage) | Qiniu 云储存 Laravel 5 Storage版 | 存储附件 |
-| [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) | 代码提示及补全工具 | 代码提示及补全 |
-| [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar) | 页面调试工具栏 (对 phpdebugbar 的封装) | 开发环境中的 DEBUG |
-| [overtrue/laravel-wechat](https://github.com/overtrue/laravel-wechat) | 微信 SDK for Laravel / Lumen | 微信小程序登录 |
-
-## 自定义 Artisan 命令
-
-| 命令行名字 | 说明 | Cron | 代码调用 |
-| --- | --- | --- | --- |
-| `es:init` | 初始化elasticsearch | 无 | 无 |
-
-## 队列清单
-
-| 名称 | 说明 | 调用时机 |
-| --- | --- | --- |
-| PushArticleImagesToTargetDisk.php | 将文章图片保存到targetDisk | 发布文章和更新文章 |
-
-
-## 小程序二维码
-
-![file](http://qiniu.einsition.com/article/a27/126393085b4a7553b146d7099fa543fe.jpeg)
