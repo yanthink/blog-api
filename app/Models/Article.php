@@ -19,7 +19,7 @@ use Overtrue\LaravelFollow\Traits\CanBeLiked;
  *
  * @property int $id
  * @property int $user_id
- * @property int $visible
+ * @property int $state
  * @property string $title 标题
  * @property string $preview 预览图
  * @property int $heat 热度
@@ -60,7 +60,7 @@ use Overtrue\LaravelFollow\Traits\CanBeLiked;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereVisible($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereState($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withoutTrashed()
  * @mixin \Eloquent
@@ -101,7 +101,7 @@ class Article extends Model
 
     protected $fillable = [
         'user_id',
-        'visible',
+        'state',
         'title',
         'preview',
         'cache',
@@ -130,7 +130,7 @@ class Article extends Model
         parent::boot();
 
         static::addGlobalScope('visible', function (Builder $builder) {
-            $builder->where('visible', 1);
+            $builder->where('state', 1);
         });
     }
 
@@ -231,7 +231,7 @@ class Article extends Model
 
     public function shouldBeSearchable()
     {
-        return !!$this->visible;
+        return $this->state == 1; // visible 字段和 model visible 属性有冲突...
     }
 
     public function refreshCache()

@@ -35,9 +35,10 @@ class ArticleController extends Controller
         return ArticleResource::collection($articles);
     }
 
-    public function show(Article $article)
+    public function show($id)
     {
-        abort_if(!$article->visible, 404);
+        $article = Article::find($id);
+        abort_if($article->state != 1, 404);
 
         $article->update(['cache->views_count' => $article->cache['views_count'] + 1]);
 
@@ -53,7 +54,7 @@ class ArticleController extends Controller
         $article = new Article;
         $article->title = $request->input('title');
         $article->preview = $request->input('preview');
-        $article->visible = $request->input('visible');
+        $article->state = $request->input('state');
         $article->save();
 
         $article->tags()->sync($request->input('tags'));
@@ -67,7 +68,7 @@ class ArticleController extends Controller
 
         $article->title = $request->input('title');
         $article->preview = $request->input('preview');
-        $article->visible = $request->input('visible');
+        $article->state = $request->input('state');
         $article->updated_at = now();
         $article->save();
 

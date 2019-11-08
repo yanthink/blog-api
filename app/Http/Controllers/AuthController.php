@@ -68,7 +68,7 @@ class AuthController extends Controller
                     ->first();
 
         if ($user && Hash::check($password, $user->password)) {
-            $token = $user->createToken('wechat user token');
+            $token = $user->createToken('web user token');
 
             $data = [
                 'access_token' => $token->accessToken,

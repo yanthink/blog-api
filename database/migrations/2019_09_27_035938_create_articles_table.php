@@ -11,7 +11,7 @@ class CreateArticlesTable extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
-            $table->boolean('visible')->default(true);
+            $table->tinyInteger('state')->default(1)->comment('[隐藏,显示]');
             $table->string('title');
             $table->string('preview');
             $table->bigInteger('heat')->default(0)->index()->comment('热度');

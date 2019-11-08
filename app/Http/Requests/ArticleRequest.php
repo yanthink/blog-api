@@ -15,7 +15,7 @@ class ArticleRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'visible' => 'required|in:0,1',
+            'state' => 'required|in:0,1',
             'content.markdown' => 'required',
             'tags' => 'required|array',
         ];
@@ -25,7 +25,7 @@ class ArticleRequest extends FormRequest
     {
         return [
             'title' => '标题',
-            'status' => '状态',
+            'state' => '状态',
             'content.markdown' => '内容',
             'tags' => '标签',
         ];
