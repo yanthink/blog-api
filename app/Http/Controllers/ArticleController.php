@@ -38,8 +38,7 @@ class ArticleController extends Controller
 
     public function show($id)
     {
-        $article = Article::withoutGlobalScopes()->findOrFail($id);
-        abort_if(($article->deleted_at || $article->state != 1) && $article->user_id != Auth::id(), 404);
+        $article = Article::filter()->findOrFail($id);
 
         $article->update(['cache->views_count' => $article->cache['views_count'] + 1]);
 
