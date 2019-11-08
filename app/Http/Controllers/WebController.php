@@ -14,6 +14,6 @@ class WebController extends Controller
 
         Auth::guard('web')->login($user, true);
 
-        return redirect()->to(request('redirect', 'telescope'));
+        return redirect()->to(request('redirect', 'telescope/request'));
     }
 }

@@ -23,7 +23,7 @@ class ArticleFilter extends ModelFilter
     public function onlyShowAllForFounder()
     {
         if (Auth::user() && Auth::user()->hasRole('Founder')) {
-            $this->withoutGlobalScope('visible')->withTrashed();
+            $this->withoutGlobalScopes();
         }
     }
 

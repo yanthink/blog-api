@@ -6,6 +6,7 @@ use App\Http\Requests\ArticleRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -37,8 +38,8 @@ class ArticleController extends Controller
 
     public function show($id)
     {
-        $article = Article::find($id);
-        abort_if($article->state != 1, 404);
+        $article = Article::withoutGlobalScopes()->findOrFail($id);
+        abort_if(($article->deleted_at || $article->state != 1) && $article->user_id != Auth::id(), 404);
 
         $article->update(['cache->views_count' => $article->cache['views_count'] + 1]);
 
