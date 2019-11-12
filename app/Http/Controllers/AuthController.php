@@ -68,7 +68,7 @@ class AuthController extends Controller
                     ->first();
 
         if ($user && Hash::check($password, $user->password)) {
-            $token = $user->createToken('web user token');
+            $token = $user->createToken('web');
 
             $data = [
                 'access_token' => $token->accessToken,
@@ -100,7 +100,7 @@ class AuthController extends Controller
 
         abort_if(!$user, 406, '用户不存在！');
 
-        $token = $user->createToken('web user token');
+        $token = $user->createToken('web');
 
         broadcast(new WechatLogined($uuid, $token->accessToken, $user->getAllPermissions()->pluck('name')));
 
@@ -120,7 +120,7 @@ class AuthController extends Controller
 
         abort_if(!$user, 406, '用户不存在！');
 
-        $token = $user->createToken('wechat user token');
+        $token = $user->createToken('wechat');
 
         $data = [
             'access_token' => $token->accessToken,
@@ -187,7 +187,7 @@ class AuthController extends Controller
 
         $lock->release();
 
-        $token = $user->createToken('wechat user token');
+        $token = $user->createToken('wechat');
 
         $data = [
             'access_token' => $token->accessToken,

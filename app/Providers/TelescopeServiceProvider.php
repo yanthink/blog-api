@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Laravel\Telescope\EntryType;
 use Laravel\Telescope\Telescope;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;
@@ -30,7 +31,8 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
                    $entry->isFailedRequest() ||
                    $entry->isFailedJob() ||
                    $entry->isScheduledTask() ||
-                   $entry->hasMonitoredTag();
+                   $entry->hasMonitoredTag() ||
+                   $entry->type == EntryType::NOTIFICATION;
         });
     }
 

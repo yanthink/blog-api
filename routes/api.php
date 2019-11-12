@@ -1,10 +1,10 @@
 <?php
 
 Route::get('auth/login_code', 'AuthController@loginCode');
-Route::post('auth/login', 'AuthController@login');
-Route::post('auth/wechat_scan_login', 'AuthController@wechatScanLogin');
-Route::post('auth/wechat_login', 'AuthController@wechatLogin');
-Route::post('auth/wechat_register', 'AuthController@wechatRegister');
+Route::post('auth/login', 'AuthController@login')->name('web.login');
+Route::post('auth/wechat_scan_login', 'AuthController@wechatScanLogin')->name('scan.login');
+Route::post('auth/wechat_login', 'AuthController@wechatLogin')->name('wechat.login');
+Route::post('auth/wechat_register', 'AuthController@wechatRegister')->name('wechat.register');
 
 Route::post('relations/{relation}', 'RelationController@toggleRelation')->name('relations.toggle');
 

@@ -58,9 +58,9 @@ class CommentObserver
         switch ($comment->commentable_type) {
             case Article::class:
                 if (!$comment->parent_id) {
-                    $comment->commentable->user->notify(new CommentMyArticle($comment));
+                    $comment->commentable->user->notify((new CommentMyArticle($comment))->delay(30));
                 } else {
-                    $comment->parent->user->notify(new ReplyMyComment($comment));
+                    $comment->parent->user->notify((new ReplyMyComment($comment))->delay(30));
                 }
                 break;
         }
