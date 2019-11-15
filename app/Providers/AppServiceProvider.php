@@ -61,8 +61,10 @@ class AppServiceProvider extends ServiceProvider
     protected function registerEsEngine()
     {
         resolve(EngineManager::class)->extend('es', function ($app) {
-            return new EsEngine(ClientBuilder::create()->setHosts(config('scout.elasticsearch.hosts'))->build(),
-                config('scout.elasticsearch.index'));
+            return new EsEngine(
+                ClientBuilder::create()->setHosts(config('scout.elasticsearch.hosts'))->build(),
+                config('scout.elasticsearch.index')
+            );
         });
     }
 }

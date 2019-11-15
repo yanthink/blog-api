@@ -16,6 +16,8 @@ use App\Models\FollowRelation;
 use App\Models\User;
 use Illuminate\Database\Query\Builder as DatabaseQuery;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -108,14 +110,18 @@ class UserController extends Controller
 
     public function notifications(Request $request)
     {
+        /**
+         * @var DatabaseNotificationCollection|DatabaseNotification[] $notifications
+         */
+
         $notifications = $request->user()
                                  ->notifications()
                                  ->latest()
                                  ->paginate($request->get('per_page', 10));
 
         $ids = $notifications->where('read_at', null)->pluck('id');
-        if (count($ids)) {
-            $request->user()->notifications()->whereIn('id', $ids)->update(['read_at' => now()]);
+        if (!$ids->isEmpty()) {
+            $request->user()->notifications()->whereIn('id', $ids->all())->update(['read_at' => now()]);
             $unreadNotificationsCount = $request->user()->unreadNotifications()->count();
             $request->user()->update(['cache->unread_count' => $unreadNotificationsCount]);
             broadcast(new UnreadNotificationsChange($request->user()->id, $unreadNotificationsCount));
