@@ -10,7 +10,7 @@ class Resource extends JsonResource
 {
     protected static $availableIncludes = [];
 
-    protected static $relationLoaded = false;
+    private static $relationLoaded = false;
 
     public function __construct($resource)
     {
