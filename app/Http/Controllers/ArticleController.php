@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ArticleRequest;
 use App\Http\Resources\ArticleResource;
+use App\Jobs\SaveKeyword;
 use App\Models\Article;
 use Illuminate\Http\Request;
 
@@ -30,7 +31,13 @@ class ArticleController extends Controller
 
     public function search(Request $request)
     {
-        $articles = Article::search($request->get('q'))->paginate($request->get('per_page'));
+        $keyword = $request->get('q');
+
+        $articles = Article::search($keyword)->paginate($request->get('per_page'));
+
+        if ($keyword && $articles->total() > 0) {
+            SaveKeyword::dispatchNow($keyword);
+        }
 
         return ArticleResource::collection($articles);
     }
@@ -61,8 +68,10 @@ class ArticleController extends Controller
         return $this->withNoContent();
     }
 
-    public function update(ArticleRequest $request, Article $article)
+    public function update(ArticleRequest $request, $id)
     {
+        $article = Article::filter()->findOrFail($id);
+
         $this->authorize('update', $article);
 
         $article->title = $request->input('title');

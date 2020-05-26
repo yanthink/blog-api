@@ -19,7 +19,6 @@ use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Carbon\Carbon;
 use DB;
 use Elasticsearch\ClientBuilder;
-use Gate;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;

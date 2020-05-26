@@ -32,7 +32,7 @@ class FetchContentMentions implements ShouldQueue
     public function handle()
     {
         preg_match_all(
-            '/@(?!_)(?!.*?_$)(?<username>[a-zA-Z0-9_\x{4e00}-\x{9fa5}]{1,10})\b/u',
+            '/(?:^| +)@(?!_)(?!.*?_$)(?<username>[a-zA-Z0-9_\x{4e00}-\x{9fa5}]{1,10})(?: +|$)/u',
             $this->content->markdown,
             $matches
         );

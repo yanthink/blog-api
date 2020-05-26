@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Video;
+use App\Models\Article;
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
@@ -26,7 +26,7 @@ class EsEngine extends Engine
 
         $models->each(function ($model) use (&$params) {
             /**
-             * @var Video $model ;
+             * @var Article $model ;
              */
             $params['body'][] = [
                 'update' => [
@@ -49,7 +49,7 @@ class EsEngine extends Engine
 
         $models->each(function ($model) use (&$params) {
             /**
-             * @var Video $model
+             * @var Article $model
              */
             $params['body'][] = [
                 'delete' => [
@@ -93,7 +93,7 @@ class EsEngine extends Engine
     public function map(Builder $builder, $results, $model)
     {
         /**
-         * @var Video $model ;
+         * @var Article $model ;
          */
         if ($this->getTotalCount($results) === 0) {
             return Collection::make();
@@ -129,7 +129,7 @@ class EsEngine extends Engine
     public function flush($model)
     {
         /**
-         * @var Video $model ;
+         * @var Article $model ;
          */
         $model->newQuery()->orderBy($model->getKeyName())->unsearchable();
     }
@@ -137,7 +137,7 @@ class EsEngine extends Engine
     protected function performSearch(Builder $builder, array $options = [])
     {
         /**
-         * @var Video $model ;
+         * @var Article $model ;
          */
         $model = $builder->model;
 
@@ -153,8 +153,8 @@ class EsEngine extends Engine
                                         'query' => $builder->query,
                                         // 'fuzziness' => 'AUTO',
                                         'fields' => preg_match('/[\x{4e00}-\x{9fa5}]/u', $builder->query)
-                                            ? ['title^3', 'description']
-                                            : ['title^3', 'title.pinyin^2', 'description'],
+                                            ? ['title^3', 'content']
+                                            : ['title^3', 'title.pinyin^2', 'content'],
                                     ],
                                 ],
                                 'must_not' => [],
@@ -168,10 +168,10 @@ class EsEngine extends Engine
                                 ],
                             ],
                         ],
-                        'field_value_factor' => [
-                            'field' => 'weight', // new_score = old_score * weight
-                            // "modifier": "log1p", new_score = old_score * log(1 + weight) 平滑
-                        ],
+                        // 'field_value_factor' => [
+                        //     'field' => 'weight', // new_score = old_score * weight
+                        //     // "modifier": "log1p", new_score = old_score * log(1 + weight) 平滑
+                        // ],
                         'boost_mode' => 'multiply',
                         'score_mode' => 'multiply',
                     ],

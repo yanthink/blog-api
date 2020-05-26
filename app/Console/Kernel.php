@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\StatisticsHotKeywords;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Laravel\Telescope\Console\PruneCommand;
@@ -16,6 +17,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command(Commands\RemoveExpiredAttachment::class)->dailyAt('02:00');
         $schedule->command(PruneCommand::class)->daily();
+        $schedule->command(StatisticsHotKeywords::class)->daily();
     }
 
     protected function commands()

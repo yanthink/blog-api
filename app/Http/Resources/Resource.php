@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Throwable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -11,6 +12,8 @@ class Resource extends JsonResource
     protected static $availableIncludes = [];
 
     private static $relationLoaded = false;
+
+    public $preserveKeys = true;
 
     public function __construct($resource)
     {
@@ -25,7 +28,13 @@ class Resource extends JsonResource
     public static function collection($resource)
     {
         if (!self::$relationLoaded) {
-            $resource->loadMissing(self::getRequestIncludes());
+            if (is_object($resource)) {
+                try {
+                    $resource->loadMissing(self::getRequestIncludes());
+                } catch (Throwable $exception) {
+                }
+            }
+
             self::$relationLoaded = true;
         }
 

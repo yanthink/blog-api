@@ -2,52 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TagRequest;
-use App\Http\Resources\TagResource;
-use App\Models\Tag;
+use App\Http\Resources\CommentResource;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
-class TagController extends Controller
+class CommentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:api'])->except(['all']);
+        $this->middleware(['auth:api']);
     }
 
     public function index(Request $request)
     {
-        $this->authorize('index', Tag::class);
+        $this->authorize('index', Comment::class);
 
-        $tags = Tag::query()
-                   ->filter($request->all())
-                   ->orderBy('order')
-                   ->paginate($request->get('per_page', 10));
+        $comments = Comment::query()
+                           ->filter($request->all())
+                           ->orderBy('id', 'desc')
+                           ->paginate($request->get('per_page', 10));
 
-        return TagResource::collection($tags);
+        return CommentResource::collection($comments);
     }
 
-    public function store(TagRequest $request)
+    public function update(Request $request, Comment $comment)
     {
-        $this->authorize('store', Tag::class);
+        $this->authorize('update', Comment::class);
 
-        Tag::create($request->only('name', 'slug', 'order'));
+        $this->validate($request, ['content.markdown' => 'required']);
+
+        $comment->updated_at = now();
+        $comment->save();
 
         return $this->withNoContent();
-    }
-
-    public function update(TagRequest $request, Tag $tag)
-    {
-        $this->authorize('update', Tag::class);
-
-        $tag->update($request->only('name', 'slug', 'order'));
-
-        return $this->withNoContent();
-    }
-
-    public function all()
-    {
-        $tags = Tag::query()->orderBy('order')->get();
-
-        return TagResource::collection($tags);
     }
 }

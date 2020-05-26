@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Article;
+use App\Models\Comment;
 use App\Models\Tag;
 use App\Models\User;
 use App\Policies\ArticlePolicy;
+use App\Policies\CommentPolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\TagPolicy;
@@ -22,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Tag::class => TagPolicy::class,
         Article::class => ArticlePolicy::class,
+        Comment::class => CommentPolicy::class,
     ];
 
     public function boot()

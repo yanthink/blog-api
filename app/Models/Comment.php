@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Traits\WithDiffForHumanTimes;
 use EloquentFilter\Filterable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -24,25 +23,30 @@ use Overtrue\LaravelFollow\Traits\CanBeVoted;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $children
+ * @property-read int|null $children_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $commentable
- * @property-read \App\Models\Content $content
+ * @property-read \App\Models\Content|null $content
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $downvoters
  * @property-read int|null $downvoters_count
+ * @property-read mixed $friendly_comments_count
+ * @property-read mixed $friendly_down_voters_count
+ * @property-read mixed $friendly_up_voters_count
  * @property-read mixed $has_down_voted
  * @property-read mixed $has_up_voted
+ * @property-read \App\Models\Comment $parent
+ * @property-read \App\Models\Comment $root
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $upvoters
  * @property-read int|null $upvoters_count
+ * @property-read \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $voters
  * @property-read int|null $voters_count
- * @property-read \App\Models\Comment $root
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment filter($input = [], $filter = null)
- * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Comment onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment paginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment query()
- * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment simplePaginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereBeginsWith($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereCache($value)
@@ -51,26 +55,18 @@ use Overtrue\LaravelFollow\Traits\CanBeVoted;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereEndsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereHeat($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereLike($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereParentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment wherePopular($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereRootId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereUserId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Comment withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Comment withoutTrashed()
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Comment whereHeat($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $children
- * @property-read int|null $children_count
- * @property-read mixed $friendly_comments_count
- * @property-read mixed $friendly_down_voters_count
- * @property-read mixed $friendly_up_voters_count
- * @property-read \App\Models\Comment $parent
- * @property-read \App\Models\User $user
  */
-class Comment extends Model
+class Comment extends BaseModel
 {
     use SoftDeletes;
     use Filterable;

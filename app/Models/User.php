@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\ToggleVote;
+use DateTimeInterface;
 use EloquentFilter\Filterable;
 use Hash;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,11 +17,13 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User
+ *
  * @property int $id
  * @property string|null $username
  * @property string|null $email
  * @property string|null $wechat_openid 小程序OPENID
  * @property string $password
+ * @property string|null $remember_token
  * @property string $avatar
  * @property string $gender
  * @property string $bio 座右铭
@@ -33,7 +36,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $articles_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property-read int|null $clients_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
+ * @property-read int|null $comments_count
  * @property-read mixed $has_password
+ * @property-read mixed $url
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
@@ -62,14 +68,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereLike($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereSettings($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUsername($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWechatOpenid($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
- * @property-read int|null $comments_count
- * @property-read mixed $url
  */
 class User extends Authenticatable
 {
@@ -146,6 +150,11 @@ class User extends Authenticatable
     ];
 
     protected $guard_name = 'api';
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
+    }
 
     public function setSettingsAttribute($value)
     {

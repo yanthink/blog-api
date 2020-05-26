@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
-use GuzzleHttp\Client;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 class SaveKeyword
 {
@@ -25,22 +25,27 @@ class SaveKeyword
             $index = config('scout.elasticsearch.index');
             $host = config('scout.elasticsearch.hosts')[0];
 
-            $response = (new Client())->post(sprintf('%s/%s/_analyze', $host, $index), [
-                'json' => [
-                    'analyzer' => 'ik_smart',
-                    'text' => $this->keyword,
-                ],
-            ]);
+            $tokens = Http::post(sprintf('%s/%s/_analyze', $host, $index), [
+                'analyzer' => 'ik_smart',
+                'text' => $this->keyword,
+            ])['tokens'];
 
-            $result = json_decode((string) $response->getBody(), true);
-            $keywords = (Arr::pluck($result['tokens'], 'token'));
+            $keywords = Arr::pluck($tokens, 'token');
 
-            // $keywords = Arr::wrap($this->keyword);
+            $newKeywords = [];
+            foreach ($keywords as $keyword) {
+                if (strlen($keyword) >= 2) {
+                    $newKeywords[] = $keyword;
+                }
+            }
+            if ($newKeywords != $keywords) {
+                $newKeywords[] = join('', $keywords);
+            }
 
             $file = storage_path(sprintf('keywords/%s.log', now()->toDateString()));
-            File::append($file, sprintf('[%s] %s "%s" %s'.PHP_EOL, now()->toDateTimeString(), request()->ip(), join('', $keywords), Auth::id()));
+            File::append($file, sprintf('[%s] %s "%s" %s'.PHP_EOL, now()->toDateTimeString(), request()->ip(), join('|', $newKeywords), Auth::id()));
         } catch (\Exception $exception) {
-
+            \Log::debug($exception->getMessage());
         }
     }
 }

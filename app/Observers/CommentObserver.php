@@ -24,16 +24,16 @@ class CommentObserver
 
     public function saving(Comment $comment)
     {
-        if (is_null($comment->getOriginal('cache'))) {
+        if (is_null($comment->getRawOriginal('cache'))) {
             $comment->cache = [];
         }
 
         if ($comment->isDirty(['cache'])) {
             $heat = Comment::HEAT_UP_VOTER * $comment->cache['up_voters_count']
-                    + Comment::HEAT_DOWN_VOTER * $comment->cache['down_voters_count']
-                    + Comment::HEAT_COMMENT * $comment->cache['comments_count'];
+                + Comment::HEAT_DOWN_VOTER * $comment->cache['down_voters_count']
+                + Comment::HEAT_COMMENT * $comment->cache['comments_count'];
 
-            $comment->heat = (integer)$heat;
+            $comment->heat = (integer) $heat;
         }
     }
 
@@ -47,12 +47,12 @@ class CommentObserver
             $comment->commentable->refreshCache();
         }
 
-        if ($comment->parent_id) {
-            $comment->parent->refreshCache();
-        }
-
         if ($comment->root_id) {
             $comment->root->refreshCache();
+        }
+
+        if ($comment->parent_id && $comment->parent_id != $comment->root_id) {
+            $comment->parent->refreshCache();
         }
 
         switch ($comment->commentable_type) {
@@ -75,7 +75,7 @@ class CommentObserver
     {
         if (
             !self::$contentSaved &&
-            request()->routeIs(['*.comments.store', '*.comments.update']) &&
+            request()->routeIs(['*.comments.store', '*.comments.update', 'comments.update']) &&
             $comment->has('content')
         ) {
             self::$contentSaved = true;

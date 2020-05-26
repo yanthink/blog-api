@@ -39,6 +39,7 @@ class ArticleCommentController extends Controller
 
     public function store(Request $request, Article $article)
     {
+        sleep(3);
         $this->validate($request, [
             'content.markdown' => 'required|min:1|max:2048',
             'parent_id' => [

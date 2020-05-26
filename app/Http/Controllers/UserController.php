@@ -194,7 +194,7 @@ class UserController extends Controller
         $extends = $request->input('extends');
 
         if (
-            $username != $user->getOriginal('username') &&
+            $username != $user->getRawOriginal('username') &&
             $user->cache['username_modify_count'] < 1
         ) {
             $user->username = $username;
@@ -278,7 +278,7 @@ class UserController extends Controller
             }
         }
 
-        if (!$user->getOriginal('name')) {
+        if (!$user->getRawOriginal('name')) {
             abort(422, '请先设置用户名！');
         }
 

@@ -31,7 +31,7 @@
 - PHP >= 7.1.3
 - MySQL 8.0+
 - Redis 3.0+
-- Elasticsearch 6.0+
+- Elasticsearch 7.0+
 
 ## 开发环境部署/安装
 
@@ -96,24 +96,18 @@ username: admin
 password: 888888
 ```
 
-#### 8. 安装elasticsearch
+#### 8. 安装 elasticsearch
 
-    brew install elasticsearch
+    查看 https://www.einsition.com/articles/3
 
-#### 9. 安装elasticsearch-analysis-ik
 
-```bash
-cd $(brew --prefix elasticsearch)
-./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.4/elasticsearch-analysis-ik-6.2.4.zip
-```
-
-#### 10. 初始化Elasticsearch
+#### 9. 初始化Elasticsearch
 
 ```bash
 php artisan es:init
 ```
 
-#### 11. 安装 laravel-echo-server
+#### 10. 安装 laravel-echo-server
 
     npm install -g laravel-echo-server
     laravel-echo-server client:add

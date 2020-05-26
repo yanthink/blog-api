@@ -2,6 +2,7 @@
 
 namespace App\ModelFilters;
 
+use App\Models\User;
 use EloquentFilter\ModelFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -12,6 +13,12 @@ class CommentFilter extends ModelFilter
     public function setup()
     {
         $this->loadMyVoteRelations();
+    }
+
+    public function username($username)
+    {
+        $id = User::where('username', $username)->value('id');
+        $this->where('user_id', $id);
     }
 
     public function root($id)

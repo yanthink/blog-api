@@ -56,7 +56,10 @@ class TransformsResponse
                 $data['success'] = true;
 
                 $transforms = [
-                    'meta.total' => 'total', 'meta.current_page' => 'current', 'meta.per_page' => 'pageSize'
+                    'meta.total' => 'total',
+                    'meta.per_page' => 'pageSize',
+                    'meta.current_page' => 'current',
+                    'meta.last_page' => 'lastPage',
                 ];
 
                 foreach ($transforms as $originalKey => $newKey) {
@@ -66,7 +69,7 @@ class TransformsResponse
                 }
 
                 unset($data['links']);
-                unset($data['meta']);
+                // unset($data['meta']);
             }
 
             $response->setData($data);

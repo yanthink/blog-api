@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Console\Command;
 
 class StatisticsHotKeywords extends Command
@@ -37,8 +38,7 @@ class StatisticsHotKeywords extends Command
         $this->splitFile();
         $this->statisticsTopData();
 
-        // todo 保存到缓存
-        dd($this->topData);
+        Cache::forever('hot_keywords', $this->topData);
     }
 
     private function splitFile()
@@ -49,9 +49,10 @@ class StatisticsHotKeywords extends Command
             while (!feof($fp)) {
                 $line = fgets($fp);
                 $arr = explode('"', $line);
-                $keyword = $arr[1] ?? '';
+                $keywordsStr = $arr[1] ?? '';
+                $keywords = array_filter(explode('|', $keywordsStr));
 
-                if ($keyword) {
+                foreach ($keywords as $keyword) {
                     // 通过hash方法分解成多个小数据集
                     $hashId = $this->getHashIdByKeyword($keyword);
 

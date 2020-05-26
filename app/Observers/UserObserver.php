@@ -9,7 +9,7 @@ class UserObserver
 {
     public function saving(User $user)
     {
-        if (is_null($user->getOriginal('settings'))) {
+        if (is_null($user->getRawOriginal('settings'))) {
             $user->settings = [];
         }
 

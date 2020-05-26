@@ -34,7 +34,7 @@ class ArticleObserver
             $article->preview = '';
         }
 
-        if (is_null($article->getOriginal('cache'))) {
+        if (is_null($article->getRawOriginal('cache'))) {
             $article->cache = [];
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use EloquentFilter\Filterable;
 use Overtrue\LaravelFollow\FollowRelation as OvertrueFollowRelation;
 
@@ -15,14 +16,14 @@ use Overtrue\LaravelFollow\FollowRelation as OvertrueFollowRelation;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property string|null $updated_at
  * @property string|null $deleted_at
- * @property-read \App\Models\FollowRelation $followable
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation filter($input = array(), $filter = null)
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $followable
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation filter($input = [], $filter = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation paginateFilter($perPage = null, $columns = array(), $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation paginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\Overtrue\LaravelFollow\FollowRelation popular($type = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation simplePaginateFilter($perPage = null, $columns = array(), $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation simplePaginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation whereBeginsWith($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelation whereDeletedAt($value)
@@ -40,4 +41,9 @@ class FollowRelation extends OvertrueFollowRelation
     use Filterable;
 
     protected $with = [];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
+    }
 }

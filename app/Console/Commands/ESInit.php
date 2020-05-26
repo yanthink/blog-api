@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Elasticsearch\ClientBuilder;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -17,89 +18,81 @@ class ESInit extends Command
 
     public function handle(Client $client)
     {
-        $this->createTemplate($client);
-        // $this->createIndex($client); // elasticsearch7 不允许一个索引下创建多个类型
-    }
-
-    /**
-     * 创建模板 see https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic-templates.html
-     *
-     * @param Client $client
-     */
-    private function createTemplate(Client $client)
-    {
-        $url = config('scout.elasticsearch.hosts')[0].'/_template/template_1';
-        $params = [
-            'json' => [
-                'template' => config('scout.elasticsearch.index'),
-                'settings' => [
-                    'refresh_interval' => '5s',
-                    'number_of_shards' => 1, // 分片为
-                    'number_of_replicas' => 0, // 副本数
-                ],
-                'mappings' => [
-                    'dynamic_templates' => [ // 动态映射模板
-                        [
-                            'integer_fields' => [
-                                'match_mapping_type' => 'long',
-                                'mapping' => [
-                                    'type' => 'integer',
-                                ],
-                            ],
-                        ],
-                        [
-                            'string_fields' => [ // 字段映射模板的名称，一般为"类型_fields"的命名方式
-                                'match' => '*',
-                                // 匹配的字段名为所有
-                                'match_mapping_type' => 'string',
-                                // 限制匹配的字段类型，只能是 string 类型
-                                'mapping' => [ // 字段的处理方式
-                                    'type' => 'text',
-                                    // 字段类型限定为 string
-                                    'analyzer' => 'ik_max_word',
-                                    // 字段采用的分析器名，默认值为 standard 分析器
-                                    'fields' => [
-                                        'raw' => [
-                                            'type' => 'keyword',
-                                            // 'ignore_above' => 256, // 字段是索引时忽略长度超过定义值的字段。
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        try {
-            $client->delete($url);
-        } catch (\Exception $exception) {
-        }
-        $client->put($url, $params);
-
-        $this->info("=======创建模板成功=======");
+        $this->createIndex($client);
     }
 
     private function createIndex(Client $client)
     {
-        $url = config('scout.elasticsearch.hosts')[0].'/'.config('scout.elasticsearch.index');
+        $index = config('scout.elasticsearch.index');
         $params = [
-            'json' => [
+            'index' => $index,
+            'body' => [
                 'settings' => [
                     'refresh_interval' => '5s',
                     'number_of_shards' => 1, // 分片为
                     'number_of_replicas' => 0, // 副本数
+                    'analysis' => [
+                        'analyzer' => [
+                            'default' => [
+                                'tokenizer' => 'ik_smart',
+                            ],
+                            'pinyin_analyzer' => [
+                                'tokenizer' => 'my_pinyin',
+                            ],
+                        ],
+                        'tokenizer' => [
+                            'my_pinyin' => [ // https://github.com/medcl/elasticsearch-analysis-pinyin
+                                'type' => 'pinyin',
+                                'keep_first_letter' => true,
+                                'keep_separate_first_letter' => false,
+                                'limit_first_letter_length' => 5,
+                                'keep_full_pinyin' => true,
+                                'keep_joined_full_pinyin' => true,
+                                'keep_none_chinese' => true,
+                                'keep_none_chinese_together' => true,
+                                'keep_none_chinese_in_first_letter' => true,
+                                'keep_none_chinese_in_joined_full_pinyin' => true,
+                                'none_chinese_pinyin_tokenize' => true,
+                                'keep_original' => false,
+                                'lowercase' => true,
+                                'trim_whitespace' => true,
+                                'remove_duplicated_term' => true,
+                                'ignore_pinyin_offset' => true,
+                            ],
+                        ],
+                    ],
                 ],
-            ],
+                'mappings' => [
+                    // elasticsearch7 不在支持指定索引类型，所以不需要指定索引
+                    'properties' => [
+                        'title' => [
+                            'type' => 'text',
+                            'analyzer' => 'ik_max_word', // 最细粒度拆分
+                            'fields' => [
+                                'pinyin' => [
+                                    'type' => 'text',
+                                    'store' => false,
+                                    'analyzer' => 'pinyin_analyzer',
+                                ],
+                            ],
+                        ],
+                        'content' => [
+                            'type' => 'text',
+                            'analyzer' => 'ik_smart', // 最粗粒度拆分
+                        ],
+                    ],
+                ],
+            ]
         ];
 
-        try {
-            $client->delete($url);
-        } catch (\Exception $exception) {
-        }
-        $client->put($url, $params);
+        $client = ClientBuilder::create()->setHosts(config('scout.elasticsearch.hosts'))->build();
 
+        try {
+            $client->indices()->delete(compact('index'));
+        } catch (\Exception $e) {
+        }
+
+        $client->indices()->create($params);
         $this->info("=========创建索引成功=========");
     }
 }

@@ -73,7 +73,14 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'articles.update',
             'display_name' => '修改文章',
         ]);
-
+        Permission::create([
+            'name' => 'comments.index',
+            'display_name' => '评论管理',
+        ]);
+        Permission::create([
+            'name' => 'comments.update',
+            'display_name' => '修改评论',
+        ]);
         // create roles and assign created permissions
         $role = Role::create([
             'name' => 'Founder',

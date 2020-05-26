@@ -2,10 +2,9 @@
 
 namespace App\Exceptions;
 
-use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\Translation\Exception\InvalidResourceException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -18,12 +17,12 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    public function report(Exception $exception)
+    public function report(Throwable $exception)
     {
         parent::report($exception);
     }
 
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $exception)
     {
         if ($exception instanceof ValidationException) {
             abort(422, $exception->validator->getMessageBag()->first());

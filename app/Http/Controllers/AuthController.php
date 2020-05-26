@@ -17,7 +17,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('throttle:10,1')->only(['loginCode']);
+        $this->middleware('throttle:120,1')->only(['loginCode']);
         $this->middleware('auth:api')->except([
             'loginCode',
             'login',

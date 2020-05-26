@@ -24,6 +24,7 @@ class PermissionController extends Controller
                                  ->when(request('name'), function (Builder $builder, $name) {
                                      $builder->where('name', $name);
                                  })
+                                 ->orderBy('id', 'desc')
                                  ->paginate($pageSize);
 
         return PermissionsResource::collection($permissions);

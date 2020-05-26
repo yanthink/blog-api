@@ -6,7 +6,6 @@ use App\Models\Traits\EsHighlightAttributes;
 use App\Models\Traits\WithDiffForHumanTimes;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +19,8 @@ use Overtrue\LaravelFollow\Traits\CanBeLiked;
  * @property int $id
  * @property int $user_id
  * @property int $state
- * @property string $title 标题
- * @property string $preview 预览图
+ * @property string $title
+ * @property string $preview
  * @property int $heat 热度
  * @property array|null $cache 数据缓存
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -29,48 +28,46 @@ use Overtrue\LaravelFollow\Traits\CanBeLiked;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
  * @property-read int|null $comments_count
- * @property-read \App\Models\Content $content
+ * @property-read \App\Models\Content|null $content
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $favoriters
  * @property-read int|null $favoriters_count
+ * @property-read mixed $friendly_comments_count
+ * @property-read mixed $friendly_likes_count
+ * @property-read mixed $friendly_views_count
  * @property-read mixed $has_favorited
  * @property-read mixed $has_liked
  * @property-read mixed $highlights
+ * @property-read mixed $url
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $likers
  * @property-read int|null $likers_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Tag[] $tags
  * @property-read int|null $tags_count
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article filter($input = [], $filter = null)
- * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article paginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article query()
- * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article simplePaginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereBeginsWith($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereCache($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereEndsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereHeat($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereLike($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article wherePreview($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereState($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Article withoutTrashed()
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Article whereHeat($value)
- * @property-read mixed $friendly_comments_count
- * @property-read mixed $friendly_likes_count
- * @property-read mixed $friendly_views_count
- * @property-read mixed $url
  */
-class Article extends Model
+class Article extends BaseModel
 {
     use SoftDeletes;
     use Filterable;

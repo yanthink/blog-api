@@ -13,6 +13,9 @@ Route::apiResource('tags', 'TagController')->except(['show', 'destroy']);
 
 Route::apiResource('articles', 'ArticleController')->except(['destroy']);
 Route::apiResource('articles.comments', 'ArticleCommentController');
+Route::apiResource('comments', 'CommentController')->only(['index', 'update']);
+
+Route::get('keywords/hot', 'KeywordController@hot');
 
 Route::get('search/users', 'UserController@search');
 

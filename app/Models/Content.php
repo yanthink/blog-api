@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Content
+ *
  * @property int $id
  * @property string $contentable_type
  * @property int $contentable_id
@@ -19,12 +19,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed $combine_markdown
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $mentions
  * @property-read int|null $mentions_count
- * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Content newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Content newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Content onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Content query()
- * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Content whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Content whereContentableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Content whereContentableType($value)
@@ -37,7 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Content withoutTrashed()
  * @mixin \Eloquent
  */
-class Content extends Model
+class Content extends BaseModel
 {
     use SoftDeletes;
 

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * App\Models\FollowRelationCache
  *
@@ -24,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\FollowRelationCache whereUserId($value)
  * @mixin \Eloquent
  */
-class FollowRelationCache extends Model
+class FollowRelationCache extends BaseModel
 {
     protected $fillable = [
         'user_id',

@@ -9,8 +9,8 @@ class TransformsRequest extends Transforms
 {
     /**
      * Handle an incoming request.
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -25,7 +25,7 @@ class TransformsRequest extends Transforms
     protected function transform($key, $value)
     {
         if ($key == 'per_page') {
-            return min($value, 20);
+            return min($value, 100);
         }
 
         return $value;
