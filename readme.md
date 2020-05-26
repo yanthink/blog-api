@@ -5,7 +5,7 @@
 * 演示地址：https://www.einsition.com
 * 前端源码：https://github.com/yanthink/blog-v2
 
-该项目基于 Laravel6.0 开发。
+该项目基于 Laravel7.0 开发。
 
 
 ## 功能如下
@@ -28,14 +28,14 @@
 ## 运行环境要求
 
 - Nginx 1.8+
-- PHP >= 7.1.3
+- PHP >= 7.2.5
 - MySQL 8.0+
 - Redis 3.0+
 - Elasticsearch 7.0+
 
 ## 开发环境部署/安装
 
-本项目代码使用 PHP 框架 [Laravel 6.0](https://learnku.com/docs/laravel/6.x) 开发，本地开发环境使用 [Laravel Valet](https://learnku.com/docs/laravel/6.x/valet/5128)。
+本项目代码使用 PHP 框架 [Laravel 7.0](https://learnku.com/docs/laravel/7.x) 开发，本地开发环境使用 [Laravel Valet](https://learnku.com/docs/laravel/7.x/valet/7451)。
 
 ### 基础安装
 
