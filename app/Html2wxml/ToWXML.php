@@ -4,7 +4,7 @@ namespace App\Html2wxml;
 
 use App\Html2wxml\Highlight\Highlighter;
 use DOMDocument;
-use Parsedown;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 /**
  * Project: html2wxml
@@ -21,7 +21,7 @@ class ToWXML
 
     public $highlight;
 
-    public $parsedown;
+    public $converter;
 
     private $block_tags = 'br,address,article,applet,aside,audio,blockquote,canvas,center,dd,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video';
 
@@ -42,7 +42,15 @@ class ToWXML
 
         $this->highlight = new Highlighter();
 
-        $this->parsedown = new Parsedown();
+        $this->converter = new GithubFlavoredMarkdownConverter([
+            'renderer' => [
+                'block_separator' => "\n",
+                'inner_separator' => "\n",
+                'soft_break'      => '<br/>',
+            ],
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+        ]);
 
         $this->block_tags = explode(',', $this->block_tags);
         $this->inline_tags = explode(',', $this->inline_tags);
@@ -90,7 +98,7 @@ class ToWXML
     public function markdown2json($text)
     {
 
-        $html = $this->parsedown->text($text);
+        $html = $this->converter->convertToHtml($text);
         return $this->html2json($html);
     }
 

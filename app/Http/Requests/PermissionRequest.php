@@ -18,7 +18,7 @@ class PermissionRequest extends FormRequest
             'name' => [
                 'required',
                 'between:2,128',
-                'regex:/^[\w-\.]+$/'
+                'regex:/^[\w\-\.]+$/'
             ],
             'display_name' => 'required|between:4,128',
         ];

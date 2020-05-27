@@ -98,7 +98,7 @@ password: 888888
 
 #### 8. 安装 elasticsearch
 
-    查看 https://www.einsition.com/articles/3
+查看 https://www.einsition.com/articles/3
 
 
 #### 9. 初始化Elasticsearch

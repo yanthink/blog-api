@@ -42,4 +42,7 @@ Route::apiResource('roles', 'RoleController')->except(['destroy']);
 Route::get('permissions/all', 'PermissionController@all');
 Route::apiResource('permissions', 'PermissionController')->except(['destroy']);
 
+Route::get('sensitive_words', 'SensitiveWordController@index');
+Route::put('sensitive_words', 'SensitiveWordController@update');
+
 Route::post('attachments/upload', 'AttachmentController@upload');
