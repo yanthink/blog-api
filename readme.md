@@ -1,3 +1,5 @@
+> 该项目以迁移到 https://github.com/yanthink/pingfan.blog ，今后不再维护
+
 ## 项目概述
 
 * 产品名称：个人博客系统api接口
